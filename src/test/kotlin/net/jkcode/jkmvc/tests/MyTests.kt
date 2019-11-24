@@ -1005,26 +1005,6 @@ class MyTests{
     }
 
     @Test
-    fun testCloneThreadLocalMap(){
-        // ThreadLocalMap的类, 是ThreadLocal的内部私有类
-        // 编码时使用内部类 "ThreadLocal.ThreadLocalMap", 但是Java在编译代码时为了区分内部类, 会将内部类名改为 "ThreadLocal$ThreadLocalMap"
-        val mapClazz = Class.forName("java.lang.ThreadLocal\$ThreadLocalMap")
-        println(mapClazz)
-        val mapConstructor = mapClazz.getDeclaredConstructor(mapClazz)
-        println(mapConstructor)
-        mapConstructor.isAccessible = true
-        println(mapConstructor)
-
-        // 获得当前线程拥有的ThreadLocalMap实例
-        val threadLocalProp = Thread::class.getProperty("threadLocals") as KMutableProperty1<Thread, Any?>
-        val value = threadLocalProp.get(Thread.currentThread())
-
-        // 克隆实例
-        //val o = value.tryClone() // wrong: ThreadLocalMap没有实现Cloneable接口
-        val o = mapConstructor.newInstance(value) // wrong: ThreadLocalMap(ThreadLocalMap parentMap) 构造函数只能用于对 InheritableThreadLocal 中的ThreadLocalMap进行复制
-    }
-
-    @Test
     fun testFuncReflect(){
         val f = { it:String ->
             it

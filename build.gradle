@@ -94,7 +94,101 @@ project(':') {
         }
     }
 
+    // 依赖
     apply from: 'dep.gradle'
+
+    // kotlin文档生成
+    apply plugin: 'org.jetbrains.dokka'
+
+    dokka {
+        outputFormat = 'html'
+        outputDirectory = "$buildDir/javadoc"
+    }
+
+    task dokkaJavadoc(type: org.jetbrains.dokka.gradle.DokkaTask) {
+        outputFormat = "javadoc"
+        outputDirectory = "$buildDir/dokkaJavadoc"
+    }
+
+    // 发布到maven中央库
+    if(!project.name.endsWith('example') && !project.name.endsWith('demo') && !project.name.endsWith('benchmark')){
+        apply plugin: 'maven-publish'
+        apply plugin: 'signing'
+
+        task sourcesJar(type: Jar) {
+            //from sourceSets.main.allJava // 只java, 不包含kotlin与配置文件
+            from sourceSets.main.allSource // 所有
+            classifier = 'sources'
+        }
+
+        task javadocJar(type: Jar) {
+            //from javadoc
+            from dokkaJavadoc
+            classifier = 'javadoc'
+        }
+
+        publishing {
+            // 定义发布什么
+            publications {
+                mavenJava(MavenPublication) {
+                    // groupId = project.group
+                    // artifactId = project.name
+                    // version = project.version
+                    // groupId,artifactId,version，如果不定义，则会按照以上默认值执行
+                    from components.java
+                    artifact sourcesJar
+                    artifact javadocJar
+                    
+                    pom {
+                        // 构件名称
+                        // 区别于artifactId，可以理解为artifactName
+                        name = 'jkutil'
+                        // 构件描述
+                        description = "Jkutil is bunch of idiomatic, small, general purpose tools, It's used in other framework, eg: Jkmvc/Jksoa"
+                        // 构件主页
+                        url = 'https://github.com/shigebeyond/jkutil'
+
+                        // 许可证名称和地址
+                        licenses {
+                            license {
+                                name = 'The Apache License, Version 2.0'
+                                url = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                            }
+                        }
+                        // 开发者信息
+                        developers {
+                            developer {
+                                name = 'shijianhang'
+                                email = '772910474@qq.com'
+                            }
+                        }
+                        // 版本控制仓库地址
+                        scm {
+                            url = 'https://github.com/shigebeyond/jkutil'
+                            connection = 'scm:git:https://github.com/shigebeyond/jkutil.git'
+                            developerConnection = 'scm:git:https://github.com/shigebeyond/jkutil.git'
+                        }
+                    }
+                }
+            }
+            // 定义发布到哪里
+            repositories {
+                maven {
+                    url "https://oss.sonatype.org/service/local/staging/deploy/maven2"
+                    credentials {
+                        // issues.sonatype.org账号, 配置在 ~/.gradle/gradle.properties
+                        username sonatypeUsername
+                        password sonatypePassword
+                    }
+                }
+            }
+        }
+
+        signing {
+            sign publishing.publications.mavenJava
+        }
+
+    }
 }
 
 	
