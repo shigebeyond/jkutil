@@ -379,13 +379,23 @@ public fun <T, R> decorateIterator(iterator: Iterator<T>, transform: (T) -> R): 
 }
 
 /**
- * 包装迭代器
- * @param col 被包装的迭代器
+ * 包装集合
+ * @param col 被包装的集合
  * @param 元素转换器
  * @return 新的迭代器
  */
 public fun <T, R> decorateCollection(col: Collection<T>, transform: (T) -> R): Collection<R> {
     return CollectionDecorator(col, transform)
+}
+
+/**
+ * 包装Set
+ * @param set 被包装的Set
+ * @param 元素转换器
+ * @return 新的迭代器
+ */
+public fun <T, R> decorateSet(set: Set<T>, transform: (T) -> R): Set<R> {
+    return SetDecorator(set, transform)
 }
 
 /**
