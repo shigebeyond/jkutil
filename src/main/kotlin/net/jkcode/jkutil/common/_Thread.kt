@@ -5,21 +5,37 @@ import io.netty.util.concurrent.MultithreadEventExecutorGroup
 import io.netty.util.concurrent.SingleThreadEventExecutor
 import net.jkcode.jkutil.scope.ClosingOnShutdown
 import net.jkcode.jkutil.ttl.SttlThreadPool
-import java.util.concurrent.CompletableFuture
-import java.util.concurrent.ExecutorService
-import java.util.concurrent.TimeUnit
+import java.util.concurrent.*
 import java.util.function.Supplier
 import kotlin.reflect.KProperty1
 import kotlin.reflect.jvm.javaField
 
 /**
+ * 公共的线程池配置
+ */
+private val config = Config.instance("common-pool", "yaml")
+
+/**
  * 公共的线程池
  *   执行任务时要处理好异常
  */
-public val CommonThreadPool: ExecutorService =
-        SttlThreadPool.commonPool
-        //ForkJoinPool.commonPool()
-        //Executors.newFixedThreadPool(8)
+public val CommonThreadPool: ExecutorService by lazy{
+    // 初始线程数
+    var corePoolSize: Int = config["corePoolSize"]!!
+    if(corePoolSize == 0)
+        corePoolSize = Runtime.getRuntime().availableProcessors()
+    // 最大线程数
+    var maximumPoolSize: Int =config["maximumPoolSize"]!!
+    if(maximumPoolSize == 0)
+        maximumPoolSize = corePoolSize * 8
+    // 缓存的线程池
+    val pool = ThreadPoolExecutor(corePoolSize, maximumPoolSize, 60L, TimeUnit.SECONDS, SynchronousQueue())
+    if(config["useSttl"]!!)
+        SttlThreadPool(pool)
+    else
+        pool
+
+}
 
 /**
  * 关闭线程池

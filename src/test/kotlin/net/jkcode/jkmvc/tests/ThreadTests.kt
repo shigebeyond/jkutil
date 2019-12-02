@@ -1,7 +1,9 @@
 package net.jkcode.jkmvc.tests
 
+import net.jkcode.jkutil.common.currMillis
 import net.jkcode.jkutil.common.getProperty
 import org.junit.Test
+import java.util.concurrent.CountDownLatch
 import java.util.concurrent.ForkJoinPool
 import kotlin.reflect.KMutableProperty1
 import java.util.concurrent.Executors
@@ -40,14 +42,20 @@ class ThreadTests {
 
     @Test
     fun testForkJoinPool() {
-        //val pool = ForkJoinPool(2)
-        val pool = Executors.newFixedThreadPool(2)
-        pool.execute {
-
+        val pool = ForkJoinPool(1)
+        //val pool = Executors.newFixedThreadPool(1)
+        val requests = 100000
+        val latch = CountDownLatch(requests)
+        val start = System.currentTimeMillis()
+        for(i in 0..requests) {
+            pool.execute {
+                println(i)
+                latch.countDown()
+            }
         }
-        pool.submit{
-
-        }
+        latch.await()
+        val runtime = System.currentTimeMillis() - start
+        println("耗时 $runtime ms")
     }
 
 }
