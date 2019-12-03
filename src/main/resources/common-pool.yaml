@@ -1,4 +1,9 @@
 # 公共线程池的配置
+# 初始线程数
 corePoolSize: 0
+# 最大线程数
 maximumPoolSize: 0
+# 队列大小
+queueSize: 0
+# 应用可传递ScopedTransferableThreadLocal
 useSttl: true

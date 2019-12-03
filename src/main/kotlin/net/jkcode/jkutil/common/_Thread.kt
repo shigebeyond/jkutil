@@ -28,9 +28,12 @@ public val CommonThreadPool: ExecutorService by lazy{
     var maximumPoolSize: Int =config["maximumPoolSize"]!!
     if(maximumPoolSize == 0)
         maximumPoolSize = corePoolSize * 8
+    // 队列大小
+    var queueSize: Int =config["queueSize"]!!
+    if(queueSize == 0)
+        queueSize = Integer.MAX_VALUE
     // 缓存的线程池
-    // todo: 将 SynchronousQueue 换为性能更优的 LinkedTransferQueue
-    val pool = ThreadPoolExecutor(corePoolSize, maximumPoolSize, 60L, TimeUnit.SECONDS, SynchronousQueue())
+    val pool = StandardThreadExecutor(corePoolSize, maximumPoolSize, queueSize)
     if(config["useSttl"]!!)
         SttlThreadPool(pool)
     else

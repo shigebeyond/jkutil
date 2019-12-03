@@ -19,7 +19,6 @@ class SttlThreadPool(protected val pool: ExecutorService): ExecutorService by po
 
     companion object {
 
-        // -------------------------------------------
         // CompletableFuture的线程池: 包装 ForkJoinPool.commonPool()
         public val completableFuturePool by lazy {
             SttlThreadPool(ForkJoinPool.commonPool())
@@ -31,7 +30,8 @@ class SttlThreadPool(protected val pool: ExecutorService): ExecutorService by po
 
         // 将公共线程池应用到 CompletableFuture.asyncPool
         public fun applyCommonPoolToCompletableFuture(){
-            if(asyncPoolProp.get(null) != completableFuturePool)
+            val pool = asyncPoolProp.get(null)
+            if(pool != completableFuturePool)
                 asyncPoolProp.set(null, completableFuturePool)
         }
     }
