@@ -2,13 +2,10 @@ package net.jkcode.jkmvc.tests
 
 import net.jkcode.jkutil.common.currMillis
 import net.jkcode.jkutil.common.getProperty
+import net.jkcode.jkutil.common.makeThreads
 import org.junit.Test
-import java.util.concurrent.CountDownLatch
-import java.util.concurrent.ForkJoinPool
+import java.util.concurrent.*
 import kotlin.reflect.KMutableProperty1
-import java.util.concurrent.Executors
-import java.util.concurrent.ExecutorService
-
 
 
 /**
@@ -56,6 +53,20 @@ class ThreadTests {
         latch.await()
         val runtime = System.currentTimeMillis() - start
         println("耗时 $runtime ms")
+    }
+
+    @Test
+    fun testCompletableFuture(){
+        val f = CompletableFuture<String>()
+        makeThreads(1){
+            println("completing: " + Thread.currentThread().name) // 线程 test-thread_0
+            f.complete("success")
+        }
+        f.whenComplete { r, ex ->
+            println("completed: " + Thread.currentThread().name) // 线程 main
+            println("result: $r")
+        }
+        Thread.sleep(1000)
     }
 
 }
