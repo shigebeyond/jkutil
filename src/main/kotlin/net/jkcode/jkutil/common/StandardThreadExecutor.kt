@@ -27,7 +27,8 @@ import java.util.concurrent.atomic.AtomicInteger
  */
 class StandardThreadExecutor(protected val executor: ThreadPoolExecutor): ExecutorService by executor{
 
-    public constructor(corePoolSize: Int, maximumPoolSize: Int, queueSize: Int = Integer.MAX_VALUE): this(ThreadPoolExecutor(corePoolSize, maximumPoolSize, 60, TimeUnit.SECONDS, TaskQueue(queueSize), TaskThreadFactory("jk-exec-"))){
+    public constructor(corePoolSize: Int, maximumPoolSize: Int, queueSize: Int = Integer.MAX_VALUE):
+            this(ThreadPoolExecutor(corePoolSize, maximumPoolSize, 60, TimeUnit.SECONDS, TaskQueue(queueSize), TaskThreadFactory("jk-exec-"))){
         (executor.queue as TaskQueue).executor = executor
     }
 
