@@ -1,5 +1,6 @@
 package net.jkcode.jkutil.ttl
 
+import net.jkcode.jkutil.common.JkApp
 import net.jkcode.jkutil.scope.BaseScope
 import java.util.*
 
@@ -10,6 +11,9 @@ typealias Local2Value = MutableMap<ScopedTransferableThreadLocal<*>, SttlValue>
 
 /**
  * 有作用域的可传递的 ThreadLocal
+ *    0. 不直接扩展 ThreadLocal, 反正他里面的数据属性都是private, 不能直接操作
+ *       而是在用一个包含 HashMap 对象的全局 ThreadLocal 对象来模拟 ThreadLocal, HashMap 对象的key是 ScopedTransferableThreadLocal 对象, value是 SttlValue 对象
+ *
  *    1. 实现 Scopable 接口, 标识有作用域, 保证值的创建与删除无误
  *    1.1 在作用域开始时创建, 保证多线程切换作用域时不污染新的作用域
  *    1.2 在作用域结束时删除, 针对 ThreadLocal 逃逸现象, 防止内存泄露
@@ -34,11 +38,6 @@ typealias Local2Value = MutableMap<ScopedTransferableThreadLocal<*>, SttlValue>
 open class ScopedTransferableThreadLocal<T>(public val supplier: (()->T)? = null): BaseScope() {
 
     companion object{
-
-        init {
-            // 修改 CompletableFuture.asyncPool 属性为 ThreadLocalInheritableThreadPool.commonPool
-            SttlThreadPool.applyCommonPoolToCompletableFuture()
-        }
 
         /**
          * 线程安全的本地值映射
@@ -136,6 +135,10 @@ open class ScopedTransferableThreadLocal<T>(public val supplier: (()->T)? = null
      *   开始新值, 如果有旧值, 就删掉
      */
     public override fun doBeginScope() {
+        // 仅在应用sttl时有效
+        if(!JkApp.useSttl)
+            return
+
         //println("beginScope")
         // 删除当前线程的旧值
         val v = local2Values.get().remove(this)
@@ -149,6 +152,10 @@ open class ScopedTransferableThreadLocal<T>(public val supplier: (()->T)? = null
      *    endScope() 可能随时随地调用, 也就是说 SttlValue 随时可能被删除, 但可能某个线程调用了 SttlInterceptor.intercept(回调), 但此时回调还没触发, 也就是旧的 ScopedTransferableThreadLocal 对象还未恢复, 等恢复后引用的 SttlValue 却应该被删掉, 因此添加 deleted 属性来做是否已删除的判断
      */
     public override fun doEndScope() {
+        // 仅在应用sttl时有效
+        if(!JkApp.useSttl)
+            return
+
         //println("endScope")
         // 删除当前线程的值 -- 漏掉删除其他线程的值
         //local2Values.get().remove(this)

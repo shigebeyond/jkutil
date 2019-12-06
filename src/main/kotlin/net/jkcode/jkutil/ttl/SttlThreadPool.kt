@@ -28,7 +28,7 @@ class SttlThreadPool(protected val pool: ExecutorService): ExecutorService by po
         //protected val asyncPoolProp = CompletableFuture::class.getStaticProperty("asyncPool") as KMutableProperty0<Any?>
         protected val asyncPoolProp = CompletableFuture::class.java.getWritableFinalField("asyncPool")
 
-        // 将公共线程池应用到 CompletableFuture.asyncPool
+        // 将 SttlThreadPool 应用到 CompletableFuture.asyncPool
         public fun applyCommonPoolToCompletableFuture(){
             val pool = asyncPoolProp.get(null)
             if(pool != completableFuturePool)

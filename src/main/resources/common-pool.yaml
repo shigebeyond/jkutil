@@ -5,5 +5,3 @@ corePoolSize: 0
 maximumPoolSize: 0
 # 队列大小
 queueSize: 0
-# 应用可传递ScopedTransferableThreadLocal
-useSttl: true

@@ -34,11 +34,10 @@ public val CommonThreadPool: ExecutorService by lazy{
         queueSize = Integer.MAX_VALUE
     // 缓存的线程池
     val pool = StandardThreadExecutor(corePoolSize, maximumPoolSize, queueSize)
-    if(config["useSttl"]!!)
+    if(JkApp.useSttl)
         SttlThreadPool(pool)
     else
         pool
-
 }
 
 /**

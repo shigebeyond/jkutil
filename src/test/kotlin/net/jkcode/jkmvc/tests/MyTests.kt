@@ -433,7 +433,7 @@ class MyTests{
 
     @Test
     fun testObject(){
-        val clazz = Application::class.java.name
+        val clazz = JkApp::class.java.name
         println(clazz)
         val exist = try{
                         Class.forName(clazz) != null

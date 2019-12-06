@@ -1,0 +1,5 @@
+# 环境： pro/dev/test
+env: test
+name: jkapp
+# 应用可传递ScopedTransferableThreadLocal, 影响 1. CompletableFuture 的线程池 2. 公共线程池 3. ScopedTransferableThreadLocal 的 doBeginScope()/doEndScope() 实现是否为空
+useSttl: true

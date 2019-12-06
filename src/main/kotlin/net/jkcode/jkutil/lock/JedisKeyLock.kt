@@ -1,6 +1,6 @@
 package net.jkcode.jkutil.lock
 
-import net.jkcode.jkutil.common.Application
+import net.jkcode.jkutil.common.JkApp
 import net.jkcode.jkutil.redis.ShardedJedisFactory
 import redis.clients.jedis.ShardedJedis
 
@@ -45,7 +45,7 @@ class JedisKeyLock : IDistributedKeyLock() {
 
         // TODO: 优化: setnx+expire 合并为一行代码 jedis.set(key, data, "NX", "EX", expireSeconds)
         // 锁不住直接false
-        if(jedis.setnx(path, Application.fullWorkerId) === 0L){
+        if(jedis.setnx(path, JkApp.fullWorkerId) === 0L){
             // 处理没有过期时间(即上一次设置过期时间失败)的情况：直接删锁，下一个请求就正常了
             if(jedis.ttl(path) === -1L)
                 jedis.del(path);

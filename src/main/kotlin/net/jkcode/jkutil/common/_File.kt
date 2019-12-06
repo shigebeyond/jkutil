@@ -193,7 +193,7 @@ public fun ClassLoader.getRootPath(): String {
      *
      * => classLoader根目录开头多了一个/符号， 同时分隔符变为/（linux的分隔符）
      */
-    if(Application.isWin && root.startsWith('/')){
+    if(JkApp.isWin && root.startsWith('/')){
         root = root.substring(1)
         root = root.replace('/', File.separatorChar)
     }

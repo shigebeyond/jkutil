@@ -1,5 +1,6 @@
 package net.jkcode.jkutil.common
 
+import net.jkcode.jkutil.ttl.SttlThreadPool
 import java.util.concurrent.atomic.AtomicInteger
 import java.util.concurrent.atomic.AtomicLong
 
@@ -9,12 +10,12 @@ import java.util.concurrent.atomic.AtomicLong
  * @author shijianhang<772910474@qq.com>
  * @date 2019-01-17 12:12 PM
  */
-object Application {
+object JkApp {
 
     /**
      * 应用配置
      */
-    public val config = Config.instance("application", "properties")
+    public val config = Config.instance("jkapp", "yaml")
 
     /**
      * 应用名
@@ -24,7 +25,21 @@ object Application {
     /**
      * 环境
      */
-    public val env: String = config["environment"]!!
+    public val env: String = config["env"]!!
+
+    /**
+     * 是否应用可传递ScopedTransferableThreadLocal, 影响
+     * 1. CompletableFuture 的线程池
+     * 2. 公共线程池
+     * 3. ScopedTransferableThreadLocal 的 doBeginScope()/doEndScope() 实现是否为空
+     */
+    public val useSttl: Boolean = config["useSttl"]!!
+
+    init{
+        // 将 SttlThreadPool 应用到 CompletableFuture.asyncPool
+        if(useSttl)
+            SttlThreadPool.applyCommonPoolToCompletableFuture()
+    }
 
     /**
      * 是否测试环境
@@ -40,7 +55,7 @@ object Application {
     /**
      * 是否线上环境
      */
-    public val isProd: Boolean = env == "prod"
+    public val isPro: Boolean = env == "pro"
 
     /**
      * 是否debug环境
