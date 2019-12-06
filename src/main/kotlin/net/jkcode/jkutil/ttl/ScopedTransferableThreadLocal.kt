@@ -1,7 +1,7 @@
 package net.jkcode.jkutil.ttl
 
 import net.jkcode.jkutil.common.JkApp
-import net.jkcode.jkutil.scope.BaseScope
+import net.jkcode.jkutil.scope.IScope
 import java.util.*
 
 /**
@@ -35,7 +35,7 @@ typealias Local2Value = MutableMap<ScopedTransferableThreadLocal<*>, SttlValue>
  * @author shijianhang<772910474@qq.com>
  * @date 2019-09-17 8:32 AM
  */
-open class ScopedTransferableThreadLocal<T>(public val supplier: (()->T)? = null): BaseScope() {
+open class ScopedTransferableThreadLocal<T>(public val supplier: (()->T)? = null): IScope{
 
     companion object{
 
@@ -134,7 +134,7 @@ open class ScopedTransferableThreadLocal<T>(public val supplier: (()->T)? = null
      * 作用域开始
      *   开始新值, 如果有旧值, 就删掉
      */
-    public override fun doBeginScope() {
+    public override fun beginScope() {
         // 仅在应用sttl时有效
         if(!JkApp.useSttl)
             return
@@ -151,7 +151,7 @@ open class ScopedTransferableThreadLocal<T>(public val supplier: (()->T)? = null
      *    删除值, 要删除所有被传递的线程的值
      *    endScope() 可能随时随地调用, 也就是说 SttlValue 随时可能被删除, 但可能某个线程调用了 SttlInterceptor.intercept(回调), 但此时回调还没触发, 也就是旧的 ScopedTransferableThreadLocal 对象还未恢复, 等恢复后引用的 SttlValue 却应该被删掉, 因此添加 deleted 属性来做是否已删除的判断
      */
-    public override fun doEndScope() {
+    public override fun endScope() {
         // 仅在应用sttl时有效
         if(!JkApp.useSttl)
             return

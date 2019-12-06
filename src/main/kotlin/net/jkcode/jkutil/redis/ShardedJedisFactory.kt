@@ -63,7 +63,7 @@ object ShardedJedisFactory: IJedisFactory {
      * 线程安全的redis连接
      */
     private val jedises: AllRequestScopedTransferableThreadLocal<HashMap<String, ShardedJedis>> = object: AllRequestScopedTransferableThreadLocal<HashMap<String, ShardedJedis>>({HashMap()}){ // 所有请求域的可传递的 ThreadLocal
-        public override fun doEndScope() {
+        public override fun endScope() {
             // 请求结束要调用 close() 来关闭连接
             val jedises = get()
             for((name, jedis) in jedises)
@@ -71,7 +71,7 @@ object ShardedJedisFactory: IJedisFactory {
                 jedis.close()
             jedises.clear()
 
-            super.doEndScope()
+            super.endScope()
         }
     }
 

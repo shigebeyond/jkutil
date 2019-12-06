@@ -23,7 +23,7 @@ object SttlInterceptor {
     /**
      * map池
      */
-    private val mapPool = SimpleObjectPool(){
+    public val mapPool = SimpleObjectPool(){
         HashMap<ScopedTransferableThreadLocal<*>, SttlValue>()
     }
 
@@ -34,7 +34,7 @@ object SttlInterceptor {
      * @param action
      * @return
      */
-    private inline fun <T> wrap(callerLocals: Local2Value, action:() -> T): T {
+    public inline fun <T> wrap(callerLocals: Local2Value = ScopedTransferableThreadLocal.weakCopyLocal2Value(), action:() -> T): T {
         // 1 worker thread 的ScopedTransferableThreadLocal旧对象
         val workerLocals = mapPool.borrowObject() // 借map, 来存旧对象
         workerLocals.putAll(ScopedTransferableThreadLocal.getLocal2Value())
@@ -163,7 +163,7 @@ object SttlInterceptor {
      * @param command
      * @return
      */
-    public fun intercept(callerLocals: Local2Value = ScopedTransferableThreadLocal.weakCopyLocal2Value(), command: () -> Any?): (() -> Any?) {
+    public fun <T> intercept(callerLocals: Local2Value = ScopedTransferableThreadLocal.weakCopyLocal2Value(), command: () -> T): (() -> T) {
         return { ->
             wrap(callerLocals, command)
         }
@@ -175,7 +175,7 @@ object SttlInterceptor {
      * @param fn
      * @return
      */
-    public fun intercept(callerLocals: Local2Value = ScopedTransferableThreadLocal.weakCopyLocal2Value(), fn: (Any?) -> Any?): ((Any?) -> Any?) {
+    public fun <T, U> intercept(callerLocals: Local2Value = ScopedTransferableThreadLocal.weakCopyLocal2Value(), fn: (T) -> U): ((T) -> U) {
         return { r ->
             wrap(callerLocals) { fn.invoke(r) }
         }

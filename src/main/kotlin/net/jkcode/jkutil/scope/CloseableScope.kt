@@ -11,14 +11,6 @@ import java.io.Closeable
 class CloseableScope(val closing: Closeable): IScope {
 
     /**
-     * 添加子作用域
-     * @param childScope
-     */
-    public override fun addChildScope(childScope: IScope) {
-        throw UnsupportedOperationException()
-    }
-
-    /**
      * 作用域开始
      */
     public override fun beginScope() {
