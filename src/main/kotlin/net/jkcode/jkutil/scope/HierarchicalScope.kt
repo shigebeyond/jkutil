@@ -38,6 +38,8 @@ abstract class HierarchicalScope : IScope {
      * 作用域开始
      */
     public override fun beginScope(){
+        //println("beginScope: $this")
+
         // 自身作用域开始
         doBeginScope()
 
@@ -50,6 +52,8 @@ abstract class HierarchicalScope : IScope {
      * 作用域结束
      */
     public override fun endScope(){
+        //println("endScope: $this")
+
         // 自身作用域结束
         doEndScope()
 

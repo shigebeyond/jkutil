@@ -63,7 +63,7 @@ object SttlInterceptor {
 
     /**
      * 拦截 CompletableFuture
-     *    1. 不能使用 wrap() 来包装回调,因为回调完就恢复之前 ScopedTransferableThreadLocal, 改写的 ScopedTransferableThreadLocal 就丢了
+     *    1. 不能使用 sttlWrap() 来包装回调,因为回调完就恢复之前 ScopedTransferableThreadLocal, 改写的 ScopedTransferableThreadLocal 就丢了
      *    2. CompletableFuture 只写不删(恢复), 但是 ScopedTransferableThreadLocal 自己有作用域管理, 会自己删除
      *    3. 记住这个方法是有副作用的, 会改写 调用 CompletableFuture.complete()/completeExceptionally() 的线程的 ScopedTransferableThreadLocal, 不过一般都是通用线程池, 自身不具有 ScopedTransferableThreadLocal
      *

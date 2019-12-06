@@ -1,5 +1,6 @@
 package net.jkcode.jkutil.scope
 
+import net.jkcode.jkutil.common.JkApp
 import net.jkcode.jkutil.ttl.ScopedTransferableThreadLocal
 import net.jkcode.jkutil.ttl.SttlInterceptor
 import java.io.Closeable
@@ -52,7 +53,11 @@ open class IRequestScope : HierarchicalScope(), Closeable {
      * @param reqAction
      * @return
      */
-    public inline fun <T>  wrap(reqAction: () -> CompletableFuture<T>): CompletableFuture<T> {
+    public inline fun <T> sttlWrap(reqAction: () -> CompletableFuture<T>): CompletableFuture<T> {
+        // 不应用sttl时, 不包装
+        if(!JkApp.useSttl)
+            return reqAction.invoke()
+
         // 1 请求处理前，开始作用域
         // 必须在拦截器之前调用, 因为拦截器可能引用请求域的资源
         this.beginScope()

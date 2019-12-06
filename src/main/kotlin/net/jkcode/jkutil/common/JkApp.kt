@@ -31,7 +31,7 @@ object JkApp {
      * 是否应用可传递ScopedTransferableThreadLocal, 影响
      * 1. CompletableFuture 的线程池
      * 2. 公共线程池
-     * 3. ScopedTransferableThreadLocal 的 beginScope()/endScope() 实现是否为空
+     * 3. IRequestScope#sttlWrap()
      */
     public val useSttl: Boolean = config["useSttl"]!!
 

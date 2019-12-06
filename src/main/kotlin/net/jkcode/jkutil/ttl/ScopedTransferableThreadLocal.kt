@@ -135,10 +135,6 @@ open class ScopedTransferableThreadLocal<T>(public val supplier: (()->T)? = null
      *   开始新值, 如果有旧值, 就删掉
      */
     public override fun beginScope() {
-        // 仅在应用sttl时有效
-        if(!JkApp.useSttl)
-            return
-
         //println("beginScope")
         // 删除当前线程的旧值
         val v = local2Values.get().remove(this)
@@ -152,10 +148,6 @@ open class ScopedTransferableThreadLocal<T>(public val supplier: (()->T)? = null
      *    endScope() 可能随时随地调用, 也就是说 SttlValue 随时可能被删除, 但可能某个线程调用了 SttlInterceptor.intercept(回调), 但此时回调还没触发, 也就是旧的 ScopedTransferableThreadLocal 对象还未恢复, 等恢复后引用的 SttlValue 却应该被删掉, 因此添加 deleted 属性来做是否已删除的判断
      */
     public override fun endScope() {
-        // 仅在应用sttl时有效
-        if(!JkApp.useSttl)
-            return
-
         //println("endScope")
         // 删除当前线程的值 -- 漏掉删除其他线程的值
         //local2Values.get().remove(this)
