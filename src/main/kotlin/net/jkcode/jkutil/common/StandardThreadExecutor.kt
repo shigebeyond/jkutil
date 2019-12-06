@@ -37,7 +37,8 @@ class StandardThreadExecutor(protected val executor: ThreadPoolExecutor): Execut
             executor.execute(command)
         } catch (rx: RejectedExecutionException) {
             //there could have been contention around the queue
-            if (!(executor.queue as TaskQueue).force(command)) throw RejectedExecutionException()
+            if (!(executor.queue as TaskQueue).force(command))
+                throw RejectedExecutionException()
         }
     }
 
@@ -53,15 +54,26 @@ internal class TaskQueue(queueSize: Int) : LinkedBlockingQueue<Runnable>(queueSi
         return super.offer(o) //forces the item onto the queue, to be used if the task is rejected
     }
 
+    /**
+     * 问题: 对于 ThreadPoolExecutor 的方法 getPoolSize()/getActiveCount() 的实现是加锁的, 特别是getActiveCount()要遍历worker
+     * 优化: 限制 ThreadPoolExecutor.getPoolSize() 只调用一次, 并缓存值
+     *      弃用 ThreadPoolExecutor.getActiveCount(), 改用 TaskQueue.size()
+     */
     override fun offer(o: Runnable): Boolean {
         //we are maxed out on threads, simply queue the object
-        if (executor.poolSize == executor.maximumPoolSize) return super.offer(o)
+        val poolSize = executor.poolSize
+        if (poolSize == executor.maximumPoolSize)
+            return super.offer(o)
         //we have idle threads, just add it to the queue
         //this is an approximation, so it could use some tuning
-        if (executor.activeCount < executor.poolSize) return super.offer(o)
+        //if (executor.activeCount < poolSize)
+        if (this.size < poolSize)
+            return super.offer(o)
         //if we have less threads than maximum force creation of a new thread
-        return if (executor.poolSize < executor.maximumPoolSize) false else super.offer(o)
+         if (poolSize < executor.maximumPoolSize)
+             return false
         //if we reached here, we need to add it to the queue
+        return super.offer(o)
     }
 }
 
