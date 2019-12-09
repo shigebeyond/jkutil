@@ -10,6 +10,7 @@ import net.jkcode.jkutil.idworker.SnowflakeId
 import net.jkcode.jkutil.idworker.SnowflakeIdWorker
 import net.jkcode.jkutil.iterator.ArrayFilteredIterator
 import net.jkcode.jkutil.redis.ShardedJedisFactory
+import net.jkcode.jkutil.serialize.ISerializer
 import net.jkcode.jkutil.validator.ValidateFuncDefinition
 import org.apache.commons.lang.StringEscapeUtils
 import org.dom4j.Attribute
@@ -1420,5 +1421,20 @@ class MyTests{
         println("反转义XML：" + StringEscapeUtils.unescapeXml(exml))    //转义xml
     }
 
+    @Test
+    fun testSerialize(){
+        //val obj = "hello world"
+        //val obj = LongArray(3)
+        //val obj = BitSet.valueOf(words)
+        val obj = BitSet()
+        obj.set(100)
+        println(obj)
+        val instance = ISerializer.instance("fst")
+        val bs = instance.serialize(obj)
+        if(bs != null) {
+            val obj2 = instance.unserialize(bs!!)
+            println(obj2)
+        }
+    }
 }
 

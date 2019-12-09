@@ -13,23 +13,7 @@ import java.util.*
  * @author shijianhang<772910474@qq.com>
  * @date 2019-10-17 8:43 PM
  */
-class SerializeTests {
-
-    @Test
-    fun testSerialize(){
-        //val obj = "hello world"
-        //val obj = LongArray(3)
-        //val obj = BitSet.valueOf(words)
-        val obj = BitSet()
-        obj.set(100)
-        println(obj)
-        val instance = ISerializer.instance("fst")
-        val bs = instance.serialize(obj)
-        if(bs != null) {
-            val obj2 = instance.unserialize(bs!!)
-            println(obj2)
-        }
-    }
+class HessianSerializeTests {
 
     val factory = HessianProxyFactory().also { it.setHessian2Request(true) }
 

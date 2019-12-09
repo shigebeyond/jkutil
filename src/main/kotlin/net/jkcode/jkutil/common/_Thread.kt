@@ -25,7 +25,7 @@ public val CommonThreadPool: ExecutorService by lazy{
     if(corePoolSize == 0)
         corePoolSize = Runtime.getRuntime().availableProcessors()
     // 最大线程数
-    var maximumPoolSize: Int =config["maximumPoolSize"]!!
+    var maximumPoolSize: Int = config["maximumPoolSize"]!!
     if(maximumPoolSize == 0)
         maximumPoolSize = corePoolSize * 8
     // 队列大小

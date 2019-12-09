@@ -1,5 +1,6 @@
 package net.jkcode.jkmvc.tests
 
+import java.io.Serializable
 import net.jkcode.jkutil.common.cloneProperties
 import net.jkcode.jkutil.common.generateId
 
@@ -33,7 +34,7 @@ class Lambda {
 data class Thing(val name: String, val weight: Int)
 
 
-open class Man(var name: String, var age: Int): Cloneable{
+data class Man(var name: String, var age: Int): Cloneable, Serializable{
     val id = generateId("man")
 
     /*public override fun clone(): Any {
@@ -45,7 +46,7 @@ open class Man(var name: String, var age: Int): Cloneable{
     }
 }
 
-class Family(val master: Man, val members: List<Man>): Cloneable{
+class Family(val master: Man, val members: List<Man>): Cloneable, Serializable{
 
     var deepClone: Boolean = false
 
