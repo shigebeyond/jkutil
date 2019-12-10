@@ -18,10 +18,17 @@ class FstSerializer: ISerializer {
 
     /**
      * fst内部配置
+     * 线程安全 + 不共享(不检查循环引用)
      */
-    protected val conf = FSTConfiguration.createDefaultConfiguration()
+    protected val confs: ThreadLocal<FSTConfiguration> = ThreadLocal.withInitial {
+        val c = FSTConfiguration.createDefaultConfiguration()
+        // 默认是true
+        c.isShareReferences = false
+        c
+    }
 
     init {
+        val conf = confs.get()
         try{
             // 1 自定义的序列器
             val reg = conf.getCLInfoRegistry().getSerializerRegistry()
@@ -63,7 +70,7 @@ class FstSerializer: ISerializer {
      * @param c
      */
     public fun registerClass(vararg c: Class<*>) {
-        conf.registerClass(*c)
+        confs.get().registerClass(*c)
     }
 
     /**
@@ -73,7 +80,7 @@ class FstSerializer: ISerializer {
      * @return
      */
     public override fun serialize(obj: Any): ByteArray? {
-        return conf.asByteArray(obj)
+        return confs.get().asByteArray(obj)
     }
 
     /**
@@ -83,7 +90,7 @@ class FstSerializer: ISerializer {
      * @return
      */
     public override fun unserialize(bytes: ByteArray): Any? {
-        return conf.getObjectInput(bytes).readObject()
+        return confs.get().getObjectInput(bytes).readObject()
     }
 
     /**
@@ -93,7 +100,7 @@ class FstSerializer: ISerializer {
      * @return
      */
     public override fun unserialize(input: InputStream): Any? {
-        return conf.getObjectInput(input).readObject()
+        return confs.get().getObjectInput(input).readObject()
     }
 
 }
