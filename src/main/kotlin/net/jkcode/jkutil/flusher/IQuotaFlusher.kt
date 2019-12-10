@@ -2,6 +2,7 @@ package net.jkcode.jkutil.flusher
 
 import net.jkcode.jkutil.common.CommonThreadPool
 import net.jkcode.jkutil.common.commonLogger
+import net.jkcode.jkutil.common.errorAndPrint
 import net.jkcode.jkutil.lock.AtomicLock
 import java.util.concurrent.ExecutorService
 
@@ -69,14 +70,14 @@ abstract class IQuotaFlusher<RequestType /* 请求类型 */, ResponseType /* 响
             // 切换开关
             val oldSwitch = switch
             switch = !oldSwitch
-            commonLogger.debug("PeriodicFlusher.flush() : switch from [$oldSwitch] to [${!oldSwitch}]")
+            commonLogger.debug("{$javaClass.name}.flush() : switch from [$oldSwitch] to [${!oldSwitch}]")
 
             //处理旧索引的请求, 扔到线程(池)执行
             executor.execute {
                 try{
                     doFlush(oldIndex)
                 }catch (e: Exception){
-                    e.printStackTrace()
+                    commonLogger.errorAndPrint( "{$javaClass.name}.flush()错误", e)
                 }
             }
         }
