@@ -21,14 +21,10 @@ class FstSerializer: ISerializer {
      * 线程安全 + 不共享(不检查循环引用)
      */
     protected val confs: ThreadLocal<FSTConfiguration> = ThreadLocal.withInitial {
-        val c = FSTConfiguration.createDefaultConfiguration()
-        // 默认是true
-        c.isShareReferences = false
-        c
-    }
+        val conf = FSTConfiguration.createDefaultConfiguration()
+        // share模型, 性能最高
+        conf.isShareReferences = false
 
-    init {
-        val conf = confs.get()
         try{
             // 1 自定义的序列器
             val reg = conf.getCLInfoRegistry().getSerializerRegistry()
@@ -50,6 +46,7 @@ class FstSerializer: ISerializer {
         }catch (e: ClassNotFoundException){
             throw RuntimeException("配置文件 fst-serializer.yaml 错误: ${e.message}", e);
         }
+
         try{
             // 2 注册类
             val config: IConfig = Config.instance("fst-class", "yaml", true)
@@ -63,7 +60,10 @@ class FstSerializer: ISerializer {
         }catch (e: ClassNotFoundException){
             throw RuntimeException("配置文件 fst-class.yaml 错误: ${e.message}", e);
         }
+
+        conf
     }
+
 
     /**
      * 注册类名, 相当于缩写, 加快序列化
@@ -90,6 +90,8 @@ class FstSerializer: ISerializer {
      * @return
      */
     public override fun unserialize(bytes: ByteArray): Any? {
+        // 两个语句是一样的
+        //return confs.get().asObject(bytes)
         return confs.get().getObjectInput(bytes).readObject()
     }
 

@@ -1,7 +1,9 @@
 package net.jkcode.jkmvc.tests
 
+import net.jkcode.jkutil.serialize.FstSerializer
 import org.junit.Test
 import org.nustaq.serialization.FSTConfiguration
+import java.io.File
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.Executors
 import kotlin.test.assertEquals
@@ -37,7 +39,7 @@ class FstSerializeTests {
      */
     @Test
     fun testSingleton(){
-        runNFst(conf)
+        runFst(conf)
     }
 
     /**
@@ -45,7 +47,7 @@ class FstSerializeTests {
      */
     @Test
     fun testThreadsafe(){
-        runNFst(confs.get())
+        runFst(confs.get())
     }
 
     /**
@@ -54,33 +56,30 @@ class FstSerializeTests {
     @Test
     fun testThreadsafeUnshared(){
         isShareReferences = false
-        runNFst(confs.get())
+        runFst(confs.get())
     }
 
-    fun run1Fst(conf: FSTConfiguration){
+    fun runFst(conf: FSTConfiguration){
         val obj = Man("shi", 12)
         val bytes = conf.asByteArray(obj)
-        val obj2 = conf.getObjectInput(bytes).readObject() as Man
+        val obj2 = conf.asObject(bytes) as Man
         assertEquals(obj, obj2)
     }
 
-    fun runNFst(conf: FSTConfiguration){
-        val pool = Executors.newFixedThreadPool(concurrents)
-        val results = (1..5).map{
-            val latch = CountDownLatch(requests)
-            val start = System.currentTimeMillis()
-            for (i in 0..requests) {
-                pool.execute {
-                    latch.countDown()
-                }
-            }
-            latch.await()
-            val runtime = System.currentTimeMillis() - start
-            println("第 $it 轮耗时 $runtime ms")
-            runtime
-        }
+    @Test
+    fun testOut(){
+        val serializer = FstSerializer()
+        val obj = Man("shi", 12)
+        val bytes = serializer.serialize(obj)!!
+        File("man.data").writeBytes(bytes)
+    }
 
-        println("最小耗时 "+ results.min() + " ms")
+    @Test
+    fun testIn(){
+        val serializer = FstSerializer()
+        val bytes = File("man.data").readBytes()
+        val obj = serializer.unserialize(bytes)
+        println(obj)
     }
 
 }
