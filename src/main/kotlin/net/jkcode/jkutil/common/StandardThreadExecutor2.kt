@@ -25,7 +25,7 @@ import java.util.concurrent.atomic.AtomicInteger
  *
  * TODO: 将 SynchronousQueue 换为性能更优的 LinkedTransferQueue
  */
-class StandardThreadExecutor(protected val executor: ThreadPoolExecutor): ExecutorService by executor{
+class StandardThreadExecutor2(protected val executor: ThreadPoolExecutor): ExecutorService by executor{
 
     public constructor(corePoolSize: Int, maximumPoolSize: Int, queueSize: Int = Integer.MAX_VALUE):
             this(ThreadPoolExecutor(corePoolSize, maximumPoolSize, 60, TimeUnit.SECONDS, TaskQueue(queueSize), TaskThreadFactory("jk-exec-"))){
