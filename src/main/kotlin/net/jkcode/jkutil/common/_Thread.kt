@@ -1,10 +1,12 @@
 package net.jkcode.jkutil.common
 
+import io.netty.util.concurrent.DefaultThreadFactory
 import io.netty.util.concurrent.EventExecutor
 import io.netty.util.concurrent.MultithreadEventExecutorGroup
 import io.netty.util.concurrent.SingleThreadEventExecutor
 import net.jkcode.jkutil.scope.ClosingOnShutdown
 import net.jkcode.jkutil.ttl.SttlThreadPool
+import java.io.Closeable
 import java.util.concurrent.*
 import java.util.function.Supplier
 import kotlin.reflect.KProperty1
@@ -20,6 +22,7 @@ private val config = Config.instance("common-pool", "yaml")
  *   执行任务时要处理好异常
  */
 public val CommonThreadPool: ExecutorService by lazy{
+    // 1 创建线程池
     // 初始线程数
     var corePoolSize: Int = config["corePoolSize"]!!
     if(corePoolSize == 0)
@@ -32,26 +35,32 @@ public val CommonThreadPool: ExecutorService by lazy{
     var queueSize: Int =config["queueSize"]!!
     if(queueSize == 0)
         queueSize = Integer.MAX_VALUE
-    // 缓存的线程池
-    val pool = StandardThreadExecutor(corePoolSize, maximumPoolSize, queueSize)
+    // 创建线程池
+    val pool = StandardThreadExecutor(corePoolSize, maximumPoolSize, queueSize, DefaultThreadFactory("CommonPool", true))
+    // 预创建线程
+    pool.prestartAllCoreThreads()
+
+    // 2 关机后关闭线程池
+    ClosingOnShutdown.addClosing(object: Closeable{
+        override fun close() {
+            println("-- 关闭线程池, 并等待任务完成 --")
+            /**
+             * 停止工作线程: 不接收新任务
+             * shutdown()只是将线程池的状态设置为SHUTWDOWN状态，正在执行的任务会继续执行下去，没有被执行的则中断。
+             * shutdownNow()则是将线程池的状态设置为STOP，正在执行的任务则被停止，没被执行任务的则返回。
+             */
+            pool.shutdown()
+
+            // 等待任务完成
+            pool.awaitTermination(1, TimeUnit.DAYS) // 等长一点 = 死等
+        }
+    })
+
+    // 3 包装sttl
     if(JkApp.useSttl)
         SttlThreadPool(pool)
     else
         pool
-}
-
-/**
- * 关闭线程池
- */
-public val threadPoolCloser = object: ClosingOnShutdown(){
-    override fun close() {
-        println("-- 关闭线程池, 并等待任务完成 --")
-        // 停止工作线程: 不接收新任务
-        CommonThreadPool.shutdown()
-
-        // 等待任务完成
-        CommonThreadPool.awaitTermination(1, TimeUnit.DAYS) // 等长一点 = 死等
-    }
 }
 
 /**

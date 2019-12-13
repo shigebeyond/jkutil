@@ -5,6 +5,7 @@ import net.jkcode.jkutil.common.commonLogger
 import net.jkcode.jkutil.common.errorAndPrint
 import net.jkcode.jkutil.lock.AtomicLock
 import java.util.concurrent.ExecutorService
+import java.util.concurrent.RejectedExecutionException
 
 /**
  * 定量刷盘
@@ -73,12 +74,16 @@ abstract class IQuotaFlusher<RequestType /* 请求类型 */, ResponseType /* 响
             commonLogger.debug("{$javaClass.name}.flush() : switch from [$oldSwitch] to [${!oldSwitch}]")
 
             //处理旧索引的请求, 扔到线程(池)执行
-            executor.execute {
-                try{
-                    doFlush(oldIndex)
-                }catch (e: Exception){
-                    commonLogger.errorAndPrint( "{$javaClass.name}.flush()错误", e)
+            try{
+                executor.execute {
+                    try{
+                        doFlush(oldIndex)
+                    }catch (e: Exception){
+                        commonLogger.errorAndPrint( "{$javaClass.name}.flush()错误", e)
+                    }
                 }
+            }catch (e: RejectedExecutionException){
+                commonLogger.error("{$javaClass.name}.flush()错误: 公共线程池已满", e)
             }
         }
     }

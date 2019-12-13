@@ -1,5 +1,6 @@
 package net.jkcode.jkmvc.tests
 
+import net.jkcode.jkutil.common.CommonThreadPool
 import net.jkcode.jkutil.common.currMillis
 import net.jkcode.jkutil.common.getProperty
 import net.jkcode.jkutil.common.makeThreads
@@ -36,6 +37,13 @@ class ThreadTests {
         val o = mapConstructor.newInstance(value) // wrong: ThreadLocalMap(ThreadLocalMap parentMap) 构造函数只能用于对 InheritableThreadLocal 中的ThreadLocalMap进行复制
     }
 
+
+    @Test
+    fun testCommonPool() {
+        CommonThreadPool.execute {
+            println("hello")
+        }
+    }
 
     @Test
     fun testForkJoinPool() {
