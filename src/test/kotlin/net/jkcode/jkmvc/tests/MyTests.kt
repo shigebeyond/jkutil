@@ -3,6 +3,8 @@ package net.jkcode.jkmvc.tests
 import com.alibaba.fastjson.JSON
 import com.alibaba.fastjson.JSONObject
 import com.alibaba.fastjson.serializer.SerializerFeature
+import io.netty.util.concurrent.DefaultEventExecutor
+import io.netty.util.concurrent.DefaultPromise
 import net.jkcode.jkutil.bit.SetBitIterator
 import net.jkcode.jkutil.common.*
 import net.jkcode.jkutil.elements.ElementCollection
@@ -1435,6 +1437,22 @@ class MyTests{
             val obj2 = instance.unserialize(bs!!)
             println(obj2)
         }
+    }
+
+
+    @Test
+    fun testNettyFuture(){
+        val future = DefaultPromise<Void>(DefaultEventExecutor())
+        future.addListener { f ->
+            try {
+                println(f.get())
+            }catch (e: Exception){
+                e.printStackTrace()
+            }
+        }
+        //future.setSuccess(null)
+        future.setFailure(Exception("test"))
+        Thread.sleep(1000)
     }
 }
 
