@@ -182,7 +182,7 @@ public fun String.classPath2class(): Class<*> {
     // 获得类名
     val className = this.substringBefore(".class").replace(File.separatorChar, '.')
     // 获得类
-    return Class.forName(className)
+    return getClassByName(className)
 }
 
 /**
@@ -344,6 +344,37 @@ public fun <T: Any> KClass<T>.getGetters(): Map<String, KProperty1.Getter<T, Any
     }
 }
 
+/****************************** java反射扩展: 注解 *******************************/
+/**
+ * 元素的注解缓存: <元素 to <缓存名 to 注解>>
+ */
+private val ele2anns: ConcurrentHashMap<AnnotatedElement, ConcurrentHashMap<String, Holder<Annotation>>> = ConcurrentHashMap();
+
+/**
+ * 获得缓存的注解
+ *    优化 getAnnotation(annotationClass) 的性能
+ *    Class.annotationData() 每次都重新遍历祖先类来解析注解, 并创建新的注解对象
+ *    Method 也类似
+ *
+ * @param annotationClass 注解类
+ * @return
+ */
+public fun <A : Annotation> AnnotatedElement.getCachedAnnotation(annotationClass: Class<A>): A? {
+    return ele2anns.getOrPut(this){
+        ConcurrentHashMap()
+    }.getOrPut(annotationClass.name){
+        Holder(getAnnotation(annotationClass))
+    }.value as A?
+}
+
+/**
+ * 获得缓存的注解
+ * @return
+ */
+public inline fun <reified A : Annotation> AnnotatedElement.getCachedAnnotation(): A?{
+    return getCachedAnnotation(A::class.java)
+}
+
 /****************************** java反射扩展: Method *******************************/
 /**
  * 是否静态方法
@@ -408,6 +439,21 @@ public fun Class<*>.isSuperClass(subClass: Class<*>): Boolean {
 }
 
 /**
+ * 类缓存: <类名 to 类>
+ */
+private val name2classes: ConcurrentHashMap<String, Class<*>> = ConcurrentHashMap();
+/**
+ * 获得类
+ *    优化 Class.forName() 性能
+ * @return
+ */
+public fun getClassByName(name: String): Class<*> {
+    return name2classes.getOrPut(name) {
+        Class.forName(name)
+    }
+}
+
+/**
  * 获得带类名的方法签名
  * @param withClass
  * @return
@@ -461,7 +507,7 @@ public fun Class<*>.getMethodSignatureMaps(): Map<String, Method> {
  * @return
  */
 public fun getMethodByClassAndSignature(clazz: String, methodSignature: String): Method{
-    val c = Class.forName(clazz) // ClassNotFoundException
+    val c = getClassByName(clazz) // ClassNotFoundException
     val m = c.getMethodBySignature(methodSignature)
     if(m == null)
         throw IllegalArgumentException("Class [$clazz] has no method [$methodSignature]") // 无函数

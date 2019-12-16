@@ -32,6 +32,7 @@ import java.util.*
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.ConcurrentLinkedQueue
 import kotlin.collections.ArrayList
+import kotlin.collections.HashMap
 import kotlin.reflect.KClass
 import kotlin.reflect.KMutableProperty0
 import kotlin.reflect.KMutableProperty1
@@ -929,6 +930,40 @@ class MyTests{
         // 获得字段值
         println(f.get(map))
     }
+
+    @Test
+    fun testForName(){
+        var j = 0
+        var ns = System.nanoTime()
+        val n = 100000000 // 1千万
+        for (i in 0..n) {
+            val clazz = Config::class.java
+            j++
+        }
+        println(System.nanoTime() - ns) // 11904762
+
+        j = 0
+        ns = System.nanoTime()
+        val name = "net.jkcode.jkutil.common.Config"
+        for (i in 0..n) {
+            val clazz = Class.forName(name)
+            j++;
+        }
+        println(System.nanoTime() - ns) // 52040051820
+
+        val map = HashMap<String, Class<*>>()
+        j = 0
+        ns = System.nanoTime()
+        for (i in 0..n) {
+            val clazz = map.getOrPut(name){
+                Class.forName(name)
+            }
+            j++;
+        }
+        println(System.nanoTime() - ns) // 458669446
+
+    }
+
 
     @Test
     fun testParamName(){
