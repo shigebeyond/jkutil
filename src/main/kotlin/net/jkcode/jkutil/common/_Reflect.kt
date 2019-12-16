@@ -60,7 +60,6 @@ private fun Any.wrapClone(cloning: Boolean): Any{
 
 // 单元素list
 private val singleListClass = Class.forName("java.util.Collections\$SingletonList")
-
 /**
  * 克隆集合
  * @param cloningElement 是否克隆元素
@@ -409,28 +408,39 @@ public fun Class<*>.isSuperClass(subClass: Class<*>): Boolean {
 }
 
 /**
- * 获得方法签名
+ * 获得带类名的方法签名
  * @param withClass
  * @return
  */
-public fun Method.getSignature(withClass: Boolean = false): String {
-    val buffer = StringBuilder()
-    // 类名
-    if(withClass)
-        buffer.append(this.declaringClass.name).append('.')
-    // 方法名
-    buffer.append(this.name)
-    // 参数类型
-    return this.parameterTypes.joinTo(buffer, ",", "(", ")"){
-        it.name
-    }.toString().replace("java.lang.", "")
+public fun Method.getFullSignature(): String {
+    // 类名 + 方法签名
+    return this.declaringClass.name + "." + getSignature()
+}
+
+/**
+ * 方法签名缓存: <方法 to 方法签名>
+ */
+private val method2Signs: ConcurrentHashMap<Method, String> = ConcurrentHashMap();
+/**
+ * 获得方法签名
+ * @return
+ */
+public fun Method.getSignature(): String {
+    return method2Signs.getOrPut(this) {
+        val buffer = StringBuilder()
+        // 方法名
+        buffer.append(this.name)
+        // 参数类型
+        this.parameterTypes.joinTo(buffer, ",", "(", ")") {
+            it.name
+        }.toString().replace("java.lang.", "")
+    }
 }
 
 /**
  * 类的方法缓存: <类 to <方法签名 to 方法>>
  */
 private val class2methods: ConcurrentHashMap<String, Map<String, Method>> = ConcurrentHashMap();
-
 /**
  * 获得当前类的方法哈希: <方法签名 to 方法>
  * @return
@@ -499,7 +509,6 @@ public inline fun <T> Class<T>.getConstructorOrNull(vararg parameterTypes: Class
  * loop缓存: <类 to MethodHandles.Lookup>
  */
 private val class2lookups: ConcurrentHashMap<Class<*>, MethodHandles.Lookup> = ConcurrentHashMap();
-
 /**
  * 获得类对应的MethodHandles.Lookup对象
  * @return
