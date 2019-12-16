@@ -1,5 +1,7 @@
 package net.jkcode.jkutil.singleton
 
+import net.jkcode.jkutil.common.getClassByName
+
 /**
  * 全局的bean实例池
  *
@@ -23,6 +25,6 @@ interface IBeanSingletons {
      * @return
      */
     fun instance(clazz: String): Any{
-        return instance(Class.forName(clazz))
+        return instance(getClassByName(clazz))
     }
 }
