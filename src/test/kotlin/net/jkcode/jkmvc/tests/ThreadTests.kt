@@ -61,6 +61,7 @@ class ThreadTests {
         latch.await()
         val runtime = System.currentTimeMillis() - start
         println("耗时 $runtime ms")
+        pool.shutdown()
     }
 
     @Test
