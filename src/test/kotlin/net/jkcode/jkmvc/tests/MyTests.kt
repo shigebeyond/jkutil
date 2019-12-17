@@ -261,6 +261,14 @@ class MyTests{
 
     @Test
     fun testNumber(){
+        // 求余: 可能是负数
+        var j = -9
+        // 优先级: % > and
+        println(j and Integer.MAX_VALUE % 10) // 7
+        println((j and Integer.MAX_VALUE) % 10) // 9
+        println(j and (Integer.MAX_VALUE % 10)) // 7
+        println("------------")
+
         //val io:Integer = 1
         //val i:Int = io
 //        val map = mapOf("a" to 111)
@@ -268,14 +276,14 @@ class MyTests{
 //        val io:Integer = map["a"]!! as Integer
 
         // 外部的i vs 内部的i, 虽同名, 但不是同一个变量
-        var i = 0
+        /*var i = 0
         for(i in 0 until 10){
             if(i == 5) {
                 println(i) // 5
                 break
             }
         }
-        println(i) // 0
+        println(i) // 0*/
     }
 
     @Test

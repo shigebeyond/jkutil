@@ -11,7 +11,7 @@ import java.util.*
 class ConsistentHash<T: Any>(public val virtualNodeMultiple: Int,// 虚拟节点倍数，即一个真实节点对应创建 virtualNodeMultiple 个虚拟节点
                              public val virtualNodeMaxSize: Int = 100, // 虚拟节点最大个数
                              realNodes: Collection<T> = emptyList(), // 真实节点
-                             public val hashFunc: (Any) -> Int = { it.hashCode() /* int溢出可能是负数 */ and Integer.MAX_VALUE } // 哈希函数, 对node/key取哈希, node(节点如机器)与key(主体如缓存键)的类型不同
+                             public val hashFunc: (Any) -> Int = { it.hashCode() /* int溢出可能是负数 */ } // 哈希函数, 对node/key取哈希, node(节点如机器)与key(主体如缓存键)的类型不同
 ) {
     /**
      * 虚拟节点序号的间隔
@@ -50,7 +50,7 @@ class ConsistentHash<T: Any>(public val virtualNodeMultiple: Int,// 虚拟节点
      * @param action 操作
      */
     protected inline fun forEachVirtualIndexFromRealNode(realNode: T, action: (Int) -> Unit){
-        val hash = hashFunc.invoke(realNode)
+        val hash = hashFunc.invoke(realNode) and Integer.MAX_VALUE // int溢出可能是负数
         var index = hash % virtualNodeMaxSize
         for (i in 0 until virtualNodeMultiple) {
             action.invoke(index)
@@ -90,7 +90,7 @@ class ConsistentHash<T: Any>(public val virtualNodeMultiple: Int,// 虚拟节点
      */
     public operator fun get(key: Any): T? {
         // 计算key对应的hash
-        val hash = hashFunc.invoke(key)
+        val hash = hashFunc.invoke(key) and Integer.MAX_VALUE
         val index = hash % virtualNodeMaxSize
         return get(index)
     }
