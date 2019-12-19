@@ -1,3 +1,18 @@
+/*
+ *  Copyright 2009-2016 Weibo, Inc.
+ *
+ *    Licensed under the Apache License, Version 2.0 (the "License");
+ *    you may not use this file except in compliance with the License.
+ *    You may obtain a copy of the License at
+ *
+ *        http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *    Unless required by applicable law or agreed to in writing, software
+ *    distributed under the License is distributed on an "AS IS" BASIS,
+ *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *    See the License for the specific language governing permissions and
+ *    limitations under the License.
+ */
 package net.jkcode.jkutil.common;
 
 import java.util.concurrent.Executors;
@@ -9,8 +24,10 @@ import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
-
 /**
+ * 使用 motan 的线程池实现: com.weibo.api.motan.core.StandardThreadExecutor
+ *    原来想改进 tomcat 线程池, 后面发现 motan 写得更好, 直接引过来用
+ *
  * <pre>
  *
  * 代码和思路主要来自于：
@@ -77,11 +94,10 @@ public class StandardThreadExecutor extends ThreadPoolExecutor {
         submittedTasksCount = new AtomicInteger(0);
 
         // 最大并发任务限制： 队列buffer数 + 最大线程数
-        //maxSubmittedTaskCount = queueCapacity + maxThreads; // 如果 queueCapacity 为最大int, 则该表达式为负数
-        maxSubmittedTaskCount = queueCapacity;
-
-        System.out.println("------------------------ hello -----------------------------");
-        System.out.println("coreThreads="+coreThreads+", maxThreads="+maxThreads+", queueCapacity="+queueCapacity+", "+ "maxSubmittedTaskCount=" + maxSubmittedTaskCount);
+        if(queueCapacity + maxThreads > 0) // 正数
+            maxSubmittedTaskCount = queueCapacity + maxThreads;
+        else // 负数
+            maxSubmittedTaskCount = queueCapacity;
     }
 
     public void execute(Runnable command) {
