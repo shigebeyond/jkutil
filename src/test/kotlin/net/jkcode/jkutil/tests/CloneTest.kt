@@ -1,6 +1,5 @@
-package net.jkcode.jkmvc.tests
+package net.jkcode.jkutil.tests
 
-import net.jkcode.jkutil.common.generateId
 import net.jkcode.jkutil.common.tryClone
 import org.junit.Test
 

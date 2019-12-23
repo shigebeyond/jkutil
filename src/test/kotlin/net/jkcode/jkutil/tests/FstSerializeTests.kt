@@ -1,11 +1,9 @@
-package net.jkcode.jkmvc.tests
+package net.jkcode.jkutil.tests
 
 import net.jkcode.jkutil.serialize.FstSerializer
 import org.junit.Test
 import org.nustaq.serialization.FSTConfiguration
 import java.io.File
-import java.util.concurrent.CountDownLatch
-import java.util.concurrent.Executors
 import kotlin.test.assertEquals
 
 /**

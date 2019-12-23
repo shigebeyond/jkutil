@@ -1,4 +1,4 @@
-package net.jkcode.jkmvc.tests
+package net.jkcode.jkutil.tests
 
 import java.io.Serializable
 import net.jkcode.jkutil.common.cloneProperties
@@ -7,7 +7,7 @@ import net.jkcode.jkutil.common.generateId
 open class A() {
     open fun echo(){}
 }
-class B():A() {
+class B(): A() {
     /*override fun echo(){
         println("Ah")
     }*/

@@ -1,4 +1,4 @@
-package net.jkcode.jkmvc.tests
+package net.jkcode.jkutil.tests
 
 import net.jkcode.jkutil.common.getProperty
 import net.jkcode.jkutil.common.makeThreads

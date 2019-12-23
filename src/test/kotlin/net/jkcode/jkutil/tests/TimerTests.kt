@@ -1,4 +1,4 @@
-package net.jkcode.jkmvc.tests
+package net.jkcode.jkutil.tests
 
 import io.netty.util.HashedWheelTimer
 import io.netty.util.Timeout

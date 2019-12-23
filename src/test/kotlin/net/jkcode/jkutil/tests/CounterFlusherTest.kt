@@ -1,4 +1,4 @@
-package net.jkcode.jkmvc.guard
+package net.jkcode.jkutil.tests
 
 import net.jkcode.jkutil.common.VoidFuture
 import net.jkcode.jkutil.common.makeThreads

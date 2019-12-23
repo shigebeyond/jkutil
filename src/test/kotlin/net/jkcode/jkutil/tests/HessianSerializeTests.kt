@@ -1,12 +1,10 @@
-package net.jkcode.jkmvc.tests
+package net.jkcode.jkutil.tests
 
 import com.caucho.hessian.client.HessianProxyFactory
-import net.jkcode.jkutil.serialize.ISerializer
 import org.junit.Test
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.FileInputStream
-import java.util.*
 
 /**
  * 测试序列化

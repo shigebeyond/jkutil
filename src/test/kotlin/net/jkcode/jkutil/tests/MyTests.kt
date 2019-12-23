@@ -1,4 +1,4 @@
-package net.jkcode.jkmvc.tests
+package net.jkcode.jkutil.tests
 
 import com.alibaba.fastjson.JSON
 import com.alibaba.fastjson.JSONObject
@@ -889,13 +889,13 @@ class MyTests{
         // println(this::class)
 
        println(this::class.simpleName) // MyTests
-        println(this::class.qualifiedName) // net.jkcode.jkmvc.tests.MyTests
+        println(this::class.qualifiedName) // net.jkcode.jkutil.tests.MyTests
         //println(this::class.jvmName)
 
-        println(this.javaClass.name) // net.jkcode.jkmvc.tests.MyTests
-        println(this.javaClass.canonicalName) // net.jkcode.jkmvc.tests.MyTests
+        println(this.javaClass.name) // net.jkcode.jkutil.tests.MyTests
+        println(this.javaClass.canonicalName) // net.jkcode.jkutil.tests.MyTests
         println(this.javaClass.simpleName) // MyTests
-        println(this.javaClass.typeName) // net.jkcode.jkmvc.tests.MyTests
+        println(this.javaClass.typeName) // net.jkcode.jkutil.tests.MyTests
 
         println(MyTests::class.qualifiedName)
         println(Int::class.qualifiedName)
@@ -1011,11 +1011,11 @@ class MyTests{
 
     @Test
     fun testExtend(){
-        val a:A = A()
+        val a: A = A()
         a.sayHi() // A
-        val b:B = B()
+        val b: B = B()
         b.sayHi() // B
-        val c:A = B()
+        val c: A = B()
         c.sayHi() // A
     }
 
@@ -1496,6 +1496,15 @@ class MyTests{
         //future.setSuccess(null)
         future.setFailure(Exception("test"))
         Thread.sleep(1000)
+    }
+
+    @Test
+    fun testPropertyHandler(){
+        val man = Man("shi", 12)
+        println(PropertyHandler.get(man, "name"))
+
+        val family = Family(man, emptyList())
+        println(PropertyHandler.getPath(family, "master.name"))
     }
 }
 

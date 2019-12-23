@@ -1,4 +1,4 @@
-package net.jkcode.jkmvc.tests
+package net.jkcode.jkutil.tests
 
 import net.jkcode.jkutil.cache.ICache
 import net.jkcode.jkutil.common.randomInt
