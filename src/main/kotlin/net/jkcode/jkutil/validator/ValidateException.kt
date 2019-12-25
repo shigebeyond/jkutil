@@ -4,9 +4,11 @@ import net.jkcode.jkutil.common.JkException
 
 /**
  * 校验异常
+ *   不需要`cause: Throwable?`, 因为 errors 已包含异常信息
  */
-class ValidateException(message: String, cause: Throwable? = null, public val errors: Map<String, String> = emptyMap()) : JkException(message, cause) {
-
-    public constructor(cause: Throwable, errors: Map<String, String> = emptyMap()) : this(cause.toString(), cause, errors) {
-    }
+class ValidateException(
+        message: String,
+        public val name: String = "", // 对象名
+        public val errors: Map<String, String> = emptyMap() // 对象字段的错误
+) : JkException(message) {
 }
