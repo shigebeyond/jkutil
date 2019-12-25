@@ -60,7 +60,8 @@ public fun Any.repeateToList(times: Int): List<Any> {
  * @return
  */
 public fun Any.isArray(): Boolean {
-    return this is Array<*> || this is IntArray || this is ShortArray || this is LongArray || this is FloatArray || this is DoubleArray || this is BooleanArray
+    //return this is Array<*> || this is IntArray || this is ShortArray || this is LongArray || this is FloatArray || this is DoubleArray || this is BooleanArray
+    return this.javaClass.isArray()
 }
 
 /**
@@ -78,20 +79,28 @@ public fun Any?.isArrayOrCollection(): Boolean {
 public fun Any.isArrayOrCollectionEmpty(): Boolean {
     if(this is Array<*>)
         return this.isEmpty()
+
     if(this is IntArray)
         return this.isEmpty()
+
     if(this is ShortArray)
         return this.isEmpty()
+
     if(this is LongArray)
         return this.isEmpty()
+
     if(this is FloatArray)
         return this.isEmpty()
+
     if(this is DoubleArray)
         return this.isEmpty()
+
     if(this is BooleanArray)
         return this.isEmpty()
+
     if(this is Collection<*>)
         return this.isEmpty()
+
     return false
 }
 
@@ -102,20 +111,28 @@ public fun Any.isArrayOrCollectionEmpty(): Boolean {
 public fun Any.iteratorArrayOrCollection(): Iterator<*>? {
     if(this is Array<*>)
         return this.iterator()
+        
     if(this is IntArray)
         return this.iterator()
+        
     if(this is ShortArray)
         return this.iterator()
+        
     if(this is LongArray)
         return this.iterator()
+        
     if(this is FloatArray)
         return this.iterator()
+        
     if(this is DoubleArray)
         return this.iterator()
+        
     if(this is BooleanArray)
         return this.iterator()
+        
     if(this is Collection<*>)
         return this.iterator()
+        
     return null
 }
 

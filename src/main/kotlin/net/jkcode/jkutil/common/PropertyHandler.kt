@@ -1,6 +1,7 @@
 package net.jkcode.jkutil.common
 
 import java.lang.reflect.Array
+import kotlin.reflect.KClass
 import kotlin.reflect.KMutableProperty1
 import kotlin.reflect.KProperty1
 
@@ -66,6 +67,65 @@ object PropertyHandler {
         for (key in keys)
             data = get(data, key)
         return data
+    }
+
+    /**
+     * 获得属性类型
+     *
+     * @param obj
+     * @param key
+     * @return
+     */
+    @JvmStatic
+    @JvmOverloads
+    public fun getType(obj: Any?, key: String): Class<*>? {
+        if (obj == null)
+            return null
+
+        // obj是数组/集合
+        if (obj.javaClass.isArray() || obj is Collection<*>)
+            return Int::class.java
+
+        // obj是哈希
+        if (obj is Map<*, *>) {
+            val value = obj[key]
+            // 值的类型
+            if(value != null)
+                return value.javaClass
+
+            // key/value类型擦除, 只能返回Object
+            Any::class.java
+        }
+
+        // obj是对象
+        val prop = obj::class.getProperty(key) as KProperty1<Any, Any?>
+        if(prop == null)
+            throw NoSuchElementException("获得对象属性失败: 对象为[$obj], 属性名为[$prop]")
+
+        return (prop.getter.returnType.classifier as KClass<*>).java
+    }
+
+    /**
+     * 获得'.'分割的路径下的属性类型
+     *
+     * @param obj
+     * @param path '.'分割的路径
+     * @return
+     */
+    @JvmStatic
+    @JvmOverloads
+    public fun getPathType(obj: Any?, path:String): Class<*>? {
+        // 单层
+        if(!path.contains('.'))
+            return getType(path, path)
+
+        // 多层
+        val keys = path.split('.') as MutableList<String>
+        val last = keys.removeAt(keys.size - 1) // 最后一个
+        var data:Any? = obj
+        for (key in keys)
+            data = get(data, key)
+        return getType(data, last)
     }
 
     /**
