@@ -81,17 +81,22 @@ class RuleValidator(public val label: String /* 值的标识, 如orm中的字段
 	 *
 	 * @param value 要校验的数值，该值可能被修改
 	 * @param variables 变量
-	 * @return 最终的数值
+	 * @return 校验结果: 1. 如果是预言函数, value为原值, 否则value为执行结果 2. error为null则校验成功
 	 */
-	public override fun validate(value:Any?, variables:Map<String, Any?>): Any? {
+	public override fun validate(value:Any?, variables:Map<String, Any?>): ValidateResult {
 		if(subRules.isEmpty())
-			return value
+			return ValidateResult(value, null)
 
 		// 逐个运算规则子表达式
-		var result:Any? = value
-		for (subRule in subRules)
-			result = executeSubRule(subRule, result, variables, label);
-		return result
+		var value2:Any? = value
+		for ((func, args) in subRules) {
+			val result = ValidateFunc.get(func).execute(value2, args, variables, label)
+			if(result.error != null)
+				return result
+
+			value2 = result.value
+		}
+		return ValidateResult(value2, null)
 	}
 
 	/**

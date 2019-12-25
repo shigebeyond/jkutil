@@ -17,10 +17,10 @@ interface IValidator {
 	 *
 	 * @param value 要校验的数值，该值可能被修改
 	 * @param variables 变量
-	 * @return
+	 * @return 校验结果: 1. 如果是预言函数, value为原值, 否则value为执行结果 2. error为null则校验成功
 	 */
 	@Throws(ValidateException::class)
-	fun validate(value:Any?, variables:Map<String, Any?> = emptyMap()): Any?
+	fun validate(value:Any?, variables:Map<String, Any?> = emptyMap()): ValidateResult
 
 	/**
 	 * 合并2个校验器
@@ -34,9 +34,12 @@ interface IValidator {
 
 		val me = this
 		return object: IValidator{
-			override fun validate(value: Any?, variables: Map<String, Any?>): Any? {
+			override fun validate(value: Any?, variables: Map<String, Any?>): ValidateResult {
 				val result = me.validate(value, variables)
-				return other.validate(result, variables)
+				if(result.error != null)
+					return result
+
+				return other.validate(result.value, variables)
 			}
 
 		}

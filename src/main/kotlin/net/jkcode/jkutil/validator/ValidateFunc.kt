@@ -11,6 +11,29 @@ import kotlin.reflect.KType
 import kotlin.reflect.full.memberFunctions
 
 /**
+ * 校验结果
+ *    值 + 错误
+ *    如果错误为null, 则校验通过, 否则校验失败
+ *
+ * @author shijianhang
+ * @date 2016-10-19 下午3:40:55
+ */
+data class ValidateResult(public val value: Any?, public val error: String?){
+
+    /**
+     * 获得结果值或抛出异常
+     *   如果错误为null, 则返回value, 否则抛异常
+     */
+    public fun getOrThrow(): Any? {
+        if(error == null)
+            return value
+
+        throw ValidateException(error)
+    }
+
+}
+
+/**
  * 校验函数
  *
  * @author shijianhang
@@ -71,9 +94,9 @@ class ValidateFunc(protected val func: KFunction<*> /* 方法 */) : IValidateFun
      * @param args 参数
      * @param variables 变量
      * @param label 值的标识, 如orm中的字段名, 如请求中的表单域名
-     * @return 如果是预言函数, 返回原值, 否则返回执行结果
+     * @return 校验结果: 1. 如果是预言函数, value为原值, 否则value为执行结果 2. error为null则校验成功
      */
-    public override fun execute(value:Any?, args:Array<String>, variables:Map<String, Any?>, label:String): Any? {
+    public override fun execute(value:Any?, args:Array<String>, variables:Map<String, Any?>, label:String): ValidateResult{
         // 获得函数
         if(func == null)
             throw ValidateException("不存在校验方法${this.func}");
@@ -97,15 +120,15 @@ class ValidateFunc(protected val func: KFunction<*> /* 方法 */) : IValidateFun
                 // 如果预言失败, 则抛 ValidateException 异常
                 if(result == false) {
                     val message: String = messages[name]!!
-                    throw ValidateException(label + message.replaces(args));
+                    return ValidateResult(null, label + message.replaces(args));
                 }
 
                 // 返回原值
-                return value
+                return ValidateResult(value, null)
             }
 
             // 否则返回执行结果
-            return result
+            return ValidateResult(result, null)
         }catch (e:Exception){
             throw Exception("调用校验方法出错：" + name + "(" + args.joinToString(",") + ")", e)
         }
