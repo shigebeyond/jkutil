@@ -59,7 +59,7 @@ object PropertyHandler {
     public fun getPath(obj: Any?, path:String): Any? {
         // 单层
         if(!path.contains('.'))
-            return get(path, path)
+            return get(obj, path)
 
         // 多层
         val keys:List<String> = path.split('.')
@@ -117,7 +117,7 @@ object PropertyHandler {
     public fun getPathType(obj: Any?, path:String): Class<*>? {
         // 单层
         if(!path.contains('.'))
-            return getType(path, path)
+            return getType(obj, path)
 
         // 多层
         val keys = path.split('.') as MutableList<String>

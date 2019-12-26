@@ -1,7 +1,7 @@
 package net.jkcode.jkutil.validator
 
 // 校验lambda: 如果校验失败, 则抛 ValidateException 异常, 否则返回最终的值
-public typealias ValidateLambda = (value: Any?, variables: Map<String, Any?>) -> Any?;
+public typealias ValidateLambda = (value: Any?, variables: Map<String, Any?>) -> ValidateResult;
 
 /**
  * 校验器
@@ -57,7 +57,7 @@ interface IValidator {
 
 		val me = this
 		return object: IValidator{
-			override fun validate(value: Any?, variables: Map<String, Any?>): Any? {
+			override fun validate(value: Any?, variables: Map<String, Any?>): ValidateResult {
 				val result = me.validate(value, variables)
 				return other(result, variables)
 			}
