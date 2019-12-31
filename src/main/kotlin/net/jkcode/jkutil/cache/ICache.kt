@@ -27,7 +27,7 @@ interface ICache {
      * @param key 键
      * @return
      */
-    fun get(key: Any): Any?
+    operator fun get(key: Any): Any?
 
     /**
      * 根据键获得值
@@ -47,7 +47,17 @@ interface ICache {
      * @param value 值
      * @param expireSencond 过期秒数
      */
-    fun put(key: Any, value: Any?, expireSencond:Long):Unit
+    fun put(key: Any, value: Any?, expireSencond:Long = 6000):Unit
+
+    /**
+     * 设置键值
+     *
+     * @param key 键
+     * @param value 值
+     */
+    operator fun set(key: Any, value: Any?):Unit{
+        put(key, value)
+    }
 
     /**
      * 删除指定的键的值

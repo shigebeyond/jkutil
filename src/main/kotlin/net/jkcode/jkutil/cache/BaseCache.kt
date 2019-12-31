@@ -26,7 +26,7 @@ abstract class BaseCache: ICache {
      * @param key 键
      * @return
      */
-    public override fun get(key: Any): Any?{
+    public override operator fun get(key: Any): Any?{
         val v = doGet(key)
         return if(v == Unit) null else v
     }

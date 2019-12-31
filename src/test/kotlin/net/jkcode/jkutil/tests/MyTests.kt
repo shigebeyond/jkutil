@@ -124,6 +124,8 @@ class MyTests{
         println("ns1: " + ns1)
         println("ns2: " + ns2)
         println("ns span: " + (ns2 - ns1) / 1000000) // 1000
+
+        println(TimeZone.getDefault())
     }
 
     @Test

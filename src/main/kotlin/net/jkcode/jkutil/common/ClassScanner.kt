@@ -13,7 +13,7 @@ abstract class ClassScanner : IClassScanner {
     /**
      * 自动扫描的包
      */
-    protected val packages: MutableList<String> = LinkedList();
+    protected open val packages: MutableCollection<String> = LinkedList();
 
     /**
      * 扫描过的类文件
