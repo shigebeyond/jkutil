@@ -30,7 +30,7 @@ interface ICache {
     operator fun get(key: Any): Any?
 
     /**
-     * 根据键获得值
+     * 根据键获得值, 如果无则构建
      *
      * @param key 键
      * @param expireSeconds 过期秒数
@@ -47,7 +47,7 @@ interface ICache {
      * @param value 值
      * @param expireSencond 过期秒数
      */
-    fun put(key: Any, value: Any?, expireSencond:Long = 6000):Unit
+    fun put(key: Any, value: Any?, expireSencond:Long = 6000)
 
     /**
      * 设置键值
@@ -55,7 +55,7 @@ interface ICache {
      * @param key 键
      * @param value 值
      */
-    operator fun set(key: Any, value: Any?):Unit{
+    operator fun set(key: Any, value: Any?){
         put(key, value)
     }
 
@@ -63,11 +63,19 @@ interface ICache {
      * 删除指定的键的值
      * @param key 要删除的键
      */
-    fun remove(key: Any):Unit
+    fun remove(key: Any)
+
+    /**
+     * 删除指定正则的值
+     * @param pattern 要删除的键的正则
+     */
+    fun removeByPattern(pattern: String){
+        throw UnsupportedOperationException()
+    }
 
     /**
      * 清空缓存
      */
-    fun clear():Unit
+    fun clear()
 
 }

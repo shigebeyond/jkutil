@@ -45,6 +45,7 @@ private val dateFormats: ThreadLocal<ConcurrentHashMap<String, SimpleDateFormat>
 
 /**
  * 日期格式化
+ *    字符串转日期, 参考 String.toDate()
  *
  * @param pattern 格式
  * @return
@@ -61,7 +62,7 @@ public fun Date.format(pattern: String = "yyyy-MM-dd HH:mm:ss"): String {
  *
  * @return
  */
-public fun Date.print():Unit{
+public fun Date.print(){
     println(this.format("yyyy-MM-dd HH:mm:ss"))
 }
 

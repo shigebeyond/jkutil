@@ -133,7 +133,7 @@ public fun File.replaceText(transform:(txt: String) -> String){
  *   使用栈来优化
  * @param action 访问者函数
  */
-public fun File.travel(action:(file: File) -> Unit): Unit {
+public fun File.travel(action:(file: File) -> Unit) {
     val files: Stack<File> = Stack()
     files.push(this)
     travelFiles(files, action)
@@ -144,7 +144,7 @@ public fun File.travel(action:(file: File) -> Unit): Unit {
  * @param files 文件栈
  * @param action 访问者函数
  */
-public fun travelFiles(files: Stack<File>, action:(file: File) -> Unit): Unit {
+public fun travelFiles(files: Stack<File>, action:(file: File) -> Unit) {
     while (!files.isEmpty()){
         val file = files.pop();
         if(file.isDirectory)
@@ -204,7 +204,7 @@ public fun ClassLoader.getRootPath(): String {
  * 遍历url中的资源
  * @param action 访问者函数
  */
-public fun URL.travel(action:(relativePath:String, isDir:Boolean) -> Unit):Unit{
+public fun URL.travel(action:(relativePath:String, isDir:Boolean) -> Unit){
     if(isJar()){ // 遍历jar
         val conn = openConnection() as JarURLConnection
         val jarFile = conn.jarFile

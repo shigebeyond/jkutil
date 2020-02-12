@@ -46,7 +46,7 @@ abstract class BaseCache: ICache {
      * @param value 值
      * @param expireSencond 过期秒数
      */
-    public override fun put(key: Any, value: Any?, expireSencond:Long):Unit{
+    public override fun put(key: Any, value: Any?, expireSencond:Long){
         doPut(key, value ?: Unit, expireSencond)
     }
 
@@ -57,7 +57,7 @@ abstract class BaseCache: ICache {
      * @param value 值
      * @param expireSencond 过期秒数
      */
-    public abstract fun doPut(key: Any, value: Any, expireSencond:Long):Unit
+    public abstract fun doPut(key: Any, value: Any, expireSencond:Long)
 
     /**
      * 根据键获得值

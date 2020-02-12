@@ -1,5 +1,6 @@
-package net.jkcode.jkutil.common
+package net.jkcode.jkutil.collection
 
+import net.jkcode.jkutil.common.MutablePair
 import net.jkcode.jkutil.iterator.CollectionFilteredTransformedIterator
 import java.util.*
 

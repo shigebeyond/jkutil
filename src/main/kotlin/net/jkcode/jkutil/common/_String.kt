@@ -1,13 +1,11 @@
 package net.jkcode.jkutil.common
 
-import org.slf4j.LoggerFactory
 import java.io.PrintWriter
 import java.io.StringWriter
 import java.text.NumberFormat
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
-import kotlin.collections.HashMap
 import kotlin.reflect.KClass
 import kotlin.reflect.KType
 
@@ -175,11 +173,38 @@ public inline fun String.replaces(params:Array<String>, prefix:CharSequence = ":
  */
 public inline fun String.replaces(params:Map<String, Any?>, prefix:CharSequence = ":", postfix:CharSequence = ""):String
 {
-    return this.replace("$prefix([\\w\\d@_]+)$postfix".toRegex()){ matches:MatchResult ->
-        val i = matches.groupValues[1]
-        val value = params.get(i);
+    return this.replace("$prefix([\\w\\d\\.@_]+)$postfix".toRegex()){ matches:MatchResult ->
+        val key = matches.groupValues[1]
+        val value = params.get(key);
         if(value == null)
             ""
+        else
+            value.toString()
+    };
+}
+
+/**
+ * 替换字符串
+ *   参数名是字符串, 但是自带格式, 如 <default:DEFAULT '?'>
+ *   如果参数值为null, 才不会格式化输出
+ *
+ * @param params 参数值
+ * @param prefix 参数名前缀正则
+ * @param postfix 参数名后缀正则
+ * @return
+ */
+public inline fun String.replacesFormat(params:Map<String, Any?>, prefix:CharSequence = "<", postfix:CharSequence = ">"):String
+{
+    // .+ 贪婪 .+? 非贪婪
+    return this.replace("$prefix(.+?)$postfix".toRegex()){ matches:MatchResult ->
+        val exp = matches.groupValues[1].split(':', limit = 2)
+        val key = exp[0]
+        val format = if(exp.size > 1) exp[1] else null // 格式
+        val value = params.get(key);
+        if(value == null)
+            ""
+        else if(format != null) // 格式化输出
+            format.replace("?", value.toString())
         else
             value.toString()
     };
@@ -223,11 +248,18 @@ val datetimeFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
 
 /**
  * 转换为日期类型
+ * @param isFullTime 充满时间
  * @return
  */
-public fun String.toDate(): Date {
-    val format: SimpleDateFormat = if(contains(':')) datetimeFormat else dateFormat;
-    return format.parse(this)
+public fun String.toDate(isFullTime: Boolean = false): Date {
+    val hasTime = contains(':') // 有时分秒, 否则为纯日期
+    val format: SimpleDateFormat = if(hasTime) datetimeFormat else dateFormat;
+    val date = format.parse(this)
+    // 纯日期 + 充满时间
+    if(!hasTime && isFullTime)
+        return date.add(Calendar.SECOND, 86400 - 1)
+
+    return date
 }
 
 /**

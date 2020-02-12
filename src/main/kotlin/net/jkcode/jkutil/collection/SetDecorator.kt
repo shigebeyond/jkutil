@@ -1,4 +1,6 @@
-package net.jkcode.jkutil.common
+package net.jkcode.jkutil.collection
+
+import net.jkcode.jkutil.common.decorateIterator
 
 /**
  * 集合的包装器

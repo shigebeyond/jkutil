@@ -1,4 +1,4 @@
-package net.jkcode.jkutil.common;
+package net.jkcode.jkutil.collection;
 
 import java.io.Serializable;
 import java.util.*;

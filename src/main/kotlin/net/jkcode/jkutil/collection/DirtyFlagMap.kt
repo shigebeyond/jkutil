@@ -1,4 +1,4 @@
-package net.jkcode.jkutil.common
+package net.jkcode.jkutil.collection
 
 /**
  * 标记是否脏了(改动过数据)的map
@@ -53,7 +53,7 @@ class DirtyFlagMap<K, V> /* 非公开构造函数 */protected constructor(protec
         return map.remove(key, value)
     }
 
-    public override fun putAll(from: Map<out K, V>): Unit{
+    public override fun putAll(from: Map<out K, V>) {
         // 检查插入的值是否已存在JedisPoolConfig
         var same = true
         for((k, v) in from){
@@ -69,7 +69,7 @@ class DirtyFlagMap<K, V> /* 非公开构造函数 */protected constructor(protec
         map.putAll(from)
     }
 
-    public override fun clear(): Unit{
+    public override fun clear() {
         // 检查是否早就是空的
         if(dirty == false && map.isEmpty())
             return

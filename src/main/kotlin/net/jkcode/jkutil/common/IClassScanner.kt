@@ -12,26 +12,26 @@ interface IClassScanner {
      *
      * @param pck 包名
      */
-    fun addPackage(pck: String): Unit
+    fun addPackage(pck: String)
 
     /**
      * 添加多个包
      *
      * @param pcks 包名
      */
-    fun addPackages(pcks: Collection<String>): Unit
+    fun addPackages(pcks: Collection<String>)
 
     /**
      * 扫描指定包下的类
      *
      * @param pck 包名
      */
-    fun scan(pck: String): Unit
+    fun scan(pck: String)
 
     /**
      * 收集类文件
      *
      * @param relativePath 类文件相对路径
      */
-    fun collectClass(relativePath: String): Unit
+    fun collectClass(relativePath: String)
 }

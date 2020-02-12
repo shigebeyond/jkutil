@@ -39,7 +39,7 @@ class LRUCache(protected val maxSize:Int = 10000 /*最大个数*/) : BaseCache()
      * @param expireSencond 过期秒数
      */
     @Synchronized
-    public override fun doPut(key: Any, value: Any, expireSencond: Long):Unit {
+    public override fun doPut(key: Any, value: Any, expireSencond: Long) {
         storage.put(key, value)
     }
 
@@ -48,7 +48,7 @@ class LRUCache(protected val maxSize:Int = 10000 /*最大个数*/) : BaseCache()
      * @param key 要删除的键
      */
     @Synchronized
-    public override fun remove(key: Any):Unit {
+    public override fun remove(key: Any) {
         storage.remove(key)
     }
 
@@ -56,7 +56,7 @@ class LRUCache(protected val maxSize:Int = 10000 /*最大个数*/) : BaseCache()
      * 清空缓存
      */
     @Synchronized
-    public override fun clear():Unit {
+    public override fun clear() {
         storage.clear()
     }
 }

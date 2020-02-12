@@ -52,7 +52,7 @@ class JedisCache(protected val configName: String = "default") : BaseCache(){
      * @param value 值
      * @param expireSencond 过期秒数
      */
-    public override fun doPut(key: Any, value: Any, expireSencond:Long):Unit {
+    public override fun doPut(key: Any, value: Any, expireSencond:Long) {
         //jedis.set(key.toString(), value.toString(), "NX", "EX", expires)
         jedis.set(serializer.serialize(key), serializer.serialize(value), "NX".toByteArray(), "EX".toByteArray(), expireSencond)
     }
@@ -61,14 +61,32 @@ class JedisCache(protected val configName: String = "default") : BaseCache(){
      * 删除指定的键的值
      * @param key 要删除的键
      */
-    public override fun remove(key: Any):Unit {
+    public override fun remove(key: Any) {
         jedis.del(serializer.serialize(key))
+    }
+
+    /**
+     * 删除指定正则的值
+     * @param pattern 要删除的键的正则
+     */
+    public override fun removeByPattern(pattern: String){
+        /*val keys = jedis.keys(pattern)
+        for (key in keys) {
+            jedis.del(key)
+        }*/
+        // 由于 ShardedJedis 是分块管理 Jedis, 因此遍历每块来扫描key -- 性能较差
+        for(s in jedis.allShards){
+            val keys = s.keys(pattern)
+            for (key in keys) {
+                jedis.del(key)
+            }
+        }
     }
 
     /**
      * 清空缓存
      */
-    public override fun clear():Unit {
+    public override fun clear() {
         //jedis.flushAll()
         throw UnsupportedOperationException("not implemented")
     }

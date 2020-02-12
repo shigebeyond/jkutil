@@ -6,6 +6,7 @@ import net.jkcode.jkutil.singleton.BeanSingletons
 import org.yaml.snakeyaml.Yaml
 import java.io.InputStreamReader
 import java.net.URL
+import java.nio.file.FileSystems
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
 import kotlin.collections.HashMap
@@ -84,7 +85,11 @@ class Config(public override val props: Map<String, *>, // 配置项
          * @return
          */
         public fun buildProperties(file:String, type: String = "properties", merging: Boolean = false): Map<String, *> {
-            val urls = Thread.currentThread().contextClassLoader.getResources(file)
+            val path = FileSystems.getDefault().getPath(file)
+            val urls = if(path.isAbsolute)
+                            listOf(URL("file://$file")).enumeration()
+                        else
+                            Thread.currentThread().contextClassLoader.getResources(file)
             if(!urls.hasMoreElements())
                 throw IllegalArgumentException("配置文件[$file]不存在")
             // 1 不合并: 取第一个

@@ -1,5 +1,7 @@
 package net.jkcode.jkutil.common
 
+import net.jkcode.jkutil.collection.CollectionDecorator
+import net.jkcode.jkutil.collection.SetDecorator
 import org.apache.commons.collections.iterators.AbstractIteratorDecorator
 import java.math.BigDecimal
 import java.net.URLEncoder
@@ -356,6 +358,38 @@ public fun <T> Iterator<T>.joinTo(buffer: StringBuilder, separator: CharSequence
  */
 public fun Iterator<*>.toDesc(): String {
     return this.joinToString(", ",javaClass.name + "(", ")")
+}
+
+/**
+ * 遍历枚举
+ * @param action
+ */
+public fun <T> Enumeration<T>.forEach(action: (T) -> Unit){
+
+    for (element in this) {
+        action(element)
+    }
+}
+
+/**
+ * 转为map
+ * @param transform
+ * @return
+ */
+public fun <T, K, V> Enumeration<T>.associate(transform: (T) -> Pair<K, V>): Map<K, V> {
+    return associateTo(LinkedHashMap<K, V>(), transform)
+}
+
+/**
+ * 转为map
+ * @param destination
+ * @param transform
+ */
+public inline fun <T, K, V, M : MutableMap<in K, in V>> Enumeration<T>.associateTo(destination: M, transform: (T) -> Pair<K, V>): M {
+    for (element in this) {
+        destination += transform(element)
+    }
+    return destination
 }
 
 /**

@@ -1,11 +1,10 @@
 package net.jkcode.jkutil.tests
 
-import com.alibaba.fastjson.JSON
-import com.alibaba.fastjson.JSONObject
-import com.alibaba.fastjson.serializer.SerializerFeature
 import io.netty.util.concurrent.DefaultEventExecutor
 import io.netty.util.concurrent.DefaultPromise
 import net.jkcode.jkutil.bit.SetBitIterator
+import net.jkcode.jkutil.collection.DoneFlagList
+import net.jkcode.jkutil.collection.FixedKeyMapFactory
 import net.jkcode.jkutil.common.*
 import net.jkcode.jkutil.elements.ElementCollection
 import net.jkcode.jkutil.idworker.SnowflakeId
@@ -14,6 +13,7 @@ import net.jkcode.jkutil.iterator.ArrayFilteredIterator
 import net.jkcode.jkutil.redis.ShardedJedisFactory
 import net.jkcode.jkutil.serialize.ISerializer
 import net.jkcode.jkutil.validator.ValidateFuncDefinition
+import org.apache.commons.collections.map.ListOrderedMap
 import org.apache.commons.lang.StringEscapeUtils
 import org.dom4j.Attribute
 import org.dom4j.DocumentException
@@ -27,6 +27,7 @@ import java.io.InputStreamReader
 import java.lang.reflect.ParameterizedType
 import java.net.HttpURLConnection
 import java.net.URL
+import java.nio.file.FileSystems
 import java.text.MessageFormat
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
@@ -63,6 +64,24 @@ class MyTests{
         })
     }
 
+    @Test
+    fun testEmail(){
+        val email = "wxzhaopin<wxzhaopin@tencent.com>;"
+        println(email.substringBefore("<"))
+        println(email.substring(0, email.indexOf("<")))
+
+        println(email.substringAfter("<"))
+        println(email.substring(email.indexOf("<")))
+    }
+
+    @Test
+    fun testPath(){
+        val file = "books.xml"
+//        val file = "/home/shi/code/xmind/source/hibernate-htype2nativetype.yaml"
+        val path = FileSystems.getDefault().getPath(file)
+        println(path.isAbsolute)
+        println(path.toAbsolutePath())
+    }
 
     @Test
     fun testCompare(){
@@ -98,6 +117,24 @@ class MyTests{
     @Test
     fun testFormat(){
         println(MessageFormat.format("Avg ResponseTime: {0,number,#.##}ms", 1.toFloat() / 3))
+    }
+
+
+    @Test
+    fun testCollection(){
+        val stack = Stack<Int>()
+        for(i in 1..10)
+            stack.push(i)
+
+        // 同添加的顺序
+        for(e in stack)
+            println(e)
+
+        // 倒序
+        do{
+            val e = stack.pop()
+            println(e)
+        }while(stack.isNotEmpty())
     }
 
     @Test
@@ -220,6 +257,18 @@ class MyTests{
 
     @Test
     fun testBit(){
+        println(1 shl 0)
+        println(1 shl 1)
+        println(1 shl 2)
+
+
+        println(4 shr 0)
+        println(4 shr 1)
+        println(4 shr 2)
+    }
+
+    @Test
+    fun testBitSet(){
         val bs = BitSet(10)
         bs.set(0)
         bs.set(5)
@@ -319,6 +368,24 @@ class MyTests{
         map[k] = "test"
         k = Pair(Integer(1), String(charArrayOf('a')))
         println(map[k]) // test
+    }
+
+    @Test
+    fun testOrderMap(){
+        val m = HashMap<Int, String>()
+        m[2] = "b"
+        m[1] = "a"
+        println(m)
+
+        val m2 = ListOrderedMap( )
+        m2[2] = "b"
+        m2[1] = "a"
+        println(m2)
+
+        val m3 = LinkedHashMap<Int, String>()
+        m3[2] = "b"
+        m3[1] = "a"
+        println(m3)
     }
 
     @Test
@@ -631,7 +698,10 @@ class MyTests{
         // 从01-29到01-31,加一个月后, 都是2017-02-28 00:00:00
         val startTime = "2018-02-01".toDate()
         startTime.print()
+        val endTime = startTime.add(Calendar.SECOND, 86400 - 1)
+        endTime.print()
 
+        /*
         val month = 1
         val cl = GregorianCalendar()
         cl.time = startTime
@@ -639,6 +709,7 @@ class MyTests{
         cl.time.print()
         val endTime = cl.timeInMillis / 1000 - 1 // 秒
         Date(endTime * 1000).print()
+        */
     }
 
     @Test
@@ -777,43 +848,6 @@ class MyTests{
     }
 
     @Test
-    fun testJson(){
-        val o = HashMap<String, Any?>()
-        o["notify_url"] = "http://baidu.com" // 原始值
-        var json = JSON.toJSONString(o)
-        println(json) // 输出 {"notify_url":"http://baidu.com"}
-
-        json = JSON.toJSONString(o, SerializerFeature.WriteSlashAsSpecial)
-        println(json) // 输出: {"notify_url":"http:\/\/baidu.com"}
-
-        val o2 = JSONObject.parse(json) as JSONObject
-        println(o2["notify_url"])
-    }
-
-    @Test
-    fun testJson2(){
-        val o = Man("shi", 12)
-        var json = JSON.toJSONString(o)
-        println(json) // 输出 {"age":12,"id":105254286010613760,"name":"shi"}
-
-        json = JSON.toJSONString(o, SerializerFeature.WriteSlashAsSpecial)
-        println(json) // 输出: {"age":12,"id":105254286010613760,"name":"shi"}
-
-        val o2 = JSON.parseObject(json, Man::class.java);
-        println(o2)
-    }
-
-    @Test
-    fun testJson3(){
-        val o = IllegalArgumentException("test error")
-        var json = JSON.toJSONString(o)
-        println(json) // 输出 {"age":12,"id":105254286010613760,"name":"shi"}
-
-        val o2 = JSON.parseObject(json, IllegalArgumentException::class.java);
-        println(o2)
-    }
-
-    @Test
     fun testXml(){
         // https://www.cnblogs.com/longqingyang/p/5577937.html
         // 解析books.xml文件
@@ -855,6 +889,30 @@ class MyTests{
         val books = config.props["favoriteBooks"]
         println(books)
         println(books is List<*>)
+    }
+
+    @Test
+    fun testHibernate(){
+        val config = Config("/home/shi/code/xmind/source/hibernate-sqltype2physicaltype.yaml", "yaml")
+        // 输出指定db的不同逻辑(sql)类型, 对应的物理类型
+        val db = "mysql"
+        for((type, value) in config.props){
+            val map = value as Map<String, String>
+            var value: String? = null
+            for ((k, v) in map){
+                if(k.contains(db, true)){
+                    value = v
+                    break
+                }
+            }
+            if(value == null && (db.contains("sqlserver", true) || db.contains("sybase", true))){
+                value = map["AbstractTransactSQLDialect"]
+            }
+            if(value == null){
+                value = map["Dialect"]
+            }
+            println("$type: $value")
+        }
     }
 
     @Test
@@ -1130,6 +1188,13 @@ class MyTests{
     }
 
     @Test
+    fun testEscapeRegex(){
+        val str = "\n?.[]"
+        val r = str.replace("([\\\\*+\\[\\](){}\\$.?\\^|])".toRegex(), "\\\\$1")
+        println(r)
+    }
+
+    @Test
     fun testPattern(){
         /*
         val reg = "^\\d+$".toRegex()
@@ -1152,14 +1217,30 @@ class MyTests{
         println(str.replace(reg2, "*") )// abc*c*d
         */
 
-        val argExpr = "(\"第0个分片的参数\"),(\"第1个分片的参数\"),(\"第2个分片的参数\")"
+        /*val argExpr = "(\"第0个分片的参数\"),(\"第1个分片的参数\"),(\"第2个分片的参数\")"
         //val argses = argExpr.split("),(")
         val reg = "(?<=\\)),(?=\\()".toRegex()
         println(argExpr.replace(reg, "--------") )//
         val argses = argExpr.split(reg)
         for (args in argses){
             println(args)
-        }
+        }*/
+
+
+//        println("\\ u +".replace("\\+".toRegex(), "%20")) // 只是+
+
+//        println("\"\\\\\\\"\\\\{\\\\}\\\\\\\"\"") //  \"\{\}\" -- "{}"
+
+//        val s = "--\"{}\"--"
+//        println(s.replace("\"{}\"", "{}")) // --{}--
+//        println(s.replace("\\\"\\{\\}\\\"".toRegex(), "{}")) // --{}--
+
+//        println("\\?\\?\\?") // \?\?\?
+//        println("???xxx???".replace("\\?\\?\\?".toRegex(), "@@")) // @@xxx@@
+
+        println("\\n")
+        println("a\nb".replace("\\n".toRegex(), "\\\\n")) // a\nb
+        println("a\nb".replace("\n", "\\\\n")) // a\nb
     }
 
     @Test

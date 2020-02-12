@@ -666,7 +666,7 @@ public fun Class<*>.getWritableFinalField(name: String, inherited: Boolean = fal
 
     // 去掉final
     if (Modifier.isFinal(field.getModifiers())) {
-        val modifiersField = Field::class.java!!.getDeclaredField("modifiers")
+        val modifiersField = Field::class.java.getDeclaredField("modifiers")
         modifiersField.setAccessible(true) //Field 的 modifiers 是私有的
         modifiersField.setInt(field, field.modifiers and Modifier.FINAL.inv())
     }

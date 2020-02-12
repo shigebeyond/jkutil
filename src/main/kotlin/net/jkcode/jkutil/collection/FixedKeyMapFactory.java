@@ -1,4 +1,4 @@
-package net.jkcode.jkutil.common;
+package net.jkcode.jkutil.collection;
 
 import net.jkcode.jkutil.bit.IBitSet;
 import org.apache.commons.collections.keyvalue.DefaultMapEntry;

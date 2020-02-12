@@ -25,7 +25,7 @@ abstract class ClassScanner : IClassScanner {
      *
      * @param pck 包名
      */
-    public override fun addPackage(pck: String): Unit {
+    public override fun addPackage(pck: String) {
         // 检查是否添加过
         if(packages.contains(pck))
             return
@@ -41,7 +41,7 @@ abstract class ClassScanner : IClassScanner {
      *
      * @param pcks 包名
      */
-    public override fun addPackages(pcks: Collection<String>): Unit {
+    public override fun addPackages(pcks: Collection<String>) {
         // 逐个添加包
         for (pck in pcks)
             // 扫描包: 做了去重
@@ -53,7 +53,7 @@ abstract class ClassScanner : IClassScanner {
      *
      * @param pck 包名
      */
-    public override fun scan(pck: String): Unit {
+    public override fun scan(pck: String) {
         commonLogger.info("扫描包[{}]下的类", pck)
         // 获得类加载器
         val cld = Thread.currentThread().contextClassLoader

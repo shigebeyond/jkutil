@@ -15,7 +15,7 @@ public fun BitSet.iterator(): SetBitIterator {
  * Performs the given [operation] on each element of this [SetBitIterator].
  * @sample samples.collections.Iterators.forEachIterator
  */
-public inline fun BitSet.forEach(action: (Int) -> Unit): Unit {
+public inline fun BitSet.forEach(action: (Int) -> Unit) {
     iterator().forEach(action)
 }
 
