@@ -4,7 +4,7 @@ package net.jkcode.jkutil.common
 import com.alibaba.fastjson.JSONObject
 import net.jkcode.jkutil.singleton.BeanSingletons
 import org.yaml.snakeyaml.Yaml
-import java.io.InputStreamReader
+import java.io.File
 import java.net.URL
 import java.nio.file.FileSystems
 import java.util.*
@@ -86,9 +86,11 @@ class Config(public override val props: Map<String, *>, // 配置项
          */
         public fun buildProperties(file:String, type: String = "properties", merging: Boolean = false): Map<String, *> {
             val path = FileSystems.getDefault().getPath(file)
-            val urls = if(path.isAbsolute)
-                            listOf(URL("file://$file")).enumeration()
-                        else
+            val urls = if(path.isAbsolute) {
+                            //val url = URL("file://$file")
+                            val url = File(file).toURL()
+                            listOf(url).enumeration()
+                        }else
                             Thread.currentThread().contextClassLoader.getResources(file)
             if(!urls.hasMoreElements())
                 throw IllegalArgumentException("配置文件[$file]不存在")
@@ -114,17 +116,17 @@ class Config(public override val props: Map<String, *>, // 配置项
          * @return
          */
         public fun buildProperties(url: URL, type: String = "properties"): Map<String, *> {
-            val inputStream = url.openStream()
+            val `is` = url.openStream()
             // 无内容则返回空map
-            if(inputStream.available() == 0)
+            if(`is`.available() == 0)
                 return emptyMap<String, Any?>()
 
             // 解析内容
-            val result = inputStream.use {
+            val result = `is`.use {
                 when(type){
-                    "properties" -> Properties().apply { load(InputStreamReader(inputStream, "UTF-8")) } // 加载 properties 文件
-                    "yaml" -> Yaml().loadAs(inputStream, HashMap::class.java) // 加载 yaml 文件
-                    "json" -> JSONObject.parseObject(inputStream.reader().readText()) // 加载 json 文件
+                    "properties" -> Properties().apply { load(`is`.reader()) } // 加载 properties 文件
+                    "yaml" -> Yaml().loadAs(`is`, HashMap::class.java) // 加载 yaml 文件
+                    "json" -> JSONObject.parseObject(`is`.reader().readText()) // 加载 json 文件
                     else -> throw IllegalArgumentException("未知配置文件类型")
                 }
             }

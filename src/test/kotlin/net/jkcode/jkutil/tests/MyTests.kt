@@ -76,11 +76,16 @@ class MyTests{
 
     @Test
     fun testPath(){
-        val file = "books.xml"
-//        val file = "/home/shi/code/xmind/source/hibernate-htype2nativetype.yaml"
-        val path = FileSystems.getDefault().getPath(file)
-        println(path.isAbsolute)
-        println(path.toAbsolutePath())
+        val f = "books.xml"
+//        val f = "/home/shi/code/xmind/source/hibernate-htype2nativetype.yaml"
+        val path = FileSystems.getDefault().getPath(f)
+//        println(path.isAbsolute)
+//        println(path.toAbsolutePath())
+
+        val file = File(f)
+        println(file.toURL())
+        println(file.toURL().toExternalForm())
+        println(file.toURI().toURL().toExternalForm())
     }
 
     @Test
@@ -573,7 +578,9 @@ class MyTests{
         // println("hello world".trim())
         // println("hello world".replace(" ", ""))
 
-        println("a/b/c".substringBeforeLast('/'))
+        //println("a/b/c".substringBeforeLast('/'))
+
+        println("hello".reversed())
     }
 
     @Test
@@ -598,7 +605,7 @@ class MyTests{
     }
 
     @Test
-    fun testFile(){
+    fun testFile() {
         /*println(File.separator) // "/"
         println(File.separatorChar) // "/"
         println(File.pathSeparator) // ":"
@@ -616,43 +623,6 @@ class MyTests{
             }
         }*/
 
-        // http://yipeiwu.com/getvideo.html
-        // 下载网易公开课
-        /*val f = File("/home/shi/test/course.html")
-        val ms = "<tr>\\s*<td>(.+)\\s*</td>\\s*<td><a href=\"([^\"]+)\".+</td>\\s*</tr>".toRegex().findAll(f.readText())
-        for(m in ms){
-            val title = m.groups[1]!!.value
-            val url = m.groups[2]!!.value
-            val ext = url.substringAfterLast('.')
-            // 服务器拒绝 aria2c 下载，只能用curl
-            println("aria2c -s 2 '$url' -o '$title.$ext'")
-        }*/
-
-        // 添加行号
-        val f = File("/home/shi/test/voice.txt")
-        var i = 1
-        f.forEachLine { line ->
-            if(needLineNo(line))
-                println((i++).toString() + ". " + line)
-            else
-                println(line)
-        }
-    }
-
-    fun needLineNo(line: String): Boolean {
-        // 空行
-        if(line.isBlank())
-            return false
-
-        // 标题
-        if(line.startsWith("#"))
-            return false
-
-        // 已有行号
-        if("^\\d+".toRegex().matches(line))
-            return false
-
-        return true
     }
 
     @Test
@@ -710,132 +680,6 @@ class MyTests{
         val endTime = cl.timeInMillis / 1000 - 1 // 秒
         Date(endTime * 1000).print()
         */
-    }
-
-    @Test
-    fun testLog(){
-        // testLogger.info("打信息日志")
-        // testLogger.debug("打调试日志")
-        // testLogger.error("打错误日志")
-
-        // 去掉短信的异常
-        val dir = File("/home/shi/test/szdl/logs/cn")
-        val reg = "短信发送失败: null\\s\njava\\.lang\\.NullPointerException".toRegex() //
-        dir.travel { file ->
-            /*val txt = file.readText()
-            val m = reg.find(txt)
-            println(m?.value)*/
-            file.replaceText {
-                reg.replace(it, "")
-            }
-        }
-    }
-
-    @Test
-    fun testDomainCheck() {
-        val dir = File("/home/shi/code/php/sk")
-        val domainReg = "http://([\\w\\d-_\\.]+)\\.(sk(\\d)?|shikee)\\.com".toRegex() //
-        val subDomains = HashSet<String>()
-        dir.travel { file ->
-            if (!file.name.endsWith(".php"))
-                return@travel
-
-            // 配置文件处理
-            if(file.name == "shikee.php")
-                return@travel
-
-            // 收集域名
-            val txt = file.readText()
-            val matches = domainReg.findAll(txt)
-            for(m in matches){
-                subDomains.add(m.groupValues.get(1)) // 子域名
-            }
-        }
-
-        val f = File(dir, "common/config/sk0.com/shikee.php")
-        val txt = f.readText()
-        val configReg = "domain_([\\w\\d-_]+)".toRegex()
-        val matches = configReg.findAll(txt)
-        val configDomains = HashSet<String>()
-        for(m in matches){
-            configDomains.add(m.groupValues.get(1))
-        }
-        println("****用到子域名****")
-        println(subDomains.joinToString("\n"))
-        println("****配置子域名****")
-        println(configDomains.joinToString("\n"))
-        println("****没有配置的子域名****")
-        subDomains.removeAll(configDomains)
-        println(subDomains.joinToString("\n"))
-
-    }
-
-    @Test
-    fun testDomainReplace(){
-        val dir = File("/home/shi/code/php/sk")
-        val domainPattern = "http://([\\w\\d-_\\.]+)\\.(sk(\\d)?|shikee)\\.com/?" // 1 子域名
-        val domainReg = domainPattern.toRegex() // 1 子域名
-        val assignReg = "((=|=>|\\?)\\s*)('|\")$domainPattern".toRegex()  // 1 赋值号+空格 2 赋值号 3 引号 4 子域名
-        dir.travel { file ->
-            if(!file.name.endsWith(".php"))
-                return@travel
-
-            // 配置文件处理
-            if(file.name == "shikee.php")
-                return@travel
-
-            // view文件处理
-            if(file.absolutePath.contains("/views/")) {
-                /*file.replaceText { txt ->
-                    domainReg.replace(txt) { result: MatchResult ->
-                        val subDomain = result.groupValues.get(1)
-                        "<?= config_item('domain_$subDomain') ?>"
-                    };
-                }*/
-
-                return@travel
-            }
-
-            // 业务文件处理
-            file.replaceText { txt ->
-                assignReg.replace(txt) { result: MatchResult ->
-                    val assign = result.groupValues.get(1) // 1 赋值号
-                    val quote = result.groupValues.get(3) // 2 引号
-                    val subDomain = result.groupValues.get(4) // 3 子域名
-                    "${assign}config_item('domain_$subDomain').$quote"
-                };
-            }
-        }
-        println("over")
-    }
-
-    @Test
-    fun testCode(){
-        val singleReg = "(?!property\\(\\) )//.*\\n".toRegex() // 单行注释
-        val multipleReg = "/\\*.+?\\*/".toRegex(setOf(RegexOption.DOT_MATCHES_ALL)) // 单行注释
-        val blank2Reg = "\n\\s*\n\\s*\n".toRegex() // 双空行
-        val firstReg = "\\{\\s*\n\\s*\n".toRegex() // {下的第一个空行
-       /*
-       var content = File("/home/shi/code/java/szpower/szpower2/src/main/kotlin/com/jkmvc/szpower/controller/AlarmController.kt").readText()
-        // println(multipleReg.findAll(content).joinToString {
-        //     it.value
-        // })
-        content = singleReg.replace(content, "\n")
-        content = multipleReg.replace(content, "")
-        println(content)
-        */
-
-        val dir = File("/home/shi/code/java/szpower/szpower2/src")
-        dir.travel { file ->
-            if(file.name.endsWith(".kt")){
-                file.replaceText {
-                    var content = singleReg.replace(it, "\n")
-                    content = multipleReg.replace(content, "")
-                    content = blank2Reg.replace(content, "\n\n")
-                    firstReg.replace(content, "{\n")
-                }
-            }
-        }
     }
 
     @Test
@@ -1131,8 +975,9 @@ class MyTests{
         for(m in  String::class.declaredFunctions)
             println(m.name)
         */
-        for(m in String.javaClass.methods)
+        for(m in String.javaClass.methods) {
             println(m.name)
+        }
     }
 
     @Test
@@ -1238,9 +1083,15 @@ class MyTests{
 //        println("\\?\\?\\?") // \?\?\?
 //        println("???xxx???".replace("\\?\\?\\?".toRegex(), "@@")) // @@xxx@@
 
-        println("\\n")
-        println("a\nb".replace("\\n".toRegex(), "\\\\n")) // a\nb
-        println("a\nb".replace("\n", "\\\\n")) // a\nb
+//        println("\\n")
+//        println("a\nb".replace("\\n".toRegex(), "\\\\n")) // a\nb
+//        println("a\nb".replace("\n", "\\\\n")) // a\nb
+
+        val str = "hello-world"
+        val range = 0..4
+        println(str.substring(range))
+        println(str.replaceRange(range, "fuck"))
+        println(str.replaceRange(range, "my hero"))
     }
 
     @Test
@@ -1283,7 +1134,6 @@ class MyTests{
 
     @Test
     fun testTravelFile(){
-
         val dir = File("/home/shi/test")
         dir.travel { f ->
             println("处理文件: " + f.name)
@@ -1293,90 +1143,6 @@ class MyTests{
                     println("\\t" + l)
             }
         }
-    }
-
-    @Test
-    fun testLine(){
-        var count:Int = 0
-        val dir = File("/home/shi/code/java/jkmvc/")
-        val reg = "^\\s*(//|/\\*|\\*|\\*/).*".toRegex() // 注释
-        dir.travel { file ->
-            if(file.name.endsWith(".kt")){
-                file.forEachLine { line ->
-                    if(line.isNotBlank() && !reg.matches(line)){ // 非空 + 非注释
-                        count++
-                    }else{
-                        //println(line)
-                    }
-                }
-            }
-        }
-        println(count)
-    }
-
-    @Test
-    fun testGetFileContent(){
-        // 扫描出id自增的代码
-        /*val dir = File("/home/shi/Downloads/电网项目/source/szdl/0103_Code/NNDYPT/src/main/java")
-        dir.travel {
-            //println(it)
-            it.forEachLine {
-                if(it.contains("ID_SEQ")){
-                    println(it)
-                }
-            }
-        }*/
-
-        // controller的action方法改名
-        // 由actionIndex, 改为indexAction
-        val dir = File("/oldhome/shi/code/java/jkmvc/jkmvc-example/src/main/kotlin/com/jkmvc/example")
-        dir.travel {
-            if(it.name.indexOf("Controller.kt") > 0){
-                it.replaceText {
-                    "fun\\s+action([\\w\\d]+)".toRegex().replace(it){ result: MatchResult ->
-                        "fun " + result.groups[1]!!.value.decapitalize() + "Action"
-                    }
-                }
-                println("处理文件: " + it.name)
-            }
-        }
-
-        // 扫描出分析模型的字段与注释
-        /*val dir = File("/home/shi/下载/电网项目/source/021RecoverPowerFast_AlarmAnalyse/src/com/yingkai/lpam/pojo")
-        var i = 0;
-        var clazz = ""
-        dir.travel {
-            //println(it)
-            it.forEachLine {
-                // 获得类注释
-                val matches = "^\\s+\\*\\s+([^@]+)$".toRegex().find(it)
-                if(matches != null){
-                    i++
-                    clazz = matches.groups[1]!!.value
-                }else{
-                    // 获得表名
-                    val matches = "^@Table\\(name=\"(.+)\"\\)$".toRegex().find(it)
-                    if(matches != null){
-                        println("\n-------------------------------------------------\n")
-                        println(i.toString() + matches.groups[1]!!.value + "\t" + clazz)
-                        println("-- 字段")
-                    }else{
-                        // 获得字段
-                        val matches = "^\\s+private\\s+(.+)$".toRegex().find(it)
-                        if(matches != null){
-                            val field = matches.groups[1]!!.value
-                            val arr = field.split("\\s+".toRegex())
-                            var (type, name) = arr
-                            name = name.trim(";")
-                            var comment = if(arr.size > 2) arr[2] else ""
-                            comment = comment.trim("//")
-                            println("$name\t$type\t$comment")
-                        }
-                    }
-                }
-
-            }
-        }*/
     }
 
     @Test

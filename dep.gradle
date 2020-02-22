@@ -10,6 +10,9 @@
 		// guava
 		compile 'com.google.guava:guava:27.0.1-jre'
 
+		// 识别编码
+		compile 'com.googlecode.juniversalchardet:juniversalchardet:1.0.3'
+
 		// xml
 		compile 'dom4j:dom4j:1.6.1'
 		compile 'sax:sax:2.0.1'

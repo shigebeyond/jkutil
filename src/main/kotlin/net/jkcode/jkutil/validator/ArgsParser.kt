@@ -27,20 +27,17 @@ object ArgsParser {
      *            每个参数不能包含以下字符: `,()`
      * @return
      */
-    public fun parse(exp: String): Array<String> {
+    public fun parse(exp: String): List<String> {
         val exp2 = exp.trim("(", ")") // 去括号
         if(exp2.isBlank())
-            return emptyArray()
+            return emptyList()
 
         val matches: Sequence<MatchResult> = REGEX_ARG.findAll(exp2);
         val result: ArrayList<String> = ArrayList();
         for(m in matches)
             result.add(m.groups[1]!!.value)
 
-        //return result.toArray() as Array<String> // java.lang.ClassCastException: [Ljava.lang.Object; cannot be cast to [Ljava.lang.String;
-        return Array<String>(result.size){i ->
-            result[i]
-        }
+        return result
     }
 
     /**
@@ -51,11 +48,11 @@ object ArgsParser {
      * @param hasBrackets 是否包含括号
      * @return
      */
-    public fun parse(exp: String, method: Method): Array<Any?> {
+    public fun parse(exp: String, method: Method): List<Any?> {
         val args = parse(exp)
         if(args.size != method.parameters.size)
             throw IllegalArgumentException("参数表达式中的参数个数=${args.size}, 不等于方法的参数个数=${method.parameters.size}")
-        return args.mapIndexedToArray { i, arg ->
+        return args.mapIndexed { i, arg ->
             arg.exprTo(method.parameterTypes[i])
         }
     }
@@ -68,9 +65,9 @@ object ArgsParser {
      * @param hasBrackets 是否包含括号
      * @return
      */
-    public fun parse(exp: String, fuc: KFunction<*>): Array<Any?> {
+    public fun parse(exp: String, fuc: KFunction<*>): List<Any?> {
         val args = parse(exp)
-        return args.mapIndexedToArray { i, arg ->
+        return args.mapIndexed{ i, arg ->
             arg.exprTo(fuc.parameters[i].type)
         }
     }

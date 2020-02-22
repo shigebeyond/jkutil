@@ -20,6 +20,16 @@ object ValidateFuncDefinition{
     }
 
     /**
+     * 检查非空白
+     *
+     * @param value
+     * @return
+     */
+    public fun notBlank(value:Any?): Boolean {
+        return value != null && !(value is String && value.isNotBlank());
+    }
+
+    /**
      * 检查长度
      *
      * @param value

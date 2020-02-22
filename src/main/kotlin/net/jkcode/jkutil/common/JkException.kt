@@ -22,6 +22,9 @@ abstract class JkException : RuntimeException {
             return "$message - $id"
         }
 
+    public constructor() : super() {
+    }
+
     public constructor(cause: Throwable) : super(cause) {
     }
 

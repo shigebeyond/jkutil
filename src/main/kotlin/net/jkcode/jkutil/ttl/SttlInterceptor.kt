@@ -1,5 +1,7 @@
 package net.jkcode.jkutil.ttl
 
+import io.netty.util.Timeout
+import io.netty.util.TimerTask
 import net.jkcode.jkutil.common.SimpleObjectPool
 import java.util.HashMap
 import java.util.concurrent.CompletableFuture
@@ -97,6 +99,20 @@ object SttlInterceptor {
         return object: Runnable{
             override fun run() {
                 wrap(callerLocals) { command.run() }
+            }
+        }
+    }
+
+    /**
+     * 拦截 TimerTask
+     * @param callerLocals caller thread 的ScopedTransferableThreadLocal对象
+     * @param task
+     * @return
+     */
+    public fun intercept(callerLocals: Local2Value = ScopedTransferableThreadLocal.weakCopyLocal2Value(), task: TimerTask): TimerTask {
+        return object: TimerTask{
+            override fun run(timeout: Timeout) {
+                wrap(callerLocals) { task.run(timeout) }
             }
         }
     }

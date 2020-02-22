@@ -3,7 +3,7 @@ package net.jkcode.jkutil.validator
 import java.util.concurrent.ConcurrentHashMap
 
 // 规则表达式的运算单位： 1 函数名 2 函数参数
-private typealias SubRule = Pair<String, Array<String>>
+private typealias SubRule = Pair<String, List<String>>
 
 /**
  * 规则校验器, 由一个规则表达式, 来表达校验逻辑
@@ -55,7 +55,7 @@ class RuleValidator(public val label: String /* 值的标识, 如orm中的字段
 					val args = subRule.substring(i) // 包含()
 					SubRule(func, ArgsParser.parse(args))
 				}else{
-					SubRule(subRule, emptyArray())
+					SubRule(subRule, emptyList())
 				}
 			}
 		}
@@ -85,7 +85,7 @@ class RuleValidator(public val label: String /* 值的标识, 如orm中的字段
 	 */
 	public override fun validate(value:Any?, variables:Map<String, Any?>): ValidateResult {
 		if(subRules.isEmpty())
-			return ValidateResult(value, null)
+			return ValidateResult(value, null, label)
 
 		// 逐个运算规则子表达式
 		var value2:Any? = value
@@ -96,22 +96,7 @@ class RuleValidator(public val label: String /* 值的标识, 如orm中的字段
 
 			value2 = result.value
 		}
-		return ValidateResult(value2, null)
+		return ValidateResult(value2, null, label)
 	}
 
-	/**
-	 * 运算规则子表达式
-	 *
-	 * @param subRule 规则子表达式
-	 * @param value 要校验的值
-	 * @param variables 变量
-	 * @param label 值的标识, 如orm中的字段名, 如请求中的表单域名
-	 * @return
-	 */
-	protected fun executeSubRule(subRule: SubRule, value: Any?, variables: Map<String, Any?>, label: String): Any? {
-		// 获得 1 函数名 2 函数参数
-		val (func, args) = subRule
-		// 调用校验方法
-		return ValidateFunc.get(func).execute(value, args, variables, label)
-	}
 }

@@ -2,10 +2,14 @@ package net.jkcode.jkutil.common
 
 import java.io.File
 import java.io.IOException
+import java.io.InputStream
 import java.net.JarURLConnection
 import java.net.URL
 import java.text.DecimalFormat
 import java.util.*
+import org.mozilla.universalchardet.Constants
+import org.mozilla.universalchardet.UniversalDetector
+import java.io.FileInputStream
 
 
 /****************************** 文件大小 *******************************/
@@ -51,6 +55,49 @@ public fun bytes2FileSize(size: Long): String {
     val digitGroups = (Math.log10(size.toDouble()) / Math.log10(1024.0)).toInt()
     return DecimalFormat("#,##0.#").format(size / Math.pow(1024.0, digitGroups.toDouble())) +
             " " + fileSizeUnits[digitGroups]
+}
+
+/****************************** 编码 *******************************/
+/**
+ * 是否utf8编码
+ */
+public fun File.isValidUTF8(): Boolean {
+    return Constants.CHARSET_UTF_8.equals(this.detectedCharset())
+}
+
+/**
+ * 是否utf8编码
+ */
+public fun InputStream.isValidUTF8(): Boolean {
+    return Constants.CHARSET_UTF_8.equals(this.detectedCharset())
+}
+
+/**
+ * 识别编码
+ */
+public fun File.detectedCharset(): String {
+    return FileInputStream(this).detectedCharset()
+}
+
+/**
+ * 识别编码
+ */
+public fun InputStream.detectedCharset(): String {
+    return this.use {
+        val detector = UniversalDetector(null)
+        val buf = ByteArray(4096)
+        while (true) {
+            val nread = this.read(buf)
+            if (nread == 0 || detector.isDone())
+                break
+
+            detector.handleData(buf, 0, nread)
+        }
+        detector.dataEnd()
+
+        detector.getDetectedCharset()
+    }
+
 }
 
 /****************************** 文件路径 *******************************/

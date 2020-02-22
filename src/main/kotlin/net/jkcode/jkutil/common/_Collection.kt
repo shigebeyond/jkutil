@@ -8,6 +8,7 @@ import java.net.URLEncoder
 import java.util.*
 import java.util.concurrent.ConcurrentLinkedQueue
 import java.util.concurrent.ConcurrentMap
+import kotlin.collections.HashSet
 
 /****************************** 扩展 Array + Collection *****************************/
 
@@ -361,11 +362,59 @@ public fun Iterator<*>.toDesc(): String {
 }
 
 /**
+ * Returns `true` if all elements match the given [predicate].
+ */
+public inline fun <T> Enumeration<T>.all(predicate: (T) -> Boolean): Boolean {
+    for (element in this)
+        if (!predicate(element))
+            return false
+    return true
+}
+
+/**
+ * Returns `true` if collection has at least one element.
+ */
+public fun <T> Enumeration<T>.any(): Boolean {
+    return iterator().hasNext()
+}
+
+/**
+ * Returns `true` if at least one element matches the given [predicate].
+ */
+public inline fun <T> Enumeration<T>.any(predicate: (T) -> Boolean): Boolean {
+    for (element in this) if (predicate(element))
+        return true
+    return false
+}
+
+/**
+ * Returns a set containing all elements that are contained by this collection and not contained by the specified collection.
+ *
+ * The returned set preserves the element iteration order of the original collection.
+ */
+public infix fun <T> Enumeration<T>.subtract(other: Enumeration<T>): Set<T> {
+    val set = HashSet<T>()
+    for(e in this){
+        if(!other.contains(e))
+            set.add(e)
+    }
+    return set
+}
+
+/**
+ * 包含
+ */
+public infix fun <T> Enumeration<T>.contains(e: T): Boolean {
+    return this.any {
+        it == e
+    }
+}
+
+/**
  * 遍历枚举
  * @param action
  */
 public fun <T> Enumeration<T>.forEach(action: (T) -> Unit){
-
     for (element in this) {
         action(element)
     }

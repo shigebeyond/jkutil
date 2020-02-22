@@ -18,17 +18,28 @@ import kotlin.reflect.full.memberFunctions
  * @author shijianhang
  * @date 2016-10-19 下午3:40:55
  */
-data class ValidateResult(public val value: Any?, public val error: String?){
+data class ValidateResult(
+        public val value: Any?,
+        public val error: Any?, // 对象字段的错误, 可能是 String 或 Map<String, String>
+        public val name: String // 对象名
+){
+
+    /**
+     * 是否有错
+     */
+    public fun hasErrors(): Boolean {
+        return !(error == null || error is Map<*, *> && error.isEmpty()) // 错误不为空
+    }
 
     /**
      * 获得结果值或抛出异常
      *   如果错误为null, 则返回value, 否则抛异常
      */
     public fun getOrThrow(): Any? {
-        if(error == null)
+        if(hasErrors())
             return value
 
-        throw ValidateException(error)
+        throw ValidateException(this)
     }
 
 }
@@ -81,6 +92,12 @@ class ValidateFunc(protected val func: KFunction<*> /* 方法 */) : IValidateFun
         }
     }
 
+    init {
+        // 获得函数
+        if(func == null)
+            throw IllegalArgumentException("不存在校验方法${this.func}");
+    }
+
     /**
      * 函数名
      */
@@ -96,11 +113,7 @@ class ValidateFunc(protected val func: KFunction<*> /* 方法 */) : IValidateFun
      * @param label 值的标识, 如orm中的字段名, 如请求中的表单域名
      * @return 校验结果: 1. 如果是预言函数, value为原值, 否则value为执行结果 2. error为null则校验成功
      */
-    public override fun execute(value:Any?, args:Array<String>, variables:Map<String, Any?>, label:String): ValidateResult{
-        // 获得函数
-        if(func == null)
-            throw ValidateException("不存在校验方法${this.func}");
-
+    public override fun execute(value:Any?, args:List<String>, variables:Map<String, Any?>, label:String): ValidateResult{
         try{
             // 其他参数
             var i = 2 // 从第三个参数开始
@@ -120,15 +133,15 @@ class ValidateFunc(protected val func: KFunction<*> /* 方法 */) : IValidateFun
                 // 如果预言失败, 则抛 ValidateException 异常
                 if(result == false) {
                     val message: String = messages[name]!!
-                    return ValidateResult(null, label + message.replaces(args));
+                    return ValidateResult(null, label + message.replaces(args), label);
                 }
 
                 // 返回原值
-                return ValidateResult(value, null)
+                return ValidateResult(value, null, label)
             }
 
             // 否则返回执行结果
-            return ValidateResult(result, null)
+            return ValidateResult(result, null, label)
         }catch (e:Exception){
             throw Exception("调用校验方法出错：" + name + "(" + args.joinToString(",") + ")", e)
         }
