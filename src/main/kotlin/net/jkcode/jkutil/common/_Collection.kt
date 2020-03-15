@@ -237,6 +237,16 @@ public inline fun <T, K> Iterable<T>.groupCount(keySelector: (T) -> K): Map<K, I
     return counter
 }
 
+
+/**
+ * 包含
+ */
+public infix fun <T> Collection<T>.containsAny(c: Collection<T>): Boolean {
+    return this.any {
+        c.contains(it)
+    }
+}
+
 /****************************** progression *****************************/
 /**
  * 大小

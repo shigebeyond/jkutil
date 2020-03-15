@@ -58,6 +58,21 @@ public fun Date.format(pattern: String = "yyyy-MM-dd HH:mm:ss"): String {
 }
 
 /**
+ * 日期格式化
+ *    字符串转日期, 参考 String.toDate()
+ *
+ * @param pattern 格式
+ * @return
+ */
+public fun Date.format(hasTime: Boolean): String {
+    val pattern: String = if(hasTime) "yyyy-MM-dd HH:mm:ss" else "yyyy-MM-dd"
+    return dateFormats.get().getOrPut(pattern){
+                SimpleDateFormat(pattern)
+            }
+            .format(this)
+}
+
+/**
  * 输出时间
  *
  * @return

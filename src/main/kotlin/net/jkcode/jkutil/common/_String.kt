@@ -307,24 +307,6 @@ val dateFormat = SimpleDateFormat("yyyy-MM-dd")
 val datetimeFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
 
 /**
- * 尝试将string转为int
- * @param default 转换失败的默认值
- * @return
- *
- */
-public fun String?.tryToInt(default: Int = 0): Int{
-    if(this.isNullOrBlank())
-        return default
-
-    try{
-        return this.toInt()
-    } catch (ex: Exception) {
-        return default
-    }
-
-}
-
-/**
  * 转换为日期类型
  * @param isFullTime 充满时间
  * @return

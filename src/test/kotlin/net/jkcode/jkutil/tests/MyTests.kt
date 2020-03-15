@@ -317,6 +317,7 @@ class MyTests{
 
     @Test
     fun testNumber(){
+        /*
         // 求余: 可能是负数
         var j = -9
         // 优先级: % > and
@@ -324,6 +325,7 @@ class MyTests{
         println((j and Integer.MAX_VALUE) % 10) // 9
         println(j and (Integer.MAX_VALUE % 10)) // 7
         println("------------")
+        */
 
         //val io:Integer = 1
         //val i:Int = io
@@ -340,6 +342,16 @@ class MyTests{
             }
         }
         println(i) // 0*/
+
+
+
+        println("1".toInt())
+        println("a1".toIntOrNull())
+        println("a1".toInt())
+
+        println("1.1".toDouble())
+        println("a1.1".toDoubleOrNull())
+//        println("a1.1".toDouble())
     }
 
     @Test
@@ -581,6 +593,13 @@ class MyTests{
         //println("a/b/c".substringBeforeLast('/'))
 
         println("hello".reversed())
+
+        // 不足2个, 则抛异常: java.lang.IndexOutOfBoundsException: Index: 1, Size: 1
+        /*val (k1, k2) = "a".split(".", limit = 2)
+        println(k1)
+        println(k2)*/
+
+        println(byteArrayOf(1).javaClass)
     }
 
     @Test

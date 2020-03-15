@@ -1,11 +1,13 @@
 package net.jkcode.jkutil.tests
 
+import net.jkcode.jkutil.common.lcFirst
 import net.jkcode.jkutil.common.replaceText
 import net.jkcode.jkutil.common.travel
 import net.jkcode.jkutil.common.trim
 import org.junit.Test
 import java.io.File
-import java.util.HashSet
+import java.util.*
+import kotlin.collections.ArrayList
 
 class CodeTests {
 
@@ -362,102 +364,6 @@ class CodeTests {
             }
         }
         return ranges
-    }
-
-
-
-
-    fun testFixController()
-    {
-        val dir = File("/home/shi/test/replace")
-        dir.travel { file ->
-            if (!file.name.endsWith("Controller.kt"))
-                return@travel
-
-            println("fix file: ${file.name}")
-            val content = file.readText()
-
-            // 解析 @RequestParam 注解
-            val pAnnParam = "([^\\)]*)"; // 注解参数: @RequestParam(参数) -- 序号 2
-            val pName = "([_\\w\\d]+)"; // 形参名 -- 序号 3
-            val pType = "(\\w+)"; // 参数类型 -- 序号 4
-            val pEnd = "(,|\\)[\\w\\s]*\\{)"; // 结束符号 -- 序号5
-            val pattern = "@RequestParam(\\($pAnnParam\\))?\\s*$pName\\s*:\\s*$pType\\??\\s*$pEnd";
-
-            // 替换
-            var newContent = pattern.toRegex().replace(content){ mat: MatchResult ->
-                // 解析结果
-                val annParam = mat.groupValues[2]; // 注解参数
-                val name = mat.groupValues[3]; // 形参名
-                val type = mat.groupValues[4]; // 参数类型
-                val end = mat.groupValues[5]; // 结束符号
-
-                // 处理 RequestParam, 转为 jkmvc的代码
-                var exp = this.buildExp(annParam, name, type);
-
-                // 函数开头 加{
-                if (this.funStart) {
-                    this.funStart = false;
-                    exp = "${end}\\n" . exp;
-                }
-
-                // 下一个标识为 函数开头
-                if (end.contains("{"))
-                    this.funStart = true;
-
-                return exp;
-            }
-
-
-            // 去掉 writer: Writer,
-            newContent = newContent.replace("writer: Writer, ", "");
-
-            // 去掉 @Controller
-            newContent = newContent.replace("@Controller", "");
-
-            // 去掉 @Autowired
-            newContent = newContent.replace("@Autowired", "");
-
-            if (content != newContent) {
-                file.writeText(newContent)
-            }
-        }
-    }
-
-
-    /**
-     * 构建 jkmvc 表达式
-     * @param annParam 注解参数
-     * @param name 形参名
-     * @param type 参数类型
-     */
-    fun buildExp(annParam: String?, name: String, type: String): String {
-        // 是否必须
-        var required = true;
-        if (annParam != null && "required\\s*=\\s*false".toRegex().matches(annParam))
-            required = false;
-
-        // 请求参数名
-        var param = name;
-        if(annParam != null) {
-            // 指定value
-            val mat2 = "value\\s*=\\s*\"(.+)\"".toRegex().find(annParam)
-            if(mat2 != null){
-                param = mat2.groupValues[1];
-            }
-
-            // 自身就是参数名
-            else if(annParam.contains("="))
-                param = annParam.replace("\"", "");
-        }
-
-        var exp = "val name: type = ";
-        if (required)
-            exp += "req.getNotNull(\"$param\")";
-        else
-            exp += "req[\"$param\"]";
-
-        return "\t\t$exp\n";
     }
 
     /**

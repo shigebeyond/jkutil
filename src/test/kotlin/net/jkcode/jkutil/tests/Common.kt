@@ -33,6 +33,8 @@ class Lambda {
 
 data class Thing(val name: String, val weight: Int)
 
+data class Address(val value: String, val alias: String? = null)
+
 
 data class Man(var name: String, var age: Int): Cloneable, Serializable{
     val id = generateId("man")
@@ -48,6 +50,11 @@ data class Man(var name: String, var age: Int): Cloneable, Serializable{
 
 class Family(val master: Man, val members: List<Man>): Cloneable, Serializable{
 
+    val address: Address = Address("HongKong, China", "home")
+
+    // 也会输出到xml中
+    val size: Int = members.size
+
     var deepClone: Boolean = false
 
     public override fun clone(): Any {
@@ -57,5 +64,9 @@ class Family(val master: Man, val members: List<Man>): Cloneable, Serializable{
         if(deepClone)
             o.cloneProperties("master", "members")
         return o
+    }
+
+    override fun toString(): String {
+        return "${javaClass.name}: master=<$master>, members=<$members>, address=<$address>"
     }
 }

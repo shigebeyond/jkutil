@@ -16,6 +16,9 @@
 		// xml
 		compile 'dom4j:dom4j:1.6.1'
 		compile 'sax:sax:2.0.1'
+		// 序列化与反序列化xml
+		compile 'com.thoughtworks.xstream:xstream:1.4.11.1'
+		compile 'org.simpleframework:simple-xml:2.7.1'
 
 		// yaml
 		compile 'org.yaml:snakeyaml:1.18'

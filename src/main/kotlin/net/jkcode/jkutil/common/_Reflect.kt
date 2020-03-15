@@ -282,6 +282,19 @@ public fun <T: Any> KClass<T>.getProperty(name:String): KProperty1<T, *>?{
 }
 
 /**
+ * 动态获得属性追
+ * @param name 属性名
+ * @return 属性值
+ */
+public fun Any?.getPropertyValue(name:String):Any?{
+    if(this == null)
+        return null
+
+    val prop = this::class.getProperty(name) as KProperty1<Any, *>
+    return prop?.get(this)
+}
+
+/**
  * 查找静态属性
  * @param name 属性名
  * @return
