@@ -175,6 +175,20 @@ public operator fun <E> Collection<E>.get(index: Int): E {
 }
 
 /**
+ * Returns a list containing only the non-null/blank string results of applying the given [transform] function
+ * to each element in the original collection.
+ */
+public inline fun <T, String> Iterable<T>.mapNotNullOrBlankString(transform: (T) -> String?): List<String> {
+    val result = ArrayList<String>()
+    forEach { element ->
+        transform(element)?.let {
+            result.add(it)
+        }
+    }
+    return result
+}
+
+/**
  * 集合转数组
  *   注: Array<R> 不能使用R作为泛型参数, 只能使用具体类
  */
@@ -244,6 +258,17 @@ public inline fun <T, K> Iterable<T>.groupCount(keySelector: (T) -> K): Map<K, I
 public infix fun <T> Collection<T>.containsAny(c: Collection<T>): Boolean {
     return this.any {
         c.contains(it)
+    }
+}
+
+/**
+ * 添加另外一个集合的转换后的元素
+ * @param c
+ * @param transform 元素转换函数
+ */
+public fun <R, T> MutableCollection<R>.addAllMap(c: Collection<T>, transform: (T) -> R){
+    for(e in c){
+        this.add(transform(e))
     }
 }
 
