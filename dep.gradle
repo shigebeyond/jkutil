@@ -45,6 +45,10 @@
 		// http
 		compile "org.apache.httpcomponents:httpclient:4.5.4"
 
+		// zookeeper
+		compile "org.apache.zookeeper:zookeeper:$zk_version"
+		compile "com.101tec:zkclient:$zkclient_version"
+
 		// netty -- 用到 HashedWheelTimer
 		compile "io.netty:netty-all:$netty_version"
 

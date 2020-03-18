@@ -290,7 +290,7 @@ private fun getResourceRelativePath(absolutePath: String, rootPath: String): Str
      * 文件绝对路径:       /home/shi/code/java/java/jksoa/jksoa-rpc/jksoa-rpc-client/out/production/classes/com/jksoa/example/EchoService.class
      * 参考: ClientTests.testScanClass()
      *
-     * classLoader根目录: /home/shi/code/java/jksoa/jksoa-job/out/test/classes/
+     * classLoader根目录: /home/shi/code/java/jkjob/out/test/classes/
      * 文件绝对路径:       /home/shi/code/java/jksoa/jksoa-common/out/production/classes/com/jksoa/example/ISimpleService$DefaultImpls.class
      * 参考: JobTests.testRpcJob()
      *

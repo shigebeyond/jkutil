@@ -346,8 +346,8 @@ class MyTests{
 
 
         println("1".toInt())
-        println("a1".toIntOrNull())
-        println("a1".toInt())
+        println("a1".toIntOrNull()) // 无异常
+        println("a1".toInt()) // 有异常
 
         println("1.1".toDouble())
         println("a1.1".toDoubleOrNull())
