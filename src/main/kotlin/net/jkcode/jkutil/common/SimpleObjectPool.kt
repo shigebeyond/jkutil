@@ -36,7 +36,7 @@ class SimpleObjectPool<T>(maxTotal: Int = -1, factory: () -> T): GenericObjectPo
     /**
      * 输出空闲对象
      */
-    internal fun printIdleObjects(){
+    fun printIdleObjects(){
         val idleObjects = idleObjectsField.get(this) as Collection<PooledObject<T>>
         val msg = idleObjects.joinToString(", ", "idleObjects[" + idleObjects.size + "] = [", "]") {
             "" + System.identityHashCode(it.`object`) + " - " + it.`object`
@@ -47,7 +47,7 @@ class SimpleObjectPool<T>(maxTotal: Int = -1, factory: () -> T): GenericObjectPo
     /**
      * 输出所有对象
      */
-    internal fun printAllObjects(){
+    fun printAllObjects(){
         val allObjects = allObjectsField.get(this) as Map<*, PooledObject<T>>
         val msg = allObjects.values.joinToString(", ", "idleObjects[" + allObjects.size + "] = [", "]") {
             "" + System.identityHashCode(it.`object`) + " - " + it.`object`
