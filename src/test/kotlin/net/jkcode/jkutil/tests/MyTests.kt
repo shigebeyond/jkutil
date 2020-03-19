@@ -599,7 +599,10 @@ class MyTests{
         println(k1)
         println(k2)*/
 
-        println(byteArrayOf(1).javaClass)
+//        println(byteArrayOf(1).javaClass)
+        val str = "a.b.c.d"
+        println(str.substring(0, str.lastIndexOf("c.")))
+        println(str.substringBeforeLast("c."))
     }
 
     @Test

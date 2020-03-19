@@ -103,6 +103,43 @@ public fun String.unicodeDecode(): String {
     return buffer.toString()
 }
 
+/**
+ * Returns a substring after the first occurrence of [delimiter], including [delimiter]
+ * If the string does not contain the delimiter, returns [missingDelimiterValue] which defaults to the original string.
+ */
+public fun String.substringAfterInclude(delimiter: String, missingDelimiterValue: String = this): String {
+    val index = indexOf(delimiter)
+    return if (index == -1) missingDelimiterValue else substring(index, length)
+}
+
+/**
+ * Returns a substring after the first occurrence of [delimiter], including [delimiter]
+ * If the string does not contain the delimiter, returns [missingDelimiterValue] which defaults to the original string.
+ */
+public fun String.substringAfterLastInclude(delimiter: String, missingDelimiterValue: String = this): String {
+    val index = lastIndexOf(delimiter)
+    return if (index == -1) missingDelimiterValue else substring(index, length)
+}
+
+/**
+ * 截取开始字符与结束字符之间的子字符串
+ * @param start
+ * @param end
+ * @return
+ */
+public inline fun String.substringBetween(start: String, end: String): String {
+    return substring(indexOf(start) + 1, indexOf(end))
+}
+
+/**
+ * 截取开始字符与结束字符之间的子字符串
+ * @param start
+ * @param end
+ * @return
+ */
+public inline fun String.substringBetween(start: Char, end: Char): String {
+    return substring(indexOf(start) + 1, indexOf(end))
+}
 
 /**
  * StringBuilder扩展
