@@ -6,7 +6,7 @@ import net.jkcode.jkutil.common.JkException
  * 校验异常
  *   不需要`cause: Throwable?`, 因为 errors 已包含异常信息
  */
-class ValidateException(val result: ValidateResult) : JkException() {
+class ValidateException(val result: ValidateResult<*>) : JkException() {
 
     /**
      * 消息

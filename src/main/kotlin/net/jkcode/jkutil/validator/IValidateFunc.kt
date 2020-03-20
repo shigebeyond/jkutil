@@ -18,5 +18,5 @@ interface IValidateFunc {
      * @param label 值的标识, 如orm中的字段名, 如请求中的表单域名
      * @return 校验结果: 1. 如果是预言函数, value为原值, 否则value为执行结果 2. error为null则校验成功
      */
-    fun execute(value: Any?, params: List<String>, variables: Map<String, Any?>, label: String): ValidateResult
+    fun execute(value: Any?, params: List<String>, variables: Map<String, Any?>, label: String): ValueValidateResult
 }

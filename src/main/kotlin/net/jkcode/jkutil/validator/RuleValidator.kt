@@ -83,7 +83,7 @@ class RuleValidator(public val label: String /* 值的标识, 如orm中的字段
 	 * @param variables 变量
 	 * @return 校验结果: 1. 如果是预言函数, value为原值, 否则value为执行结果 2. error为null则校验成功
 	 */
-	public override fun validate(value:Any?, variables:Map<String, Any?>): ValidateResult {
+	public override fun validate(value:Any?, variables:Map<String, Any?>): ValueValidateResult {
 		if(subRules.isEmpty())
 			return ValidateResult(value, null, label)
 

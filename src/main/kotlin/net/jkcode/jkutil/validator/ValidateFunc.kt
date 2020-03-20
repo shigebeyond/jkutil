@@ -10,6 +10,12 @@ import kotlin.reflect.KFunction
 import kotlin.reflect.KType
 import kotlin.reflect.full.memberFunctions
 
+// 单个字段值的校验结果
+typealias ValueValidateResult = ValidateResult<String>
+
+// 对象(多个字段值)的校验结果
+typealias ModelValidateResult = ValidateResult<Map<String, String>>
+
 /**
  * 校验结果
  *    值 + 错误
@@ -18,9 +24,9 @@ import kotlin.reflect.full.memberFunctions
  * @author shijianhang
  * @date 2016-10-19 下午3:40:55
  */
-data class ValidateResult(
-        public val value: Any?,
-        public val error: Any?, // 对象字段的错误, 可能是 String 或 Map<String, String>
+data class ValidateResult<E>(
+        public val value: Any?, // 单个字段值 或 对象(多个字段值)
+        public val error: E?, // 对象字段的错误, 可能是 String(单个字段错误) 或 Map<String, String>(多个字段错误)
         public val name: String // 对象名
 ){
 
@@ -113,7 +119,7 @@ class ValidateFunc(protected val func: KFunction<*> /* 方法 */) : IValidateFun
      * @param label 值的标识, 如orm中的字段名, 如请求中的表单域名
      * @return 校验结果: 1. 如果是预言函数, value为原值, 否则value为执行结果 2. error为null则校验成功
      */
-    public override fun execute(value:Any?, args:List<String>, variables:Map<String, Any?>, label:String): ValidateResult{
+    public override fun execute(value:Any?, args:List<String>, variables:Map<String, Any?>, label:String): ValueValidateResult{
         try{
             // 其他参数
             var i = 2 // 从第三个参数开始
