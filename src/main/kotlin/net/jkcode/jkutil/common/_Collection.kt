@@ -114,28 +114,28 @@ public fun Any.isArrayOrCollectionEmpty(): Boolean {
 public fun Any.iteratorArrayOrCollection(): Iterator<*>? {
     if(this is Array<*>)
         return this.iterator()
-        
+
     if(this is IntArray)
         return this.iterator()
-        
+
     if(this is ShortArray)
         return this.iterator()
-        
+
     if(this is LongArray)
         return this.iterator()
-        
+
     if(this is FloatArray)
         return this.iterator()
-        
+
     if(this is DoubleArray)
         return this.iterator()
-        
+
     if(this is BooleanArray)
         return this.iterator()
-        
+
     if(this is Collection<*>)
         return this.iterator()
-        
+
     return null
 }
 
@@ -224,6 +224,64 @@ public inline fun <T, reified R> Array<T>.mapIndexedToArray(transform: (i: Int, 
         i++
     }
     return arr as Array<R>
+}
+
+// 空选项
+public val emptyOption = toOptionMap("", "")
+
+/**
+ * 封装为选项的map
+ * @param value
+ * @param label
+ * @return
+ */
+public inline fun toOptionMap(value: String, label: String): Map<String, String> {
+    return mapOf(
+            "value" to value,
+            "label" to label
+    )
+}
+
+/**
+ * 添加选项的map
+ * @param value
+ * @param label
+ * @return
+ */
+public inline fun MutableCollection<Map<String, String>>.addOptionMap(value: String, label: String){
+    this.add(toOptionMap(value, label))
+}
+
+/**
+ * 对象列表转为选项列表
+ * @param withEmpty 是否带空选项
+ * @param transform 转换函数
+ * @return
+ */
+public inline fun <T> Collection<T>.toOptions(withEmpty: Boolean = false, transform: (T) -> Pair<String, String>?): List<Map<String, Any?>> {
+    if(this.isEmpty())
+        return if(withEmpty) listOf(emptyOption) else emptyList()
+
+    val result = ArrayList<Map<String, Any?>>()
+    if(withEmpty)
+        result.add(emptyOption)
+    return toOptions(result, transform)
+}
+
+/**
+ * 对象列表转为选项列表
+ * @param list 要存储的结果
+ * @param transform 转换函数
+ * @return
+ */
+public inline fun <T> Collection<T>.toOptions(list: MutableList<Map<String, Any?>>, transform: (T) -> Pair<String, String>?): List<Map<String, Any?>> {
+    return this.mapNotNullTo(list) {
+        val o = transform(it)
+        if(o == null)
+            null
+        else
+            toOptionMap(o.first, o.second)
+    }
 }
 
 /**

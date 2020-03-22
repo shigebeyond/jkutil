@@ -16,7 +16,7 @@ abstract class JkException : RuntimeException {
     /**
      * 消息要带上id
      */
-    public override val message: String?
+    public override val message: String
         get(){
             val message = super.message ?: ""
             return "$message - $id"

@@ -11,7 +11,7 @@ class ValidateException(val result: ValidateResult<*>) : JkException() {
     /**
      * 消息
      */
-    public override val message: String?
+    public override val message: String
         get(){
             val error = result.error
             return if(error is Map<*, *>){ // 多个错误

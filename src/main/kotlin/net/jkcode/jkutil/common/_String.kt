@@ -61,9 +61,9 @@ public fun Char.isChinese(): Boolean {
 /**
  * Unicode编码
  */
-public fun unicodeEncode(str: String): String {
+public fun String.unicodeEncode(): String {
     val builder = StringBuilder()
-    for (c in str) {
+    for (c in this) {
         val code = c.toInt()
         if (code >= 0 && code <= 127) {
             builder.append(c)

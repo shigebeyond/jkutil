@@ -22,8 +22,8 @@ import io.netty.handler.ssl.util.InsecureTrustManagerFactory.INSTANCE as Insecur
  * @date 2019-10-19 12:48 PM
  */
 class HttpClient(
-        public val endpoint: String, // 服务端地址
-        insecure: Boolean = false, // 不安全
+        public val endpoint: String = "", // 服务端地址
+        public val insecure: Boolean = false, // 不安全
         public val useCookies: Boolean = true, // 使用cookie
         public val headers: Map<String, List<String>> = emptyMap(), // 请求头
         password: String? = null, // 认证的密码
@@ -63,6 +63,12 @@ class HttpClient(
     protected val cookies: MutableMap<String, Cookie> = HashMap()
 
     /**
+     * 协议
+     */
+    protected val protocol: String
+        get() = if(insecure) "http" else "https"
+
+    /**
      * 发送请求
      *
      * @param method
@@ -72,9 +78,12 @@ class HttpClient(
      * @param requestTimeout 请求超时
      * @return
      */
-    protected fun send(method: String, uri: String, body: Any? = null, contentType: ContentType = ContentType.APPLICATION_FORM_URLENCODED, requestTimeout: Int = 5000): CompletableFuture<Response> {
+    public fun send(method: String, uri: String, body: Any? = null, contentType: ContentType = ContentType.APPLICATION_FORM_URLENCODED, headers: Map<String, String> = emptyMap(), requestTimeout: Int = 5000): CompletableFuture<Response> {
         // 1 准备http请求
-        val url = endpoint + uri
+        val url = if(uri.startsWith("http"))
+                    uri
+                else
+                    "$protocol://$endpoint/$uri"
         //val req = client.preparePost(url)
         val req = requestBuilderMethod.invoke(client, method, url) as BoundRequestBuilder
         req.setCharset(Charset.defaultCharset())
@@ -84,7 +93,10 @@ class HttpClient(
             req.addHeader("Content-Type", contentType)
         if (authorization != null)
             req.addHeader("Authorization", "Basic $authorization")
-        headers.forEach {
+        this.headers.forEach { // 全局的header
+            req.addHeader(it.key, it.value)
+        }
+        headers.forEach { // 当前请求的header
             req.addHeader(it.key, it.value)
         }
         // 3 设置cookie
@@ -126,8 +138,8 @@ class HttpClient(
      * @param requestTimeout 请求超时
      * @return
      */
-    public fun get(uri: String, body: Any? = null, contentType: ContentType = ContentType.APPLICATION_FORM_URLENCODED, requestTimeout: Int = 5000): CompletableFuture<Response> {
-        return send("GET", uri, body, contentType, requestTimeout)
+    public fun get(uri: String, body: Any? = null, contentType: ContentType = ContentType.APPLICATION_FORM_URLENCODED, headers: Map<String, String> = emptyMap(), requestTimeout: Int = 5000): CompletableFuture<Response> {
+        return send("GET", uri, body, contentType, headers, requestTimeout)
     }
 
     /**
@@ -139,8 +151,8 @@ class HttpClient(
      * @param requestTimeout 请求超时
      * @return
      */
-    public fun head(uri: String, body: Any? = null, contentType: ContentType = ContentType.APPLICATION_FORM_URLENCODED, requestTimeout: Int = 5000): CompletableFuture<Response> {
-        return send("HEAD", uri, body, contentType, requestTimeout)
+    public fun head(uri: String, body: Any? = null, contentType: ContentType = ContentType.APPLICATION_FORM_URLENCODED, headers: Map<String, String> = emptyMap(), requestTimeout: Int = 5000): CompletableFuture<Response> {
+        return send("HEAD", uri, body, contentType, headers, requestTimeout)
     }
     /**
      * 发送get请求
@@ -151,8 +163,8 @@ class HttpClient(
      * @param requestTimeout 请求超时
      * @return
      */
-    public fun post(uri: String, body: Any? = null, contentType: ContentType = ContentType.APPLICATION_FORM_URLENCODED, requestTimeout: Int = 5000): CompletableFuture<Response> {
-        return send("POST", uri, body, contentType, requestTimeout)
+    public fun post(uri: String, body: Any? = null, contentType: ContentType = ContentType.APPLICATION_FORM_URLENCODED, headers: Map<String, String> = emptyMap(), requestTimeout: Int = 5000): CompletableFuture<Response> {
+        return send("POST", uri, body, contentType, headers, requestTimeout)
     }
     /**
      * 发送get请求
@@ -163,8 +175,8 @@ class HttpClient(
      * @param requestTimeout 请求超时
      * @return
      */
-    public fun put(uri: String, body: Any? = null, contentType: ContentType = ContentType.APPLICATION_FORM_URLENCODED, requestTimeout: Int = 5000): CompletableFuture<Response> {
-        return send("PUT", uri, body, contentType, requestTimeout)
+    public fun put(uri: String, body: Any? = null, contentType: ContentType = ContentType.APPLICATION_FORM_URLENCODED, headers: Map<String, String> = emptyMap(), requestTimeout: Int = 5000): CompletableFuture<Response> {
+        return send("PUT", uri, body, contentType, headers, requestTimeout)
     }
     /**
      * 发送get请求
@@ -175,8 +187,8 @@ class HttpClient(
      * @param requestTimeout 请求超时
      * @return
      */
-    public fun delete(uri: String, body: Any? = null, contentType: ContentType = ContentType.APPLICATION_FORM_URLENCODED, requestTimeout: Int = 5000): CompletableFuture<Response> {
-        return send("DELETE", uri, body, contentType, requestTimeout)
+    public fun delete(uri: String, body: Any? = null, contentType: ContentType = ContentType.APPLICATION_FORM_URLENCODED, headers: Map<String, String> = emptyMap(), requestTimeout: Int = 5000): CompletableFuture<Response> {
+        return send("DELETE", uri, body, contentType, headers, requestTimeout)
     }
     /**
      * 发送get请求
@@ -187,8 +199,8 @@ class HttpClient(
      * @param requestTimeout 请求超时
      * @return
      */
-    public fun trace(uri: String, body: Any? = null, contentType: ContentType = ContentType.APPLICATION_FORM_URLENCODED, requestTimeout: Int = 5000): CompletableFuture<Response> {
-        return send("TRACE", uri, body, contentType, requestTimeout)
+    public fun trace(uri: String, body: Any? = null, contentType: ContentType = ContentType.APPLICATION_FORM_URLENCODED, headers: Map<String, String> = emptyMap(), requestTimeout: Int = 5000): CompletableFuture<Response> {
+        return send("TRACE", uri, body, contentType, headers, requestTimeout)
     }
     /**
      * 发送get请求
@@ -199,8 +211,8 @@ class HttpClient(
      * @param requestTimeout 请求超时
      * @return
      */
-    public fun options(uri: String, body: Any? = null, contentType: ContentType = ContentType.APPLICATION_FORM_URLENCODED, requestTimeout: Int = 5000): CompletableFuture<Response> {
-        return send("OPTIONS", uri, body, contentType, requestTimeout)
+    public fun options(uri: String, body: Any? = null, contentType: ContentType = ContentType.APPLICATION_FORM_URLENCODED, headers: Map<String, String> = emptyMap(), requestTimeout: Int = 5000): CompletableFuture<Response> {
+        return send("OPTIONS", uri, body, contentType, headers, requestTimeout)
     }
     /**
      * 发送get请求
@@ -211,8 +223,8 @@ class HttpClient(
      * @param requestTimeout 请求超时
      * @return
      */
-    public fun patch(uri: String, body: Any? = null, contentType: ContentType = ContentType.APPLICATION_FORM_URLENCODED, requestTimeout: Int = 5000): CompletableFuture<Response> {
-        return send("PATCH", uri, body, contentType, requestTimeout)
+    public fun patch(uri: String, body: Any? = null, contentType: ContentType = ContentType.APPLICATION_FORM_URLENCODED, headers: Map<String, String> = emptyMap(), requestTimeout: Int = 5000): CompletableFuture<Response> {
+        return send("PATCH", uri, body, contentType, headers, requestTimeout)
     }
 }
 
