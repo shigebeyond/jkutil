@@ -18,9 +18,10 @@ import kotlin.collections.HashMap
  * @author shijianhang
  * @date 2016-10-8 下午8:02:47
  */
-class Config(public override val props: Map<String, *>, // 配置项
-             public override val file: String = "", // 配置文件
-             public override val merging: Boolean = false // 是否合并
+open class Config(
+        public override val props: Map<String, *>, // 配置项
+        public override val file: String = "", // 配置文件
+        public override val merging: Boolean = false // 是否合并
 ): IConfig(){
 
     companion object{
