@@ -36,14 +36,14 @@ eg. `jkmvc/jkmvc-orm/src/main/resources/dataSources.yaml`
 default:
   # master database
   master:
-    driverClass: com.mysql.jdbc.Driver
+    driverClassName: com.mysql.jdbc.Driver
     url: jdbc:mysql://127.0.0.1/test?useUnicode=true&characterEncoding=utf-8
     username: root
     password: root
   # multiple slave databases
   slaves:
     -
-      driverClass: com.mysql.jdbc.Driver
+      driverClassName: com.mysql.jdbc.Driver
       url: jdbc:mysql://127.0.0.1/test?useUnicode=true&characterEncoding=utf-8
       username: root
       password: root

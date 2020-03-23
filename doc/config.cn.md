@@ -36,14 +36,14 @@ httponly = false
 default:
   # 主库
   master:
-    driverClass: com.mysql.jdbc.Driver
+    driverClassName: com.mysql.jdbc.Driver
     url: jdbc:mysql://127.0.0.1/test?useUnicode=true&characterEncoding=utf-8
     username: root
     password: root
   # 多个从库, 可省略
   slaves:
     -
-      driverClass: com.mysql.jdbc.Driver
+      driverClassName: com.mysql.jdbc.Driver
       url: jdbc:mysql://127.0.0.1/test?useUnicode=true&characterEncoding=utf-8
       username: root
       password: root
