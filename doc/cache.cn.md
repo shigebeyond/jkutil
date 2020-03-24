@@ -14,7 +14,7 @@ jedis: net.jkcode.jkmvc.cache.JedisCache
 
 ```
 default:
-    address: 127.0.0.1:6379 # 可多个节点, 使用逗号分隔
+    address: 127.0.0.1:6379 # 可多个节点, 使用逗号分隔, 选择db加/
     password:
     dbname:
     # 序列器类型

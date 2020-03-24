@@ -318,4 +318,12 @@ open class Config(
     public override fun toString(): String {
         return "Config[$props]"
     }
+
+    override fun equals(other: Any?): Boolean {
+        return other is Config && props == other.props
+    }
+
+    override fun hashCode(): Int {
+        return props.hashCode()
+    }
 }
