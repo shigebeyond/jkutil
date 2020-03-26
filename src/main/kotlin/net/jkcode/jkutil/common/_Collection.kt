@@ -258,11 +258,11 @@ public inline fun MutableCollection<Map<String, String>>.addOptionMap(value: Str
  * @param transform 转换函数
  * @return
  */
-public inline fun <T> Collection<T>.toOptions(withEmpty: Boolean = false, transform: (T) -> Pair<String, String>?): List<Map<String, Any?>> {
+public inline fun <T> Collection<T>.toOptions(withEmpty: Boolean = false, transform: (T) -> Pair<String, String>?): List<Map<String, String>> {
     if(this.isEmpty())
         return if(withEmpty) listOf(emptyOption) else emptyList()
 
-    val result = ArrayList<Map<String, Any?>>()
+    val result = ArrayList<Map<String, String>>()
     if(withEmpty)
         result.add(emptyOption)
     return toOptions(result, transform)
@@ -274,7 +274,7 @@ public inline fun <T> Collection<T>.toOptions(withEmpty: Boolean = false, transf
  * @param transform 转换函数
  * @return
  */
-public inline fun <T> Collection<T>.toOptions(list: MutableList<Map<String, Any?>>, transform: (T) -> Pair<String, String>?): List<Map<String, Any?>> {
+public inline fun <T> Collection<T>.toOptions(list: MutableList<Map<String, String>>, transform: (T) -> Pair<String, String>?): List<Map<String, String>> {
     return this.mapNotNullTo(list) {
         val o = transform(it)
         if(o == null)

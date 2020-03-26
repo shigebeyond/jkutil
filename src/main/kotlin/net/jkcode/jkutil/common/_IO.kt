@@ -1,9 +1,6 @@
 package net.jkcode.jkutil.common
 
-import java.io.File
-import java.io.FileInputStream
-import java.io.InputStream
-import java.io.OutputStream
+import java.io.*
 import java.util.zip.ZipEntry
 import java.util.zip.ZipInputStream
 
@@ -53,5 +50,15 @@ public fun ZipInputStream.forEacheEntry(action: (ZipEntry)->Unit){
                 break
             action(entry)
         }
+    }
+}
+
+/**
+ * 尝试关闭
+ */
+public fun Closeable?.tryClose(){
+    try {
+        this?.close()
+    } catch (e: Exception) {
     }
 }

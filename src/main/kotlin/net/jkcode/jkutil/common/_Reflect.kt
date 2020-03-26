@@ -17,7 +17,6 @@ import kotlin.reflect.full.memberFunctions
 import kotlin.reflect.full.staticFunctions
 import kotlin.reflect.full.staticProperties
 import kotlin.reflect.jvm.javaType
-import java.util.ArrayList
 
 /**
  * 尝试调用克隆方法
@@ -279,6 +278,28 @@ public fun <T: Any> KClass<T>.getProperty(name:String): KProperty1<T, *>?{
     return this.declaredMemberProperties.find {
         it.name == name;
     }
+}
+
+/**
+ * 动态获得多级属性追
+ * @param path 多级属性名
+ * @return 属性值
+ */
+public fun Any?.getPathPropertyValue(path:String):Any?{
+    if(this == null)
+        return null
+
+    if(path.contains(".")){
+        var value = this
+        for(name in path.split(".")){
+            value = value.getPropertyValue(name)
+            if(value == null)
+                break
+        }
+        return value
+    }
+
+    return this.getPropertyValue(path)
 }
 
 /**
@@ -718,6 +739,28 @@ public fun Class<*>.getAccessibleMethod(name: String, vararg parameterTypes: Cla
     val method = this.getDeclaredMethod(name, *parameterTypes)
     method.setAccessible(true)
     return method
+}
+
+// The CGLIB class separator: "$$"
+val CGLIB_CLASS_SEPARATOR = "$$"
+
+/**
+ * Return the user-defined class for the given class: usually simply the
+ * given class, but the original class in case of a CGLIB-generated
+ * subclass.
+ *
+ * @param clazz the class to check
+ * @return the user-defined class
+ */
+fun Any.getUserClass(): Class<*> {
+    val clazz: Class<*> = this.javaClass
+    if (clazz != null && clazz.name.contains(CGLIB_CLASS_SEPARATOR)) {
+        val superclass = clazz.superclass
+        if (superclass != null && Any::class.java != superclass) {
+            return superclass
+        }
+    }
+    return clazz
 }
 
 /****************************** 代理实现接口 *******************************/
