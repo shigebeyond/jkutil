@@ -30,6 +30,13 @@ public fun Array<Any?>.clear() {
 }
 
 /**
+ * 判断为空
+ */
+public fun ByteArray?.isNullOrEmpty(): Boolean {
+    return this == null || this.isEmpty()
+}
+
+/**
  * 非空参数转为array, 仅用于在 DbKey/Orm 的构造函数中转参数
  * @param params
  * @return
