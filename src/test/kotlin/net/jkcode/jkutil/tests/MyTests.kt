@@ -1109,11 +1109,47 @@ class MyTests{
 //        println("a\nb".replace("\\n".toRegex(), "\\\\n")) // a\nb
 //        println("a\nb".replace("\n", "\\\\n")) // a\nb
 
-        val str = "hello-world"
+        /*val str = "hello-world"
         val range = 0..4
         println(str.substring(range))
         println(str.replaceRange(range, "fuck"))
         println(str.replaceRange(range, "my hero"))
+        */
+    }
+
+    /**
+     * 测试正则性能
+     */
+    @Test
+    fun testPatternPerformance(){
+        // 1 正则匹配耗时: 1061
+        var start = System.currentTimeMillis()
+        val n = 10000000
+        val reg = "^abc-\\d+$".toRegex()
+        for(i in 0..n)
+            reg.matches("abc-123")
+        var cost = System.currentTimeMillis() - start
+        println("正则匹配耗时: $cost")
+
+        // 2 字符串匹配耗时: 60
+        start = System.currentTimeMillis()
+        for(i in 0..n)
+            "abc-123".contains("abc") // 60
+            //"abc-123".startsWith("abc") // 17
+        cost = System.currentTimeMillis() - start
+        println("字符串匹配耗时: $cost")
+    }
+
+    /**
+     * 测试路由正则
+     */
+    @Test
+    fun testRouteRegx(){
+//        val route = "<controller>(/<action>(/<id>)?)?"
+        val route = "@(/<appId>(/<version>)?)?/clientWeb/assignmentView/<activityId>"
+        var noregx = route.replace("\\(.+\\)\\??".toRegex(), "???") // 去掉()子表达式
+        noregx = noregx.replace("/?<[\\w\\d]+>".toRegex(), "???") // 去掉<参数>
+        println(noregx)
     }
 
     @Test
