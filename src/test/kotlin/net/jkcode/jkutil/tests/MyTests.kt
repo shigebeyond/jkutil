@@ -1146,9 +1146,11 @@ class MyTests{
     @Test
     fun testRouteRegx(){
 //        val route = "<controller>(/<action>(/<id>)?)?"
-        val route = "@(/<appId>(/<version>)?)?/clientWeb/assignmentView/<activityId>"
-        var noregx = route.replace("\\(.+\\)\\??".toRegex(), "???") // 去掉()子表达式
-        noregx = noregx.replace("/?<[\\w\\d]+>".toRegex(), "???") // 去掉<参数>
+        val route = "@(/<appId>(/<version>)?)?/clientWeb\\*/assignment\\?View]/<activityId>"
+        val delimiter = "\n"
+        var noregx = route.replace("\\(.+\\)\\??".toRegex(), delimiter) // 去掉()子表达式
+        noregx = noregx.replace("/?<[\\w\\d]+>".toRegex(), delimiter) // 去掉<参数>
+        noregx = noregx.replace("[\\\\*+\\[\\](){}\\\$.?\\^|]".toRegex(), delimiter) // 去掉正则符号
         println(noregx)
     }
 
