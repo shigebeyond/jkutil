@@ -21,7 +21,6 @@ object PropertyHandler {
      * @return
      */
     @JvmStatic
-    @JvmOverloads
     public fun get(obj: Any?, key: String): Any? {
         // null
         if (obj == null)
@@ -55,7 +54,6 @@ object PropertyHandler {
      * @return
      */
     @JvmStatic
-    @JvmOverloads
     public fun getPath(obj: Any?, path:String): Any? {
         // 单层
         if(!path.contains('.'))
@@ -77,7 +75,6 @@ object PropertyHandler {
      * @return
      */
     @JvmStatic
-    @JvmOverloads
     public fun getType(obj: Any?, key: String): Class<*>? {
         if (obj == null)
             return null
@@ -113,7 +110,6 @@ object PropertyHandler {
      * @return
      */
     @JvmStatic
-    @JvmOverloads
     public fun getPathType(obj: Any?, path:String): Class<*>? {
         // 单层
         if(!path.contains('.'))
@@ -136,7 +132,6 @@ object PropertyHandler {
      * @return
      */
     @JvmStatic
-    @JvmOverloads
     public fun set(obj: Any?, key: String, value: Any?) {
         // null
         if (obj == null)
