@@ -42,6 +42,9 @@ public fun ByteArray?.isNullOrEmpty(): Boolean {
  * @return
  */
 public inline fun <T> toArray(vararg params:T): Array<T> {
+    if(params.size == 1 && params[0] is Array<*>)
+        return params[0] as Array<T>
+
     return params as Array<T>
 }
 
