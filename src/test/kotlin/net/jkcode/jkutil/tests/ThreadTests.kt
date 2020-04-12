@@ -1,8 +1,7 @@
 package net.jkcode.jkutil.tests
 
 import net.jkcode.jkutil.common.CommonThreadPool
-import net.jkcode.jkutil.common.currMillis
-import net.jkcode.jkutil.common.getProperty
+import net.jkcode.jkutil.common.getInheritProperty
 import net.jkcode.jkutil.common.makeThreads
 import org.junit.Test
 import java.util.concurrent.*
@@ -29,7 +28,7 @@ class ThreadTests {
         println(mapConstructor)
 
         // 获得当前线程拥有的ThreadLocalMap实例
-        val threadLocalProp = Thread::class.getProperty("threadLocals") as KMutableProperty1<Thread, Any?>
+        val threadLocalProp = Thread::class.getInheritProperty("threadLocals") as KMutableProperty1<Thread, Any?>
         val value = threadLocalProp.get(Thread.currentThread())
 
         // 克隆实例

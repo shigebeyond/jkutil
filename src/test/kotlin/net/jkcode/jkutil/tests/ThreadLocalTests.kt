@@ -1,6 +1,6 @@
 package net.jkcode.jkutil.tests
 
-import net.jkcode.jkutil.common.getProperty
+import net.jkcode.jkutil.common.getInheritProperty
 import net.jkcode.jkutil.common.makeThreads
 import org.junit.Test
 import java.util.concurrent.ForkJoinPool
@@ -85,7 +85,7 @@ class ThreadLocalTests {
         msgs.set("test")
 
         // 获得属性
-        val prop = Thread::class.getProperty("threadLocals") as KProperty1<Thread, *>
+        val prop = Thread::class.getInheritProperty("threadLocals") as KProperty1<Thread, *>
         // 开放访问
         prop.javaField!!.setAccessible(true)
         println(prop is KMutableProperty1<*, *>) // true

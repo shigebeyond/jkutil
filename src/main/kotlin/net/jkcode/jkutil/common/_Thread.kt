@@ -138,7 +138,7 @@ public fun makeThreads(num: Int, runnable: (Int) -> Unit): List<Thread>{
  * MultithreadEventExecutorGroup.children 属性
  */
 private val childrenProp: KProperty1<MultithreadEventExecutorGroup, Array<EventExecutor>> by lazy{
-    val prop = MultithreadEventExecutorGroup::class.getProperty("children") as KProperty1<MultithreadEventExecutorGroup, Array<EventExecutor>>
+    val prop = MultithreadEventExecutorGroup::class.getInheritProperty("children") as KProperty1<MultithreadEventExecutorGroup, Array<EventExecutor>>
     prop.javaField!!.isAccessible = true
     prop
 }

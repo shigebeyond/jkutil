@@ -12,6 +12,7 @@ import com.thoughtworks.xstream.converters.MarshallingContext
 import com.thoughtworks.xstream.converters.UnmarshallingContext
 import com.thoughtworks.xstream.io.HierarchicalStreamReader
 import com.thoughtworks.xstream.io.HierarchicalStreamWriter
+import net.jkcode.jkutil.xml.StringMapConverter
 
 
 /**
@@ -55,7 +56,7 @@ class XmlTests {
         xstream.alias("family", Family::class.java)
         xstream.alias("man", Man::class.java) // 类的别名, 作为标签名
         xstream.useAttributeFor(Man::class.java, "id") // 输出为属性, 否则输出为子元素
-        xstream.aliasField("clone", Family::class.java, "deepClone") // 属性别名, 输出为子元素
+        xstream.aliasField("clone", Family::class.java, "deepClone") // 属性别名
 //        xstream.aliasAttribute(Family::class.java, "deepClone", "clone") // 属性别名, 也会输出为属性
 
         val xml = xstream.toXML(family)
@@ -100,6 +101,20 @@ class XmlTests {
             name.lcFirst()
         }
         println(xpdl)
+    }
+
+    @Test
+    fun testXstream2Map() {
+        val man = mapOf("name" to "shi", "age" to 12)
+        val xstream = XStream()
+        // 自定义转换器
+        xstream.registerConverter(StringMapConverter(xstream.mapper))
+
+        val xml = xstream.toXML(man)
+        println("序列化到XML:\n$xml")
+
+        val obj = xstream.fromXML(xml)
+        println("反序列化Bean:\n$obj")
     }
 
 }

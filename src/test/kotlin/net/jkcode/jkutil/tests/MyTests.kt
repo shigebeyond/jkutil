@@ -28,6 +28,7 @@ import java.lang.reflect.ParameterizedType
 import java.net.HttpURLConnection
 import java.net.URL
 import java.nio.file.FileSystems
+import java.text.DecimalFormat
 import java.text.MessageFormat
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
@@ -343,15 +344,26 @@ class MyTests{
         }
         println(i) // 0*/
 
-
-
-        println("1".toInt())
+/*        println("1".toInt())
         println("a1".toIntOrNull()) // 无异常
         println("a1".toInt()) // 有异常
 
         println("1.1".toDouble())
         println("a1.1".toDoubleOrNull())
 //        println("a1.1".toDouble())
+        */
+
+        println(Integer.MAX_VALUE)
+        println(Long.MAX_VALUE)
+
+        //科学计数法
+        println(Float.MAX_VALUE)
+        println(Double.MAX_VALUE)
+
+
+        val df = DecimalFormat("0.0000")
+        println(df.format(Float.MAX_VALUE))
+        println(df.format(Double.MAX_VALUE))
     }
 
     @Test
@@ -1115,6 +1127,10 @@ class MyTests{
         println(str.replaceRange(range, "fuck"))
         println(str.replaceRange(range, "my hero"))
         */
+
+        // 数字范围
+        val reg = "[0-3]+".toRegex()
+        println(reg.find("43")!!.groupValues[0]);
     }
 
     /**
@@ -1212,7 +1228,7 @@ class MyTests{
         // println(MyTests::class.getFunction("setName")) // null
 
         // 获得属性
-        val p = MyTests::class.getProperty("id")!!
+        val p = MyTests::class.getInheritProperty("id")!!
         println(p)
         println(p is KMutableProperty1) // true
         println(p::class) // class kotlin.reflect.jvm.internal.KMutableProperty1Impl
@@ -1222,7 +1238,7 @@ class MyTests{
         println(p.getter.parameters[0])
 
         // 不能修改属性的访问权限
-        // val prop: KProperty1<B, *> = B::class.getProperty("name") as KProperty1<B, *>
+        // val prop: KProperty1<B, *> = B::class.getInheritProperty("name") as KProperty1<B, *>
         // println(prop.get(B()))
 
         // kotlin类

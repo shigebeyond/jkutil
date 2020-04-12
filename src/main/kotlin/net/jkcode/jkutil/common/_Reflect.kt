@@ -12,10 +12,7 @@ import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.Future
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.*
-import kotlin.reflect.full.declaredMemberProperties
-import kotlin.reflect.full.memberFunctions
-import kotlin.reflect.full.staticFunctions
-import kotlin.reflect.full.staticProperties
+import kotlin.reflect.full.*
 import kotlin.reflect.jvm.javaType
 
 /**
@@ -281,6 +278,36 @@ public fun <T: Any> KClass<T>.getProperty(name:String): KProperty1<T, *>?{
 }
 
 /**
+ * 查找属性, 包含继承的
+ * @param name 属性名
+ * @return
+ */
+public fun <T: Any> KClass<T>.getInheritProperty(name:String): KProperty1<T, *>?{
+    var c: KClass<*>? = this
+    while (c != null) {
+        val prop = this.getProperty(name)
+        if(prop != null)
+            return prop
+
+        c = (c.java.superclass as Class<*>?)?.kotlin
+    }
+    return null
+}
+
+/**
+ * 查找属性的类型, 包含继承的
+ * @param name 属性名
+ * @return
+ */
+public fun KClass<*>.getInheritPropertyClass(name:String): KClass<*>? {
+    val prop = getInheritProperty(name)
+    if(prop == null)
+        return null
+
+    return prop.getter.returnType.classifier as KClass<*>
+}
+
+/**
  * 动态获得多级属性追
  * @param path 多级属性名
  * @return 属性值
@@ -311,7 +338,7 @@ public fun Any?.getPropertyValue(name:String):Any?{
     if(this == null)
         return null
 
-    val prop = this::class.getProperty(name) as KProperty1<Any, *>
+    val prop = this::class.getInheritProperty(name) as KProperty1<Any, *>
     return prop?.get(this)
 }
 
@@ -365,7 +392,7 @@ public fun <T: Any> KClass<T>.newInstance(needInit: Boolean = true): Any? {
  * @return
  */
 public fun <T: Any> KClass<T>.getGetter(prop: String): KProperty1.Getter<T, Any?>? {
-    return getProperty(prop)?.getter
+    return getInheritProperty(prop)?.getter
 }
 
 /**
