@@ -43,9 +43,9 @@ data class ValidateResult<E>(
      */
     public fun getOrThrow(): Any? {
         if(hasErrors())
-            return value
+            throw ValidateException(this)
 
-        throw ValidateException(this)
+        return value
     }
 
 }
