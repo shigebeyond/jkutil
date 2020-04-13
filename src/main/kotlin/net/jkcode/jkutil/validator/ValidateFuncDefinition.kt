@@ -10,6 +10,16 @@ object ValidateFuncDefinition{
 
     /************************** 校验值的方法 ************************/
     /**
+     * 检查非null
+     *
+     * @param value
+     * @return
+     */
+    public fun notNull(value:Any?): Boolean {
+        return value != null
+    }
+
+    /**
      * 检查非空
      *
      * @param value

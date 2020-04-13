@@ -71,6 +71,27 @@ class RuleValidator(public val label: String /* 值的标识, 如orm中的字段
 	}
 
 	/**
+	 * 判断规则子表达式是否包含函数
+	 * @param func
+	 * @return
+	 */
+	public fun containsFunction(func: String): Boolean {
+		return subRules.any {
+			it.first == func
+		}
+	}
+
+	/**
+	 * 判断规则子表达式是否包含不为null的函数
+	 * @return
+	 */
+	public fun containsNotNullFunction(): Boolean {
+		return containsFunction("notNull")
+			|| containsFunction("notEmpty")
+			|| containsFunction("notBlank")
+	}
+
+	/**
 	 * 执行规则表达式
 	 * <code>
 	 * 	   // 编译
