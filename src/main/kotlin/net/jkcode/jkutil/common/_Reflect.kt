@@ -16,6 +16,22 @@ import kotlin.reflect.full.*
 import kotlin.reflect.jvm.javaType
 
 /**
+ * 强制转换数组类型
+ *   如果是空数组, 则使用内联函数 emptyArray<T>() 来做类型转换, 如将 Object[] 转为 Map[]
+ * @return
+ */
+public inline fun <reified T> Any?.asArray(): Array<T>?{
+    if(this == null)
+        return null
+
+    // 空数组
+    if(isArrayEmpty())
+        return emptyArray<T>() // emptyArray() 是内敛函数, 依赖于T
+
+    return this as Array<T>
+}
+
+/**
  * 尝试调用克隆方法
  *    1 如果是集合+数组, 则复制为新的集合+数组
  *    2 如果实现了 Cloneable 接口, 则调用并返回 clone(), 否则直接返回 this
@@ -264,6 +280,37 @@ public fun KClass<*>.getConstructor(vararg paramTypes:Class<*>): KFunction<*>?{
     return constructors.find {
         it.matches("<init>", paramTypes); // 构造函数的名称为 <init>
     }
+}
+
+/**
+ * 对象上调用函数
+ * @param name 函数名
+ * @param params 所有参数,不包含this
+ * @return
+ */
+public fun Any.callFunction(name: String, vararg params: Any): Any? {
+    // 第一个参数为this
+    val pt = toArray(this, *params)
+    return this::class.callFunction(name, pt)
+}
+
+/**
+ * 类上调用函数
+ * @param name 函数名
+ * @param params 所有参数,包含this
+ * @return
+ */
+public fun KClass<*>.callFunction(name: String, vararg params: Any): Any? {
+    // 获得参数类型
+    val paramTypes = params.mapToArray {
+        it.javaClass
+    }
+
+    // 获得函数
+    val func = memberFunctions.find {
+        it.matches(name, paramTypes);
+    }
+    return func?.call(*params)
 }
 
 /**

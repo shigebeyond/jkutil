@@ -42,9 +42,6 @@ public fun ByteArray?.isNullOrEmpty(): Boolean {
  * @return
  */
 public inline fun <T> toArray(vararg params:T): Array<T> {
-    if(params.size == 1 && params[0] is Array<*>)
-        return params[0] as Array<T>
-
     return params as Array<T>
 }
 
@@ -86,10 +83,10 @@ public fun Any?.isArrayOrCollection(): Boolean {
 }
 
 /**
- * 是否数组或集合为空
+ * 是否数组为空
  * @return
  */
-public fun Any.isArrayOrCollectionEmpty(): Boolean {
+public fun Any.isArrayEmpty(): Boolean {
     if(this is Array<*>)
         return this.isEmpty()
 
@@ -110,6 +107,17 @@ public fun Any.isArrayOrCollectionEmpty(): Boolean {
 
     if(this is BooleanArray)
         return this.isEmpty()
+
+    return false
+}
+
+/**
+ * 是否数组或集合为空
+ * @return
+ */
+public fun Any.isArrayOrCollectionEmpty(): Boolean {
+    if(isArrayEmpty())
+        return true
 
     if(this is Collection<*>)
         return this.isEmpty()
