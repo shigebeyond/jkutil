@@ -7,7 +7,7 @@ import java.util.concurrent.TimeUnit
 import java.util.concurrent.atomic.AtomicBoolean
 
 // 是否缓存当前毫秒
-public var currMillisCached: Boolean = true
+public var currMillisCached: Boolean = false
 // 缓存当前毫秒
 @Volatile
 private var currMs:Long = 0

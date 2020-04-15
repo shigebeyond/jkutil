@@ -63,11 +63,19 @@ open class IRequestScope : HierarchicalScope(), Closeable {
         this.beginScope()
 
         // 2 调用请求处理, 并包装 ScopedTransferableThreadLocal 的传递
-        return SttlInterceptor.wrap(action = reqAction)
+        // fix bug: SttlInterceptor.wrap() 的实现是先记录当前旧的 ThreadLocal, 在action处理完再恢复旧的 ThreadLocal,
+        // 但问题是 action 一般是请求处理, 会在新的 ThreadLocal 下记录新的资源(如 db), 那么你在 action 执行完毕后恢复旧的 Threadlocal, 那么记录在新的 ThreadLocal 的资源就丢失了,
+        // 然后你再回到 IRequestScope#sttlWrap() 的调用处再调用 endScope() 来销毁资源? 都没资源了, 还销毁个鸡毛
+        /*return SttlInterceptor.wrap(action = reqAction)
                 .whenComplete { r, ex ->
                     // 3 请求处理后，结束作用域(关闭资源)
                     this.endScope()
-                }
+                    // 4 返回结果
+                    if(ex != null)
+                        throw ex
+                    r
+                }*/
+        // 正确姿势: sttl 包含作用域, 作用域包含action
     }
 
 }
