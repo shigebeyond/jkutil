@@ -64,7 +64,7 @@ abstract class IQuotaFlusher<RequestType /* 请求类型 */, ResponseType /* 响
      */
     public override fun flush(byTimeout: Boolean) {
         // 加锁: 同一时刻只有一个线程能处理
-        val locked = lock.quickLockCleanly {
+        lock.quickLockCleanly {
             // 记录旧索引
             val oldIndex = currIndex()
 
