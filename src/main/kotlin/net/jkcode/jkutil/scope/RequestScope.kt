@@ -49,7 +49,12 @@ open class IRequestScope : HierarchicalScope(), Closeable {
     /**
      * 包装请求处理, 添加作用域处理
      *    1 作用域的开始与结束
-     *    2 ScopedTransferableThreadLocal 的传递
+     *      一般用于资源的初始化与关闭
+     *    2 sttl(ScopedTransferableThreadLocal) 的传递
+     *      使用 SttlInterceptor.wrap() 来保证在调用请求(调用controller/provider)的前后保持 ThreadLocal 的一致,
+     *      因为请求处理(调用controller/provider)基本都会变更 ThreadLocal, 进而污染上层调用处的 ThreadLocal, 进而会污染后续请求的 ThreadLocal, 从而干扰后续请求的处理
+     *    3 sttl 包含作用域, 作用域包含action
+     *
      * @param reqAction
      * @return
      */
@@ -63,9 +68,10 @@ open class IRequestScope : HierarchicalScope(), Closeable {
         this.beginScope()
 
         // 2 调用请求处理, 并包装 ScopedTransferableThreadLocal 的传递
-        // fix bug: SttlInterceptor.wrap() 的实现是先记录当前旧的 ThreadLocal, 在action处理完再恢复旧的 ThreadLocal,
+        // fix bug: 不能在 SttlInterceptor.wrap() 外面才结束作用域(关闭资源)
+        // SttlInterceptor.wrap() 的实现是先记录当前旧的 ThreadLocal, 在action处理完再恢复旧的 ThreadLocal,
         // 但问题是 action 一般是请求处理, 会在新的 ThreadLocal 下记录新的资源(如 db), 那么你在 action 执行完毕后恢复旧的 Threadlocal, 那么记录在新的 ThreadLocal 的资源就丢失了,
-        // 然后你再回到 IRequestScope#sttlWrap() 的调用处再调用 endScope() 来销毁资源? 都没资源了, 还销毁个鸡毛
+        // 然后你再回到 SttlInterceptor.wrap() 外面再调用 endScope() 来销毁资源? 都没资源了, 还销毁个鸡毛
         /*return SttlInterceptor.wrap(action = reqAction)
                 .whenComplete { r, ex ->
                     // 3 请求处理后，结束作用域(关闭资源)
@@ -76,6 +82,16 @@ open class IRequestScope : HierarchicalScope(), Closeable {
                     r
                 }*/
         // 正确姿势: sttl 包含作用域, 作用域包含action
+        return SttlInterceptor.wrap{ // sttl 包含作用域
+            reqAction().whenComplete { r, ex -> // 作用域包含action
+                // 3 请求处理后，结束作用域(关闭资源)
+                this.endScope()
+                // 4 返回结果
+                if(ex != null)
+                    throw ex
+                r
+            }
+        }
     }
 
 }
