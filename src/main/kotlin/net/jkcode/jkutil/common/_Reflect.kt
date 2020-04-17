@@ -837,6 +837,45 @@ fun Any.getUserClass(): Class<*> {
     return clazz
 }
 
+/**
+ * Return the default ClassLoader to use: typically the thread context
+ * ClassLoader, if available; the ClassLoader that loaded the ClassUtils
+ * class will be used as fallback.
+ *
+ * Call this method if you intend to use the thread context ClassLoader
+ * in a scenario where you clearly prefer a non-null ClassLoader reference:
+ * for example, for class path resource loading (but not necessarily for
+ * `Class.forName`, which accepts a `null` ClassLoader
+ * reference as well).
+ * @return the default ClassLoader (only `null` if even the system
+ * ClassLoader isn't accessible)
+ * @see Thread.getContextClassLoader
+ * @see ClassLoader.getSystemClassLoader
+ */
+fun getDefaultClassLoader(): ClassLoader? {
+    var cl: ClassLoader? = null
+    try {
+        cl = Thread.currentThread().contextClassLoader
+    } catch (ex: Throwable) {
+        // Cannot access thread context ClassLoader - falling back...
+    }
+
+    if (cl == null) {
+        // No thread context class loader -> use class loader of this class.
+        cl = JkApp::class.java.classLoader
+        if (cl == null) {
+            // getClassLoader() returning null indicates the bootstrap ClassLoader
+            try {
+                cl = ClassLoader.getSystemClassLoader()
+            } catch (ex: Throwable) {
+                // Cannot access system ClassLoader - oh well, maybe the caller can live with null...
+            }
+
+        }
+    }
+    return cl
+}
+
 /****************************** 代理实现接口 *******************************/
 /**
  * 实现某接口的代理字段的迭代器

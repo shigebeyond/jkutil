@@ -1,0 +1,4 @@
+# MessageSource实现类, 默认是 net.jkcode.jkutil.message.ResourceBundleMessageSource
+impl:
+basenames:
+  - default
