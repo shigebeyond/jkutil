@@ -78,7 +78,7 @@ public class FixedKeyMapFactory {
     /**
      * 有固定key的map
      */
-    protected final class FixedKeyMap extends AbstractMap<String, Object> {
+    public final class FixedKeyMap extends AbstractMap<String, Object> {
 
         /**
          * 值

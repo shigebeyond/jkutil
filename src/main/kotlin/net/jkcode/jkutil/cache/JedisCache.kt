@@ -31,6 +31,15 @@ class JedisCache(protected val configName: String = "default") : BaseCache(){
             return ShardedJedisFactory.getConnection(configName)
         }
 
+    /**
+     * key转字节数组
+     */
+    protected fun keyBytes(key: Any): ByteArray? {
+        if(key is String)
+            return key.toByteArray()
+
+        return serializer.serialize(key)
+    }
 
     /**
      * 根据键获得值
@@ -39,7 +48,7 @@ class JedisCache(protected val configName: String = "default") : BaseCache(){
      * @return
      */
     public override fun doGet(key: Any): Any? {
-        val value = jedis.get(serializer.serialize(key))
+        val value = jedis.get(keyBytes(key))
         if(value == null)
             return null
         return serializer.unserialize(value)
@@ -54,7 +63,7 @@ class JedisCache(protected val configName: String = "default") : BaseCache(){
      */
     public override fun doPut(key: Any, value: Any, expireSencond:Long) {
         //jedis.set(key.toString(), value.toString(), "NX", "EX", expires)
-        jedis.set(serializer.serialize(key), serializer.serialize(value), "NX".toByteArray(), "EX".toByteArray(), expireSencond)
+        jedis.set(keyBytes(key), serializer.serialize(value), "NX".toByteArray(), "EX".toByteArray(), expireSencond)
     }
 
     /**
@@ -62,7 +71,7 @@ class JedisCache(protected val configName: String = "default") : BaseCache(){
      * @param key 要删除的键
      */
     public override fun remove(key: Any) {
-        jedis.del(serializer.serialize(key))
+        jedis.del(keyBytes(key))
     }
 
     /**
