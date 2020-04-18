@@ -525,6 +525,18 @@ public val <T> Class<T>.isAbstract: Boolean
     get() =  Modifier.isAbstract(modifiers)
 
 /**
+ * 是否接口
+ */
+public val <T> Class<T>.isInterface: Boolean
+    get() =  Modifier.isInterface(modifiers)
+
+/**
+ * 是否普通类 = 非抽象类 + 非接口
+ */
+public val <T> Class<T>.isNormal: Boolean
+    get() =  !isAbstract && !isInterface
+
+/**
  * 检查当前类 是否是 指定类的子类
  *
  * @param superClass 父类

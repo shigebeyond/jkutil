@@ -32,8 +32,11 @@ public fun OutputStream.writeFromInput(`in`: InputStream) {
         var length = -1
         val buffer = ByteArray(1024)
         do {
+            // 读: in -> buffer
             length = `in`.read(buffer)
-            this.write(buffer, 0, length)
+            // 写: buffer -> out
+            if(length != -1)
+                this.write(buffer, 0, length)
         } while (length != -1)
     }
 }

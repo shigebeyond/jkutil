@@ -270,7 +270,7 @@ public inline fun String.replaces(params: List<String>, prefix: CharSequence = "
  * @param postfix 参数名后缀正则
  * @return
  */
-public inline fun String.replaces(params: Map<String, Any?>, prefix: CharSequence = ":", postfix: CharSequence = ""): String {
+public inline fun String.replaces(params: Map<String, *>, prefix: CharSequence = ":", postfix: CharSequence = ""): String {
     return this.replace("$prefix([\\w\\d\\.@_]+)$postfix".toRegex()) { matches: MatchResult ->
         val key = matches.groupValues[1]
         val value = params.get(key);
