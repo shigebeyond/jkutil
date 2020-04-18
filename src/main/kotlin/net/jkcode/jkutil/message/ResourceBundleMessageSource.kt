@@ -1,10 +1,10 @@
 package net.jkcode.jkutil.message
 
-import net.jkcode.jkutil.common.Config
 import net.jkcode.jkutil.common.commonLogger
 import net.jkcode.jkutil.common.getDefaultClassLoader
 import net.jkcode.jkutil.message.MessageSource.Companion.config
 import java.io.InputStreamReader
+import java.text.MessageFormat
 import java.util.*
 import kotlin.collections.HashMap
 
@@ -27,17 +27,39 @@ open class ResourceBundleMessageSource : MessageSource {
      */
     override fun getMessage(code: String, args: Array<*>?, defaultMessage: String?, locale: Locale): String {
         val basenames: List<String> = config["basenames"]!!
+        // 遍历每个消息文件
         for (basename in basenames) {
             val bundle = doGetBundle(basename, locale)
             try {
+                // 获得消息
                 val result = bundle?.getString(code)
+                // 格式化消息(替换参数)
                 if (result != null)
-                    return result
+                    return formateMessage(result, args, locale)
             }catch (e: MissingResourceException){
             }
         }
 
         return ""
+    }
+
+    /**
+     * 格式化消息(替换参数)
+     *
+     * @param msg 消息
+     * @param args 参数
+     * @param locale
+     * @return
+     */
+    protected open fun formateMessage(msg: String, args: Array<*>?, locale: Locale): String {
+        if(args.isNullOrEmpty())
+            return msg
+
+        // 拼接参数
+        val formatter = MessageFormat(msg)
+        if (locale != null)
+            formatter.setLocale(locale)
+        return formatter.format(args)
     }
 
     /**
