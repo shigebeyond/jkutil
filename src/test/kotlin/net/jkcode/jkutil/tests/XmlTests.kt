@@ -13,6 +13,7 @@ import com.thoughtworks.xstream.converters.UnmarshallingContext
 import com.thoughtworks.xstream.io.HierarchicalStreamReader
 import com.thoughtworks.xstream.io.HierarchicalStreamWriter
 import net.jkcode.jkutil.xml.StringMapConverter
+import org.simpleframework.xml.core.Persister
 
 
 /**
@@ -45,6 +46,21 @@ class XmlTests {
 
         val obj = parserXML<Any>(xml)
         println("反序列化Bean:\n$obj")
+    }
+
+    @Test
+    fun testSimpleXml() {
+        val man = Man("shi", 12)
+        val writer = StringWriter()
+        // 写
+        val serializer = Persister()
+        serializer.write(man, writer)
+        val xml = writer.toString()
+        println(xml)
+
+        // 读
+        val appDef = serializer.read(Man::class.java, xml, false)
+        println(appDef)
     }
 
     @Test

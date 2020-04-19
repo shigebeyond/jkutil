@@ -3,6 +3,7 @@ package net.jkcode.jkutil.tests
 import java.io.Serializable
 import net.jkcode.jkutil.common.cloneProperties
 import net.jkcode.jkutil.common.generateId
+import java.util.*
 
 open class A() {
     open fun echo(){}
@@ -38,6 +39,9 @@ data class Address(val value: String, val alias: String? = null)
 
 data class Man(var name: String, var age: Int): Cloneable, Serializable{
     val id = generateId("man")
+
+    // 属性值如果为null, 则压根不输出
+    val birthday: Date? = null
 
     /*public override fun clone(): Any {
         return super.clone()

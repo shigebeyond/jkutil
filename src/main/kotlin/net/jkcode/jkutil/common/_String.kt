@@ -128,7 +128,9 @@ public fun String.substringAfterLastInclude(delimiter: String, missingDelimiterV
  * @return
  */
 public inline fun String.substringBetween(start: String, end: String): String {
-    return substring(indexOf(start) + 1, indexOf(end))
+    val startIndex = indexOf(start) + start.length
+    val endIndex = indexOf(end)
+    return substring(startIndex, endIndex)
 }
 
 /**
@@ -138,7 +140,9 @@ public inline fun String.substringBetween(start: String, end: String): String {
  * @return
  */
 public inline fun String.substringBetween(start: Char, end: Char): String {
-    return substring(indexOf(start) + 1, indexOf(end))
+    val startIndex = indexOf(start) + 1
+    val endIndex = indexOf(end)
+    return substring(startIndex, endIndex)
 }
 
 /**

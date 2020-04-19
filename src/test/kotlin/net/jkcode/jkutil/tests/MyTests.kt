@@ -604,7 +604,7 @@ class MyTests{
 
         //println("a/b/c".substringBeforeLast('/'))
 
-        println("hello".reversed())
+        //println("hello".reversed())
 
         // 不足2个, 则抛异常: java.lang.IndexOutOfBoundsException: Index: 1, Size: 1
         /*val (k1, k2) = "a".split(".", limit = 2)
@@ -612,9 +612,13 @@ class MyTests{
         println(k2)*/
 
 //        println(byteArrayOf(1).javaClass)
-        val str = "a.b.c.d"
-        println(str.substring(0, str.lastIndexOf("c.")))
-        println(str.substringBeforeLast("c."))
+//        val str = "a.b.c.d"
+//        println(str.substring(0, str.lastIndexOf("c.")))
+//        println(str.substringBeforeLast("c."))
+
+        val xml = "<app>my hero</app>"
+        val content = xml.substringBetween("<app>", "</app>")
+        println(content)
     }
 
     @Test
