@@ -1426,10 +1426,10 @@ class MyTests{
     @Test
     fun testPropertyHandler(){
         val man = Man("shi", 12)
-        println(PropertyHandler.get(man, "name"))
+        println(PropertyUtil.get(man, "name"))
 
         val family = Family(man, emptyList())
-        println(PropertyHandler.getPath(family, "master.name"))
+        println(PropertyUtil.getPath(family, "master.name"))
     }
 }
 

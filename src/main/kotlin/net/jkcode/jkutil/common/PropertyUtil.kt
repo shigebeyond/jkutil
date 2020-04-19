@@ -11,7 +11,7 @@ import kotlin.reflect.KProperty1
  * @author shijianhang<772910474@qq.com>
  * @date 2019-12-23 2:57 PM
  */
-object PropertyHandler {
+object PropertyUtil {
 
     /**
      * 获得属性值

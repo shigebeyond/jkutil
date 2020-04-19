@@ -276,7 +276,7 @@ open class Config(
      */
     public override fun pathConfig(path: String): Config{
         try{
-            val subprops = PropertyHandler.getPath(props, path) as Map<String, *>
+            val subprops = PropertyUtil.getPath(props, path) as Map<String, *>
             return Config(subprops)
         }catch (e:ClassCastException){
             throw NoSuchElementException("构建配置子项失败：配置数据为$props, 但路径[$path]的子项不是Map")
@@ -291,7 +291,7 @@ open class Config(
      */
     public override fun pathProperties(path: String): Properties{
         try{
-            val subprops = PropertyHandler.getPath(props, path) as Map<String, *>
+            val subprops = PropertyUtil.getPath(props, path) as Map<String, *>
             val result = Properties()
             result.putAll(subprops)
             return result
