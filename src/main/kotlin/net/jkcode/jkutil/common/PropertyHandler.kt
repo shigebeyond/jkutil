@@ -39,7 +39,7 @@ object PropertyHandler {
             return obj[key]
 
         // 对象
-        val prop = obj::class.getInheritProperty(key) as KProperty1<Any, Any?>
+        val prop = obj::class.getInheritProperty(key) as KProperty1<Any, Any?>?
         if(prop == null)
             throw NoSuchElementException("获得对象属性失败: 对象为[$obj], 属性名为[$prop]")
 

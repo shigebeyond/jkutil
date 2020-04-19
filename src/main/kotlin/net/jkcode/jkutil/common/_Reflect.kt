@@ -332,9 +332,9 @@ public fun <T: Any> KClass<T>.getProperty(name:String): KProperty1<T, *>?{
 public fun <T: Any> KClass<T>.getInheritProperty(name:String): KProperty1<T, *>?{
     var c: KClass<*>? = this
     while (c != null) {
-        val prop = this.getProperty(name)
+        val prop = c.getProperty(name)
         if(prop != null)
-            return prop
+            return prop as KProperty1<T, *>
 
         c = (c.java.superclass as Class<*>?)?.kotlin
     }
