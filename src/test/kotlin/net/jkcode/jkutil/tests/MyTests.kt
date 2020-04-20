@@ -1435,5 +1435,22 @@ class MyTests{
         val family = Family(man, emptyList())
         println(PropertyUtil.getPath(family, "master.name"))
     }
+
+    @Test
+    fun testUnitFuture(){
+        UnitFuture.thenAccept{
+            println("call 1")
+        }
+
+        UnitFuture.thenAccept{
+            println("call 2")
+        }
+
+        println(UnitFuture.get())
+
+        println("sleep")
+
+        Thread.sleep(100000)
+    }
 }
 

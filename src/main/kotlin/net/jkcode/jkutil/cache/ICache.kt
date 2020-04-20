@@ -31,6 +31,7 @@ interface ICache {
 
     /**
      * 根据键获得值, 如果无则构建
+     *   如果源数据是null, 则缓存空对象, 防止缓存穿透
      *
      * @param key 键
      * @param expireSeconds 过期秒数
@@ -42,6 +43,7 @@ interface ICache {
 
     /**
      * 设置键值
+     *   如果源数据是null, 则缓存空对象, 防止缓存穿透
      *
      * @param key 键
      * @param value 值
@@ -51,6 +53,7 @@ interface ICache {
 
     /**
      * 设置键值
+     *   如果源数据是null, 则缓存空对象, 防止缓存穿透
      *
      * @param key 键
      * @param value 值
