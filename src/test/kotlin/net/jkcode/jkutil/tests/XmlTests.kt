@@ -110,7 +110,7 @@ class XmlTests {
 
     @Test
     fun testXpdlLowcaseTagName(){
-        val file = File("/home/shi/test/APP_crm-1/test.xml")
+        val file = File("/home/shi/code/java/jkerp/wfengine/src/test/resources/test.xpdl")
         var xpdl = file.readText()
         xpdl = "(?<=</?)(xpdl:)?([\\w\\d]+)".toRegex().replace(xpdl) { m: MatchResult ->
             val name = m.groupValues[2]!!
