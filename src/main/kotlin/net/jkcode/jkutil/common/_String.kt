@@ -539,3 +539,23 @@ public fun Throwable.stringifyStackTrace(): String {
     }
 
 }
+
+/****************************** 正则扩展 *******************************/
+/**
+ * Returns the first match of a regular expression in the [input], beginning at the specified [startIndex].
+ *
+ * @param startIndex An index to start search with, by default 0. Must be not less than zero and not greater than `input.length()`
+ * @return An instance of [MatchResult] if match was found or `null` otherwise.
+ */
+public fun Regex.findGroupValue(input: CharSequence, groupIndex: Int = 0, startIndex: Int = 0): String?{
+    return this.find(input, startIndex)?.groupValues?.get(groupIndex)
+}
+/**
+ * Returns a sequence of all occurrences of a regular expression within the [input] string, beginning at the specified [startIndex].
+ */
+public fun Regex.findAllGroupValue(input: CharSequence, groupIndex: Int = 0, startIndex: Int = 0): List<String>{
+    val m = this.findAll(input, startIndex)
+    return m.mapToList {
+        it.groupValues.get(groupIndex)
+    }
+}

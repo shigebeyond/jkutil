@@ -576,7 +576,7 @@ class MyTests{
         // if(m != null)
         //     println(m.groups[1]!!.value)
 
-        /*val funname = "indexAction"
+        /*val funname = "index"
         val name = funname.substring(0, funname.length - 6) // 去掉Action结尾
         println(name)*/
 

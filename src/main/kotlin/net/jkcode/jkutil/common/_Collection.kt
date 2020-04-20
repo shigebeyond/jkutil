@@ -350,6 +350,23 @@ public fun <R, T> MutableCollection<R>.addAllMap(c: Collection<T>, transform: (T
 
 /****************************** progression *****************************/
 /**
+ * Applies the given [transform] function to each element of the original sequence
+ * and appends the results to the list
+ */
+public inline fun <T, R> Sequence<T>.mapToList(transform: (T) -> R): List<R> {
+    return this.mapTo(ArrayList(), transform)
+}
+
+/**
+ * Applies the given [transform] function to each element of the original sequence
+ * and appends only the non-null results to the list
+ */
+public inline fun <T, R : Any> Sequence<T>.mapNotNullToList(transform: (T) -> R): List<R> {
+    return this.mapNotNullTo(ArrayList(), transform)
+}
+
+/****************************** progression *****************************/
+/**
  * 大小
  */
 public val IntProgression.size: Int

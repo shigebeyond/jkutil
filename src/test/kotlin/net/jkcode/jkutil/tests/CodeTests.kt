@@ -421,7 +421,7 @@ class CodeTests {
      */
     @Test
     fun testFixAction (){
-        // 由actionIndex, 改为indexAction
+        // 由actionIndex, 改为index
         val dir = File("/oldhome/shi/code/java/jkmvc/jkmvc-example/src/main/kotlin/com/jkmvc/example")
         dir.travel {
             if(it.name.indexOf("Controller.kt") > 0){
