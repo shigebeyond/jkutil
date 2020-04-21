@@ -75,6 +75,8 @@ class XmlTests {
         xstream.aliasField("clone", Family::class.java, "deepClone") // 属性别名
 //        xstream.aliasAttribute(Family::class.java, "deepClone", "clone") // 属性别名, 也会输出为属性
 
+        xstream.omitField(Family::class.java, "deepClone"); // 忽略属性
+
         val xml = xstream.toXML(family)
         println("序列化到XML:\n$xml")
 
