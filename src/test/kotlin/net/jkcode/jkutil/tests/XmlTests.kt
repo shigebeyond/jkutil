@@ -109,17 +109,6 @@ class XmlTests {
     }
 
     @Test
-    fun testXpdlLowcaseTagName(){
-        val file = File("/home/shi/code/java/jkerp/wfengine/src/test/resources/test.xpdl")
-        var xpdl = file.readText()
-        xpdl = "(?<=</?)(xpdl:)?([\\w\\d]+)".toRegex().replace(xpdl) { m: MatchResult ->
-            val name = m.groupValues[2]!!
-            name.lcFirst()
-        }
-        println(xpdl)
-    }
-
-    @Test
     fun testXstream2Map() {
         val man = mapOf("name" to "shi", "age" to 12)
         val xstream = XStream()

@@ -452,6 +452,17 @@ public fun <T: Any> KClass<T>.getGetters(): Map<String, KProperty1.Getter<T, Any
     }
 }
 
+/****************************** kotlin反射扩展: 注解 *******************************/
+/**
+ * 获得缓存的注解
+ * @return
+ */
+public inline fun <reified A : Annotation> KAnnotatedElement.getCachedAnnotation(): A?{
+    return annotations.firstOrNull {
+        it.annotationClass == A::class
+    } as A?
+}
+
 /****************************** java反射扩展: 注解 *******************************/
 /**
  * 元素的注解缓存: <元素 to <缓存名 to 注解>>
