@@ -13,6 +13,7 @@ import java.util.concurrent.Future
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.*
 import kotlin.reflect.full.*
+import kotlin.reflect.jvm.javaField
 import kotlin.reflect.jvm.javaType
 
 /**
@@ -214,6 +215,17 @@ public inline val <T: Any> KClass<T>.defaultValue:T?
             else -> null
         } as T?
     }
+
+/****************************** kotlin反射扩展: KProperty *******************************/
+/**
+ * 开放访问性
+ */
+fun <R> KProperty<R>.openAccessible(){
+    val field = this.javaField!!
+    // 开放访问
+    if (!field.isAccessible)
+        field.isAccessible = true
+}
 
 /****************************** kotlin反射扩展: KClass *******************************/
 /**

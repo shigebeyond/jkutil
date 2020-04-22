@@ -4,6 +4,9 @@ import java.lang.reflect.Array
 import kotlin.reflect.KClass
 import kotlin.reflect.KMutableProperty1
 import kotlin.reflect.KProperty1
+import kotlin.reflect.jvm.isAccessible
+import kotlin.reflect.jvm.javaField
+import kotlin.reflect.jvm.javaGetter
 
 /**
  * 属性处理器
@@ -43,6 +46,8 @@ object PropertyUtil {
         if(prop == null)
             throw NoSuchElementException("获得对象属性失败: 对象为[$obj], 属性名为[$prop]")
 
+        // fix bug: 字段修饰符不是public, 不可访问: kotlin.reflect.full.IllegalCallableAccessException: java.lang.IllegalAccessException: Class kotlin.reflect.jvm.internal.calls.CallerImpl$FieldGetter can not access a member of class java.util.HashMap$Node with modifiers ""
+        prop.openAccessible()
         return prop.get(obj)
     }
 
