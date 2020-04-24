@@ -253,11 +253,15 @@ public val emptyOption = toOptionMap("", "")
  * @param label
  * @return
  */
-public inline fun toOptionMap(value: String, label: String): Map<String, String> {
-    return mapOf(
+public inline fun toOptionMap(value: String, label: String, group: String? = null): Map<String, String> {
+    val map = mutableMapOf(
             "value" to value,
             "label" to label
     )
+
+    if(group != null)
+        map["grouping"] = group
+    return map
 }
 
 /**
@@ -299,6 +303,40 @@ public inline fun <T> Collection<T>.toOptions(list: MutableList<Map<String, Stri
             null
         else
             toOptionMap(o.first, o.second)
+    }
+}
+
+
+
+/**
+ * 对象列表转为分组选项列表
+ * @param withEmpty 是否带空选项
+ * @param transform 转换函数
+ * @return
+ */
+public inline fun <T> Collection<T>.toGroupOptions(withEmpty: Boolean = false, transform: (T) -> Triple<String, String, String>?): List<Map<String, String>> {
+    if(this.isEmpty())
+        return if(withEmpty) listOf(emptyOption) else emptyList()
+
+    val result = ArrayList<Map<String, String>>()
+    if(withEmpty)
+        result.add(emptyOption)
+    return toGroupOptions(result, transform)
+}
+
+/**
+ * 对象列表转为分组选项列表
+ * @param list 要存储的结果
+ * @param transform 转换函数
+ * @return
+ */
+public inline fun <T> Collection<T>.toGroupOptions(list: MutableList<Map<String, String>>, transform: (T) -> Triple<String, String, String>?): List<Map<String, String>> {
+    return this.mapNotNullTo(list) {
+        val o = transform(it)
+        if(o == null)
+            null
+        else
+            toOptionMap(o.first, o.second, o.third)
     }
 }
 
