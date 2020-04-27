@@ -27,5 +27,6 @@ public fun generateId(module: String): Long {
  * @return
  */
 public fun generateUUID(): String {
-    return UUID.randomUUID().toString()
+    //return UUID.randomUUID().toString()
+    return UuidGenerator.nextId()
 }

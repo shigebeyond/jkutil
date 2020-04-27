@@ -397,7 +397,7 @@ public fun Any?.getPropertyValue(name:String):Any?{
     if(this == null)
         return null
 
-    val prop = this::class.getInheritProperty(name) as KProperty1<Any, *>
+    val prop = this::class.getInheritProperty(name) as KProperty1<Any, *>?
     return prop?.get(this)
 }
 
