@@ -69,6 +69,21 @@ class HttpClient(
         get() = if(insecure) "http" else "https"
 
     /**
+     * 添加cookie
+     */
+    public fun addCookie(cookie: Cookie){
+        cookies[cookie.name()] = cookie
+    }
+
+    /**
+     * 添加cookie
+     */
+    public fun addCookies(cookies: Array<Cookie>){
+        for (cookie in cookies)
+            addCookie(cookie)
+    }
+
+    /**
      * 发送请求
      *
      * @param method
