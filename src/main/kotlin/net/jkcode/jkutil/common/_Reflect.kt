@@ -363,8 +363,15 @@ public fun KClass<*>.getInheritPropertyClass(name:String): KClass<*>? {
     if(prop == null)
         return null
 
-    return prop.getter.returnType.classifier as KClass<*>
+    return prop.clazz
 }
+
+/**
+ * 获得属性类型
+ * @return
+ */
+public val KProperty<*>.clazz: KClass<*>
+    get() = this.getter.returnType.classifier as KClass<*>
 
 /**
  * 动态获得多级属性追
@@ -470,6 +477,11 @@ public fun <T: Any> KClass<T>.getGetters(): Map<String, KProperty1.Getter<T, Any
  * @return
  */
 public inline fun <reified A : Annotation> KAnnotatedElement.getCachedAnnotation(): A?{
+    //fix bug: KAnnotatedElement.annotations 只对kotlin方法有效, 对kotlin属性无效
+    // 对kotlin属性, 直接调用java的api
+    if(this is KProperty<*>)
+        return this.javaField?.getAnnotationsByType(A::class.java)?.firstOrNull()
+
     return annotations.firstOrNull {
         it.annotationClass == A::class
     } as A?

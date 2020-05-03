@@ -100,6 +100,7 @@ public inline fun trySupplierFuture(supplier: () -> Any?): CompletableFuture<Any
  *
  * @param supplier 取值函数
  * @param complete 完成后的回调函数, 接收2个参数: 1 结果值 2 异常, 返回新结果
+ * @return
  */
 public inline fun <T> trySupplierFinally(supplier: () -> T, crossinline complete: (Any?, Throwable?) -> Any?): T{
     var result:Any? = null

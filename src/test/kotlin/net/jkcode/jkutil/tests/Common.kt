@@ -1,5 +1,6 @@
 package net.jkcode.jkutil.tests
 
+import com.alibaba.fastjson.annotation.JSONField
 import java.io.Serializable
 import net.jkcode.jkutil.common.cloneProperties
 import net.jkcode.jkutil.common.generateId
@@ -36,17 +37,28 @@ data class Thing(val name: String, val weight: Int)
 
 data class Address(val value: String, val alias: String? = null)
 
+class ManHolder(val man: IMan)
 
-data class Man(var name: String, var age: Int): Cloneable, Serializable{
-    val id = generateId("man")
+interface IMan {
+    val id: Long
+    var name: String
+    var age: Int
+}
+
+data class Man(override var name: String, override var age: Int): Cloneable, Serializable, IMan {
+
+    @JSONField
+    override val id: Long = generateId("man")
 
     // 属性值如果为null, 则压根不输出
+    @JSONField
     val birthday: Date? = null
 
     /*public override fun clone(): Any {
         return super.clone()
     }*/
 
+    @JSONField
     override fun toString(): String {
         return "${javaClass.name}: id=$id, name=$name, age=$age"
     }

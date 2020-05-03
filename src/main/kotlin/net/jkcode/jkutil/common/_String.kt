@@ -555,7 +555,7 @@ public fun Regex.findGroupValue(input: CharSequence, groupIndex: Int = 0, startI
  */
 public fun Regex.findAllGroupValue(input: CharSequence, groupIndex: Int = 0, startIndex: Int = 0): List<String>{
     val m = this.findAll(input, startIndex)
-    return m.mapToList {
+    return m.mapTo(ArrayList()) {
         it.groupValues.get(groupIndex)
     }
 }

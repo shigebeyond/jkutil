@@ -60,6 +60,9 @@ object PropertyUtil {
      */
     @JvmStatic
     public fun getPath(obj: Any?, path:String): Any? {
+        if(path.isBlank())
+            return obj
+
         // 单层
         if(!path.contains('.'))
             return get(obj, path)

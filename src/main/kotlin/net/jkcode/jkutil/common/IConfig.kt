@@ -132,7 +132,7 @@ abstract class IConfig {
      * @param defaultValue
      * @return
      */
-    public abstract fun pathConfig(path: String): Config;
+    public abstract fun getPathConfig(path: String): Config;
 
     /**
      * 获得Properties类型的子配置项
@@ -140,7 +140,7 @@ abstract class IConfig {
      * @param defaultValue
      * @return
      */
-    public abstract fun pathProperties(path: String): Properties
+    public abstract fun getPathProperties(path: String): Properties
 
     /**
      * 配置项是类的列表, 对应返回实例列表

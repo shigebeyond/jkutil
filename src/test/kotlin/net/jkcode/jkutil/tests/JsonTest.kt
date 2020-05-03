@@ -22,6 +22,7 @@ class JsonTest {
     fun testJson(){
         val o = HashMap<String, Any?>()
         o["notify_url"] = "http://baidu.com" // 原始值
+        o["list"] = listOf(mapOf("a" to 1))
         var json = JSON.toJSONString(o)
         println(json) // 输出 {"notify_url":"http://baidu.com"}
 
@@ -43,6 +44,17 @@ class JsonTest {
         println(json) // 输出: {"age":12,"id":105254286010613760,"name":"shi"}
 
         val o2 = JSON.parseObject(json, Man::class.java);
+        println(o2)
+    }
+
+    // 属性类型是接口
+    @Test
+    fun testJsonHolder(){
+        val o = ManHolder(Man("shi", 12))
+        var json = JSON.toJSONString(o)
+        println(json) // 输出 {"age":12,"id":105254286010613760,"name":"shi"}
+
+        val o2 = JSON.parseObject(json, ManHolder::class.java);
         println(o2)
     }
 

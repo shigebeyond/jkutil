@@ -74,7 +74,7 @@ open class Config(
             if(path == null)
                 return config
             // 有子项
-            return config.pathConfig(path)
+            return config.getPathConfig(path)
         }
 
         /**
@@ -274,7 +274,7 @@ open class Config(
      * @param defaultValue
      * @return
      */
-    public override fun pathConfig(path: String): Config{
+    public override fun getPathConfig(path: String): Config{
         try{
             val subprops = PropertyUtil.getPath(props, path) as Map<String, *>
             return Config(subprops)
@@ -289,7 +289,7 @@ open class Config(
      * @param defaultValue
      * @return
      */
-    public override fun pathProperties(path: String): Properties{
+    public override fun getPathProperties(path: String): Properties{
         try{
             val subprops = PropertyUtil.getPath(props, path) as Map<String, *>
             val result = Properties()

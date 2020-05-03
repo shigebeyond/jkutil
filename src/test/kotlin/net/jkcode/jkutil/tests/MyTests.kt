@@ -1,5 +1,6 @@
 package net.jkcode.jkutil.tests
 
+import com.alibaba.fastjson.annotation.JSONField
 import io.netty.util.concurrent.DefaultEventExecutor
 import io.netty.util.concurrent.DefaultPromise
 import net.jkcode.jkutil.bit.SetBitIterator
@@ -39,6 +40,7 @@ import kotlin.reflect.KClass
 import kotlin.reflect.KMutableProperty0
 import kotlin.reflect.KMutableProperty1
 import kotlin.reflect.full.memberFunctions
+import kotlin.reflect.jvm.javaField
 import kotlin.reflect.jvm.javaMethod
 import kotlin.reflect.jvm.reflect
 
@@ -124,7 +126,6 @@ class MyTests{
     fun testFormat(){
         println(MessageFormat.format("Avg ResponseTime: {0,number,#.##}ms", 1.toFloat() / 3))
     }
-
 
     @Test
     fun testCollection(){
@@ -221,6 +222,18 @@ class MyTests{
         val eles = ElementCollection(listOf(1, 2, 3))
         for(i in 0 until eles.size())
             println(eles.getElement(i))
+    }
+
+    @Test
+    fun testPropAnnotation() {
+        val prop = Man::id
+
+        // kotlin属性获得注解
+        println(prop.annotations) // [] 空数组
+        println(prop.getCachedAnnotation<JSONField>()) // 有
+
+        // java属性获得注解
+        println(prop.javaField!!.getAnnotationsByType(JSONField::class.java).firstOrNull()) // 有
     }
 
     @Test
@@ -616,9 +629,12 @@ class MyTests{
 //        println(str.substring(0, str.lastIndexOf("c.")))
 //        println(str.substringBeforeLast("c."))
 
-        val xml = "<app>my hero</app>"
-        val content = xml.substringBetween("<app>", "</app>")
-        println(content)
+//        val xml = "<app>my hero</app>"
+//        val content = xml.substringBetween("<app>", "</app>")
+//        println(content)
+
+        val list = listOf("a", "b", "c")
+        println(list.joinToString(".*.", "*."))
     }
 
     @Test
@@ -825,10 +841,14 @@ class MyTests{
 
     @Test
     fun testClass(){
-        // println(MyTests::class)
-        // println(this.javaClass)
-        // println(this.javaClass.kotlin)
-        // println(this::class)
+         println(MyTests::class)
+         println(this.javaClass)
+         println(this.javaClass.kotlin)
+         println(this::class)
+         println(this::class.java)
+         println(this::class.java == this.javaClass) // true
+
+        println("-------")
 
        println(this::class.simpleName) // MyTests
         println(this::class.qualifiedName) // net.jkcode.jkutil.tests.MyTests
