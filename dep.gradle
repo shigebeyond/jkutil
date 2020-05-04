@@ -24,7 +24,7 @@
 		compile 'org.yaml:snakeyaml:1.18'
 
 		// json
-		compile 'com.alibaba:fastjson:1.2.39'
+		compile 'com.alibaba:fastjson:1.2.67'
 
 		// log
 		compile 'org.slf4j:slf4j-api:1.7.10'
