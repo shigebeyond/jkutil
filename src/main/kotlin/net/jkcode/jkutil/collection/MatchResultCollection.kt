@@ -1,21 +1,4 @@
-package net.jkcode.jkutil.iterator
-
-/**
- * 指定分组的匹配结果的迭代器
- */
-class MatchResultIterator<String>(public val it: Iterator<MatchResult>, public val groupIndex: Int = 0):Iterator<String> {
-
-    constructor(rs: Sequence<MatchResult>, groupIndex: Int = 0): this(rs.iterator(), groupIndex)
-
-    override fun hasNext(): Boolean {
-        return it.hasNext()
-    }
-
-    override fun next(): String {
-        val r = it.next()
-        return r.groupValues[groupIndex] as String
-    }
-}
+package net.jkcode.jkutil.collection
 
 /**
  * 指定分组的匹配结果的集合
@@ -44,4 +27,21 @@ class MatchResultCollection<String>(public val rs: Sequence<MatchResult>, public
         return MatchResultIterator(rs)
     }
 
+}
+
+/**
+ * 指定分组的匹配结果的迭代器
+ */
+class MatchResultIterator<String>(public val it: Iterator<MatchResult>, public val groupIndex: Int = 0):Iterator<String> {
+
+    constructor(rs: Sequence<MatchResult>, groupIndex: Int = 0): this(rs.iterator(), groupIndex)
+
+    override fun hasNext(): Boolean {
+        return it.hasNext()
+    }
+
+    override fun next(): String {
+        val r = it.next()
+        return r.groupValues[groupIndex] as String
+    }
 }

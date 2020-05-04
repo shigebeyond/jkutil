@@ -1,5 +1,6 @@
 package net.jkcode.jkutil.common
 
+import net.jkcode.jkutil.collection.MatchResultCollection
 import java.io.PrintWriter
 import java.io.StringWriter
 import java.text.NumberFormat
@@ -553,9 +554,7 @@ public fun Regex.findGroupValue(input: CharSequence, groupIndex: Int = 0, startI
 /**
  * Returns a sequence of all occurrences of a regular expression within the [input] string, beginning at the specified [startIndex].
  */
-public fun Regex.findAllGroupValue(input: CharSequence, groupIndex: Int = 0, startIndex: Int = 0): List<String>{
+public fun Regex.findAllGroupValue(input: CharSequence, groupIndex: Int = 0, startIndex: Int = 0): Collection<String>{
     val m = this.findAll(input, startIndex)
-    return m.mapTo(ArrayList()) {
-        it.groupValues.get(groupIndex)
-    }
+    return MatchResultCollection(m, groupIndex)
 }

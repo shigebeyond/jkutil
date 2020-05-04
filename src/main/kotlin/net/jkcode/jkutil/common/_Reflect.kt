@@ -477,11 +477,6 @@ public fun <T: Any> KClass<T>.getGetters(): Map<String, KProperty1.Getter<T, Any
  * @return
  */
 public inline fun <reified A : Annotation> KAnnotatedElement.getCachedAnnotation(): A?{
-    //fix bug: KAnnotatedElement.annotations 只对kotlin方法有效, 对kotlin属性无效
-    // 对kotlin属性, 直接调用java的api
-    if(this is KProperty<*>)
-        return this.javaField?.getAnnotationsByType(A::class.java)?.firstOrNull()
-
     return annotations.firstOrNull {
         it.annotationClass == A::class
     } as A?
