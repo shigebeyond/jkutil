@@ -7,6 +7,8 @@ import java.text.NumberFormat
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
+import kotlin.contracts.InvocationKind
+import kotlin.contracts.contract
 import kotlin.reflect.KClass
 import kotlin.reflect.KType
 
@@ -42,6 +44,16 @@ public fun String.longHashCode(): Long {
 }
 
 /****************************** 字符串扩展 *******************************/
+/**
+ * 如果字符串是空, 就转换下
+ */
+public inline fun <R> String?.letEmpty(block: (String?) -> String): String {
+    if(!this.isNullOrBlank())
+        return this
+
+    return block(this)
+}
+
 /**
  * 根据Unicode编码完美的判断中文汉字和符号
  */
@@ -411,7 +423,7 @@ public inline fun <T : Any> String.to(clazz: KClass<T>): T {
         Short::class -> this.toShort()
         Byte::class -> this.toByte()
         Date::class -> this.toDate()
-        else -> throw IllegalArgumentException("字符串不能自动转换为未识别的类型: " + clazz)
+        else -> throw IllegalArgumentException("字符串[$this]不能自动转换为未识别的类型: $clazz")
     } as T;
 }
 
