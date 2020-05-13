@@ -211,6 +211,19 @@ public class FixedKeyMapFactory {
             _dirtyBits.clear();
         }
 
+        @Override
+        public int hashCode() {
+            return Arrays.hashCode(_keys) * 10000000 + Arrays.hashCode(_values);
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if(o == null || !(o instanceof FixedKeyMap))
+                return false;
+
+            return Arrays.equals(_values, ((FixedKeyMap)o)._values);
+        }
+
         /*********************** EntrySet ************************/
         @Override
         public Set<Entry<String, Object>> entrySet() {

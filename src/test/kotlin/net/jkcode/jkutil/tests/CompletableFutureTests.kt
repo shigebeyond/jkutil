@@ -1,5 +1,6 @@
 package net.jkcode.jkutil.tests
 
+import net.jkcode.jkutil.common.VoidFuture
 import net.jkcode.jkutil.common.makeThreads
 import net.jkcode.jkutil.common.randomBoolean
 import net.jkcode.jkutil.common.randomInt
@@ -9,6 +10,15 @@ import java.util.concurrent.CompletableFuture
 import java.util.concurrent.atomic.AtomicInteger
 
 class CompletableFutureTests{
+
+    @Test
+    fun testVoidFuture() {
+        VoidFuture.thenRun{
+            println("hello")
+        }
+
+        Thread.sleep(1000)
+    }
 
     /**
      * CompletableFuture的 thenAccept() / exceptionally() / whenComplete()
