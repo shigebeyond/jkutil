@@ -62,8 +62,7 @@ class JedisCache(protected val configName: String = "default") : BaseCache(){
      * @param expireSencond 过期秒数
      */
     public override fun doPut(key: Any, value: Any, expireSencond:Long) {
-        //jedis.set(key.toString(), value.toString(), "NX", "EX", expires)
-        jedis.set(keyBytes(key), serializer.serialize(value), "NX".toByteArray(), "EX".toByteArray(), expireSencond)
+        jedis.setex(keyBytes(key), expireSencond.toInt(), serializer.serialize(value))
     }
 
     /**
