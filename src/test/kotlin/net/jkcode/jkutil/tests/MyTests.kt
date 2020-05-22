@@ -78,6 +78,12 @@ class MyTests{
     }
 
     @Test
+    fun testLocale(){
+        val locales = Locale.getAvailableLocales()
+        locales.forEach(::println)
+    }
+
+    @Test
     fun testPath(){
         val f = "books.xml"
 //        val f = "/home/shi/code/xmind/source/hibernate-htype2nativetype.yaml"

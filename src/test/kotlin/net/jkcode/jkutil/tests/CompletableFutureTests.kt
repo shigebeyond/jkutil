@@ -153,6 +153,17 @@ class CompletableFutureTests{
     }
 
     @Test
+    fun testException(){
+        val f = CompletableFuture<Any?>()
+        // val result = f.whenComplete{ r, t -> // 不转换结果, 调用get()方法还是会抛异常
+        val result = f.handle { r, t -> // 转换结果, 调用get()方法不抛异常 = whenComplete + 转换
+            "result=$r, exception=$t"
+        }
+        f.completeExceptionally(Exception("test"))
+        println(result.get())
+    }
+
+    @Test
     fun testCompleted(){
         val future = CompletableFuture.completedFuture(1)
         future.whenComplete{ r, ex->
