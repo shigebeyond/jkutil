@@ -66,9 +66,11 @@ object ShardedJedisFactory: IJedisFactory {
         public override fun endScope() {
             // 请求结束要调用 close() 来关闭连接
             val jedises = get()
-            for((name, jedis) in jedises)
+            for((name, jedis) in jedises) {
+                //println("req[${getReqId()}]: jedis - 1")
                 //getPool(name).returnResource(jedis)
                 jedis.close()
+            }
             jedises.clear()
 
             super.endScope()
@@ -86,6 +88,7 @@ object ShardedJedisFactory: IJedisFactory {
     public fun getConnection(name: String = "default"): ShardedJedis {
         // 获得已有连接
         var jedis:ShardedJedis = jedises.get().getOrPut(name){
+            //println("req[${getReqId()}]: jedis + 1")
             getPool(name).resource
         }
         // 尝试重连
