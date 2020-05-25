@@ -400,12 +400,25 @@ public fun Any?.getPathPropertyValue(path:String):Any?{
  * @param name 属性名
  * @return 属性值
  */
-public fun Any?.getPropertyValue(name:String):Any?{
+public fun Any?.getPropertyValue(name: String):Any?{
     if(this == null)
         return null
 
     val prop = this::class.getInheritProperty(name) as KProperty1<Any, *>?
     return prop?.get(this)
+}
+
+/**
+ * 动态设置属性追
+ * @param name 属性名
+ * @param value
+ */
+public fun Any?.setPropertyValue(name: String, value: Any?){
+    if(this == null)
+        return
+
+    val prop = this::class.getInheritProperty(name) as KMutableProperty1<Any, Any?>?
+    prop?.set(this, value)
 }
 
 /**
