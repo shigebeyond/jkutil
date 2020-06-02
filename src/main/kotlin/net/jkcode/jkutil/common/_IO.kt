@@ -27,7 +27,8 @@ public fun OutputStream.writeFile(file: File) {
  * @param in
  * @return
  */
-public fun OutputStream.writeFromInput(`in`: InputStream) {
+public fun OutputStream.writeFromInput(`in`: InputStream): Int {
+    var total = 0
     `in`.use {
         var length = -1
         val buffer = ByteArray(1024)
@@ -35,10 +36,13 @@ public fun OutputStream.writeFromInput(`in`: InputStream) {
             // 读: in -> buffer
             length = `in`.read(buffer)
             // 写: buffer -> out
-            if(length != -1)
+            if(length != -1) {
                 this.write(buffer, 0, length)
+                total += length
+            }
         } while (length != -1)
     }
+    return total
 }
 
 /**
