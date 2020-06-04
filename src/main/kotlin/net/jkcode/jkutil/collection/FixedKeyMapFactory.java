@@ -17,6 +17,11 @@ import java.util.*;
 public class FixedKeyMapFactory {
 
     /**
+     * 忽略未知的key
+     */
+    protected boolean ignoreUnknowKey;
+
+    /**
      * 固定的key
      */
     protected final String[] _keys;
@@ -30,7 +35,18 @@ public class FixedKeyMapFactory {
      * 构造函数
      * @param keys
      */
-    public FixedKeyMapFactory(final String... keys) {
+    public FixedKeyMapFactory(final String... keys){
+        this(false, keys);
+    }
+
+    /**
+     * 构造函数
+     * @param ignoreUnknowKey 忽略未知的key
+     * @param keys
+     */
+    public FixedKeyMapFactory(boolean ignoreUnknowKey, final String... keys) {
+        this.ignoreUnknowKey = ignoreUnknowKey;
+
         // 检查key是否有重复
         _keys = keys;
         List<String> allKeys = Arrays.asList(keys);
@@ -166,8 +182,15 @@ public class FixedKeyMapFactory {
         @Override
         public Object put(final String key, final Object value) {
             int i = indexOf(key);
-            if(i == -1)
+            // 未知key
+            if(i == -1) {
+                // 忽略
+                if(ignoreUnknowKey)
+                    return null;
+
+                // 抛异常
                 throw new IllegalArgumentException("Unkown key: " + key);
+            }
 
             Object oldValue = _values[i];
 
