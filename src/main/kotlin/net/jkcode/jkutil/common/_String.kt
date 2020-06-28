@@ -7,8 +7,6 @@ import java.text.NumberFormat
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
-import kotlin.contracts.InvocationKind
-import kotlin.contracts.contract
 import kotlin.reflect.KClass
 import kotlin.reflect.KType
 
@@ -46,12 +44,26 @@ public fun String.longHashCode(): Long {
 /****************************** 字符串扩展 *******************************/
 /**
  * 如果字符串是空, 就转换下
+ * @param default
+ * @return
  */
-public inline fun <R> String?.letEmpty(block: (String?) -> String): String {
+public inline fun <R> String?.emptyOr(default: (String?) -> String): String {
     if(!this.isNullOrBlank())
         return this
 
-    return block(this)
+    return default(this)
+}
+
+/**
+ * 如果字符串是空, 就返回默认值
+ * @param default
+ * @return
+ */
+public inline fun <R> String?.emptyOr(default: String): String {
+    if(!this.isNullOrBlank())
+        return this
+
+    return default
 }
 
 /**

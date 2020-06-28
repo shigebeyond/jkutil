@@ -166,6 +166,24 @@ public fun <E> Collection<E>?.isNullOrEmpty(): Boolean {
 }
 
 /**
+ * 检查集合中的元素是否相同
+ * @return
+ */
+public fun <E> Collection<E>.isSame(): Boolean {
+    if(this.isEmpty())
+        return false
+
+    var ele: E? = null
+    return this.all {
+        if(ele == null){
+            ele = it
+            true
+        }else
+            ele == it
+    }
+}
+
+/**
  * Returns the element at the specified position in this collection.
  *
  * @param index index of the element to return
