@@ -26,11 +26,27 @@ object BeanSingletons: IBeanSingletons {
      */
     public override fun instance(clazz: Class<*>): Any{
         return beans.getOrPutOnce(clazz){
-            // 检查bean类的默认构造函数
-            if(clazz.getConstructorOrNull() == null)
-                throw NoSuchMethodException("Bean Class [$clazz] has no no-arg constructor") // 无默认构造函数
-            // 创建bean实例
-            clazz.newInstance()
+            buildInstance(clazz)
         }
+    }
+
+    /**
+     * 构建类实例
+     * @param clazz
+     * @return
+     */
+    private fun buildInstance(clazz: Class<*>): Any {
+        // 1 object:　有非空静态属性 INSTANCE
+        val field = clazz.getDeclaredField("INSTANCE")
+        val inst = field?.get(null)
+        if(inst != null)
+            return inst
+
+        // 2 普通类
+        // 检查bean类的默认构造函数
+        if (clazz.getConstructorOrNull() == null)
+            throw NoSuchMethodException("Bean Class [$clazz] has no no-arg constructor") // 无默认构造函数
+        // 创建bean实例
+        return clazz.newInstance()
     }
 }

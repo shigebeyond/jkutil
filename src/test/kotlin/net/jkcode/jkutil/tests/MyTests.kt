@@ -13,6 +13,7 @@ import net.jkcode.jkutil.idworker.SnowflakeIdWorker
 import net.jkcode.jkutil.iterator.ArrayFilteredIterator
 import net.jkcode.jkutil.redis.ShardedJedisFactory
 import net.jkcode.jkutil.serialize.ISerializer
+import net.jkcode.jkutil.singleton.BeanSingletons
 import net.jkcode.jkutil.validator.ValidateFuncDefinition
 import org.apache.commons.collections.map.ListOrderedMap
 import org.apache.commons.lang.StringEscapeUtils
@@ -65,6 +66,13 @@ class MyTests{
         println(props.entries.joinToString("\n\n") {
             "${it.key}\n\t${it.value}"
         })
+    }
+
+    @Test
+    fun testBeanSingletons(){
+        val field = BeanSingletons::class.java.getDeclaredField("INSTANCE")
+        val inst = field?.get(null)
+        println(inst)
     }
 
     @Test
@@ -285,7 +293,6 @@ class MyTests{
         println(1 shl 0)
         println(1 shl 1)
         println(1 shl 2)
-
 
         println(4 shr 0)
         println(4 shr 1)
