@@ -40,6 +40,8 @@ import kotlin.collections.HashMap
 import kotlin.reflect.KClass
 import kotlin.reflect.KMutableProperty0
 import kotlin.reflect.KMutableProperty1
+import kotlin.reflect.full.companionObject
+import kotlin.reflect.full.companionObjectInstance
 import kotlin.reflect.full.memberFunctions
 import kotlin.reflect.jvm.javaField
 import kotlin.reflect.jvm.javaMethod
@@ -70,6 +72,17 @@ class MyTests{
 
     @Test
     fun testBeanSingletons(){
+        // wrong: kotlin语法是object, 不是静态变量
+//        val field = BeanSingletons::class.getStaticProperty("INSTANCE")
+//        val inst = field?.get()
+
+        // wrong
+//        val inst = BeanSingletons::class.companionObject // 伴随对象的类
+
+        // wrong
+//        val inst = BeanSingletons::class.companionObjectInstance // 伴随对象的实例
+
+        // right
         val field = BeanSingletons::class.java.getDeclaredField("INSTANCE")
         val inst = field?.get(null)
         println(inst)

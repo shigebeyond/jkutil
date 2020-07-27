@@ -1,5 +1,6 @@
 package net.jkcode.jkutil.singleton
 
+import net.jkcode.jkutil.common.getAccessibleField
 import net.jkcode.jkutil.common.getConstructorOrNull
 import net.jkcode.jkutil.common.getOrPutOnce
 import java.util.concurrent.ConcurrentHashMap
@@ -37,7 +38,7 @@ object BeanSingletons: IBeanSingletons {
      */
     private fun buildInstance(clazz: Class<*>): Any {
         // 1 object:　有非空静态属性 INSTANCE
-        val field = clazz.getDeclaredField("INSTANCE")
+        val field = clazz.getAccessibleField("INSTANCE")
         val inst = field?.get(null)
         if(inst != null)
             return inst
