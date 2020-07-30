@@ -71,6 +71,10 @@
 		    exclude(module: "io.netty:netty-transport-native-kqueue")
 		}
 
+		// quasar
+		compile "co.paralleluniverse:quasar-core:$quasar_version"
+		compile "co.paralleluniverse:quasar-kotlin:$quasar_version"
+
         // test
         testCompile "org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version"
         testCompile 'junit:junit:4.11'
