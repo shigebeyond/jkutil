@@ -6,21 +6,18 @@ import co.paralleluniverse.fibers.Suspendable
 import co.paralleluniverse.fibers.futures.AsyncCompletionStage
 import co.paralleluniverse.kotlin.fiber
 import co.paralleluniverse.strands.dataflow.Val
-import java.util.concurrent.Callable
-import java.util.concurrent.ExecutorService
-import java.util.concurrent.ForkJoinPool
-import java.util.concurrent.Future
+import java.util.concurrent.*
 
 /**
  * 默认的协程的线程池
  */
-private val defaultFiberThreadPool: ForkJoinPool by lazy{
+private val defaultFiberThreadPool: ForkJoinPool by lazy {
     // val scheduler = Fiber.defaultScheduler() // 私有方法
     val scheduler = DefaultFiberScheduler.getInstance() as FiberForkJoinScheduler
     scheduler.executor as ForkJoinPool
 }
 
-class FiberExecutorService: ExecutorService by defaultFiberThreadPool{
+class FiberExecutorService : ExecutorService by defaultFiberThreadPool {
 
     override fun execute(command: Runnable) {
         fiber @Suspendable {
@@ -28,12 +25,40 @@ class FiberExecutorService: ExecutorService by defaultFiberThreadPool{
         }
     }
 
-    override fun <T : Any?> submit(task: Callable<T>): Future<T> {
+    override fun <T> submit(task: Callable<T>): Future<T> {
         //AsyncCompletionStage(); // 私有构造函数
         return fiber @Suspendable {
             task.call()
         }
     }
+
+    override fun <T> submit(task: Runnable, result: T): Future<T> {
+        return fiber @Suspendable {
+            task.run()
+            result
+        }
+    }
+
+    override fun <T> invokeAll(tasks: Collection<Callable<T>>): List<Future<T>> {
+        return tasks.map {
+            submit(it)
+        }
+    }
+
+    override fun <T> invokeAll(tasks: Collection<Callable<T>>, timeout: Long, unit: TimeUnit): List<Future<T>> {
+        return tasks.map {
+            submit(it)
+        }
+    }
+
+    override fun <T> invokeAny(tasks: Collection<Callable<T>>): T {
+        return submit(tasks.first()).get()
+    }
+
+    override fun <T> invokeAny(tasks: Collection<Callable<T>>, timeout: Long, unit: TimeUnit): T{
+        return submit(tasks.first()).get()
+    }
+
 
 }
 
@@ -41,7 +66,7 @@ class FiberExecutorService: ExecutorService by defaultFiberThreadPool{
  * 公共的协程池
  *   执行任务时要处理好异常
  */
-public val CommonFiberPool: ExecutorService by lazy{
+public val CommonFiberPool: ExecutorService by lazy {
     // val scheduler = Fiber.defaultScheduler() // 私有方法
     val scheduler = DefaultFiberScheduler.getInstance() as FiberForkJoinScheduler
     scheduler.executor as ForkJoinPool
