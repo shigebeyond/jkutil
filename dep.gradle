@@ -73,7 +73,10 @@
 
 		// quasar
 		compile "co.paralleluniverse:quasar-core:$quasar_version"
-		compile "co.paralleluniverse:quasar-kotlin:$quasar_version"
+		compile("co.paralleluniverse:quasar-kotlin:$quasar_version"){
+			exclude(module: "org.jetbrains.kotlin:kotlin-stdlib")
+			exclude(module: "org.jetbrains.kotlin:kotlin-reflect")
+		}
 
         // test
         testCompile "org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version"

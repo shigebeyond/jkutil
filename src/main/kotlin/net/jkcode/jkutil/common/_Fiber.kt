@@ -3,10 +3,17 @@ package net.jkcode.jkutil.common
 import co.paralleluniverse.fibers.DefaultFiberScheduler
 import co.paralleluniverse.fibers.FiberForkJoinScheduler
 import co.paralleluniverse.fibers.Suspendable
-import co.paralleluniverse.fibers.futures.AsyncCompletionStage
 import co.paralleluniverse.kotlin.fiber
 import co.paralleluniverse.strands.dataflow.Val
 import java.util.concurrent.*
+
+/**
+ * 公共的协程池
+ *   执行任务时要处理好异常
+ */
+public val CommonFiberPool: ExecutorService by lazy {
+    FiberExecutorService()
+}
 
 /**
  * 默认的协程的线程池
@@ -17,6 +24,10 @@ private val defaultFiberThreadPool: ForkJoinPool by lazy {
     scheduler.executor as ForkJoinPool
 }
 
+/**
+ * 基于 ExecutorService 实现的 ExecutorService
+ *    执行在协程, 不在线程
+ */
 class FiberExecutorService : ExecutorService by defaultFiberThreadPool {
 
     override fun execute(command: Runnable) {
@@ -58,16 +69,4 @@ class FiberExecutorService : ExecutorService by defaultFiberThreadPool {
     override fun <T> invokeAny(tasks: Collection<Callable<T>>, timeout: Long, unit: TimeUnit): T{
         return submit(tasks.first()).get()
     }
-
-
-}
-
-/**
- * 公共的协程池
- *   执行任务时要处理好异常
- */
-public val CommonFiberPool: ExecutorService by lazy {
-    // val scheduler = Fiber.defaultScheduler() // 私有方法
-    val scheduler = DefaultFiberScheduler.getInstance() as FiberForkJoinScheduler
-    scheduler.executor as ForkJoinPool
 }
