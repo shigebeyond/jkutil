@@ -3,19 +3,18 @@ package net.jkcode.jkutil.tests
 import co.paralleluniverse.fibers.Fiber
 import co.paralleluniverse.fibers.FiberExecutorScheduler
 import co.paralleluniverse.fibers.Suspendable
-import co.paralleluniverse.kotlin.fiber
 import co.paralleluniverse.strands.Strand
 import io.netty.channel.DefaultEventLoop
 import org.junit.Test
 import co.paralleluniverse.fibers.FiberAsync
-import co.paralleluniverse.kotlin.Receive
-import co.paralleluniverse.kotlin.Send
-import co.paralleluniverse.kotlin.select
+import co.paralleluniverse.kotlin.*
 import co.paralleluniverse.strands.channels.Channels
 import co.paralleluniverse.strands.dataflow.Val
 import co.paralleluniverse.strands.dataflow.Var
 import net.jkcode.jkutil.common.randomBoolean
+import net.jkcode.jkutil.common.randomString
 import org.junit.Assert.assertTrue
+import java.util.concurrent.TimeUnit
 
 object Foo{
 
@@ -67,6 +66,29 @@ class FooAsync : FiberAsync<String, Exception>(), FooCompletion {
 }
 
 /**
+ * actor测试
+ */
+class FooActor: Actor(){
+    override fun doRun(): Void? {
+        try {
+            var i = 0
+            while (true) {
+                val msg = receive()
+                // process message
+                i++
+                println("actor[" + Thread.currentThread().name + "]收到第 $i 条消息: $msg")
+                if (msg == null)
+                    break
+            }
+            return null
+        }catch (e: Exception){
+            println("actor[" + Thread.currentThread().name + "]捕获异常: " + e.message)
+            throw e
+        }
+    }
+}
+
+/**
  *
  * @author shijianhang<772910474@qq.com>
  * @date 2020-07-30 9:23 PM
@@ -76,8 +98,8 @@ class FiberTests {
     @Test
     fun testFiber(){
         val f = fiber @Suspendable {
-            // The fiber will be created and will start executing this body
-
+            Fiber.park(100, TimeUnit.MILLISECONDS);
+            123
         }
         println(f.get())
     }
@@ -116,6 +138,9 @@ class FiberTests {
         println(f.get())
     }
 
+    /**
+     * 测试channel
+     */
     @Test
     fun testChannel() {
         val ch1 = Channels.newChannel<Int>(1)
@@ -146,6 +171,9 @@ class FiberTests {
         Strand.sleep(2000); //
     }
 
+    /**
+     * 测试 val / var
+     */
     @Test
     fun testDataFlow(){
         val a = Val<Int>()
@@ -167,5 +195,31 @@ class FiberTests {
         Strand.sleep(2000); //
         a.set(3); // this will trigger everything
         f.join();
+    }
+
+
+    /**
+     * 测试 actor
+     */
+    @Test
+    fun testActor(){
+        // 创建actor
+        val actor = FooActor()
+        actor.register()
+        // 协程中执行
+        val ref = actor.spawn()
+
+        for (i in 0..100){
+            val msg = randomString(4);
+
+            // 等价
+            //actor.sendOrInterrupt(msg)
+            ref.sendSync(msg)
+            //Thread.sleep(100)
+        }
+
+        // FooActor.doRun() 中的 Actor.receive() 报错: Exception in Fiber "fiber-10000001" If this exception looks strange, perhaps you've forgotten to instrument a blocking method.
+        println("主线程[" + Thread.currentThread().name + "]等待")
+        Strand.sleep(10000)
     }
 }
