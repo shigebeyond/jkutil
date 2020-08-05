@@ -1,6 +1,5 @@
 package net.jkcode.jkutil.tests
 
-import net.jkcode.jkutil.common.lcFirst
 import net.jkcode.jkutil.common.replaceText
 import net.jkcode.jkutil.common.travel
 import net.jkcode.jkutil.common.trim

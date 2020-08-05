@@ -1,10 +1,9 @@
-package net.jkcode.jkutil.common
+package net.jkcode.jkutil.fiber
 
 import co.paralleluniverse.fibers.DefaultFiberScheduler
 import co.paralleluniverse.fibers.FiberForkJoinScheduler
 import co.paralleluniverse.fibers.Suspendable
 import co.paralleluniverse.kotlin.fiber
-import co.paralleluniverse.strands.dataflow.Val
 import java.util.concurrent.*
 
 /**

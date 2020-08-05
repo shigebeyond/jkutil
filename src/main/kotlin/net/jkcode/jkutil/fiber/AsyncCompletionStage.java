@@ -11,7 +11,7 @@
  * under the terms of the GNU Lesser General Public License version 3.0
  * as published by the Free Software Foundation.
  */
-package co.paralleluniverse.fibers.futures;
+package net.jkcode.jkutil.fiber;
 
 import co.paralleluniverse.fibers.Fiber;
 import co.paralleluniverse.fibers.FiberAsync;
@@ -25,6 +25,7 @@ import java.util.concurrent.TimeoutException;
 
 /**
  * Turns {@link CompletableFuture}s into fiber-blocking operations.
+ * From quasar 0.8.0
  *
  * @author pron
  */
@@ -168,7 +169,7 @@ public class AsyncCompletionStage<V> extends FiberAsync<V, ExecutionException> {
     ///////////////////////////////////////////////////////////////////////
     private final CompletionStage<V> fut;
 
-    private AsyncCompletionStage(CompletionStage<V> future) {
+    public AsyncCompletionStage(CompletionStage<V> future) {
         this.fut = future;
     }
 

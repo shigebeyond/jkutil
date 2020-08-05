@@ -11,10 +11,15 @@ import co.paralleluniverse.kotlin.*
 import co.paralleluniverse.strands.channels.Channels
 import co.paralleluniverse.strands.dataflow.Val
 import co.paralleluniverse.strands.dataflow.Var
+import net.jkcode.jkutil.common.CommonThreadPool
 import net.jkcode.jkutil.common.randomBoolean
+import net.jkcode.jkutil.common.randomInt
 import net.jkcode.jkutil.common.randomString
+import net.jkcode.jkutil.fiber.AsyncCompletionStage
 import org.junit.Assert.assertTrue
+import java.util.concurrent.CompletableFuture
 import java.util.concurrent.TimeUnit
+
 
 object Foo{
 
@@ -69,7 +74,7 @@ class FooAsync : FiberAsync<String, Exception>(), FooCompletion {
  * actor测试
  */
 class FooActor: Actor(){
-    override fun doRun(): Void? {
+    override fun doRun(): Any? {
         try {
             var i = 0
             while (true) {
@@ -80,12 +85,47 @@ class FooActor: Actor(){
                 if (msg == null)
                     break
             }
-            return null
+            return "done"
         }catch (e: Exception){
             println("actor[" + Thread.currentThread().name + "]捕获异常: " + e.message)
             throw e
         }
     }
+}
+
+/**
+ * CompletableFuture 转 FiberCompletableFuture
+ */
+public fun <V> CompletableFuture<V>.toFiberCompletableFuture(): FiberCompletableFuture<V> {
+    val f = FiberCompletableFuture<V>()
+    this.handle { r, t ->
+        if(t == null)
+            f.complete(r)
+        else
+            f.completeExceptionally(t)
+    }
+    return f
+}
+
+/**
+ * 让 CompletableFuture.get() 由同步阻塞变为 fiber阻塞
+ */
+class FiberCompletableFuture<V>: CompletableFuture<V>() {
+
+    override fun get(): V {
+        return if (Fiber.isCurrentFiber())
+            AsyncCompletionStage<V>(this).run()
+        else
+            super.get()
+    }
+
+    override fun get(timeout: Long, unit: TimeUnit): V {
+        return if (Fiber.isCurrentFiber())
+            AsyncCompletionStage<V>(this).run(timeout, unit)
+        else
+            super.get(timeout, unit)
+    }
+
 }
 
 /**
@@ -205,7 +245,7 @@ class FiberTests {
     fun testActor(){
         // 创建actor
         val actor = FooActor()
-        actor.register()
+        //actor.register("foo-actor)
         // 协程中执行
         val ref = actor.spawn()
 
@@ -219,7 +259,44 @@ class FiberTests {
         }
 
         // FooActor.doRun() 中的 Actor.receive() 报错: Exception in Fiber "fiber-10000001" If this exception looks strange, perhaps you've forgotten to instrument a blocking method.
-        println("主线程[" + Thread.currentThread().name + "]等待")
-        Strand.sleep(10000)
+        //println("主线程[" + Thread.currentThread().name + "]等待")
+        //Strand.sleep(10000)
+
+        println(actor.get())
+    }
+
+
+    @Test
+    fun testFiberCompletableFuture() {
+        val f = fiber @Suspendable {
+            // wrong: 异步处理居然执行了2次
+            /*CompletableFuture.supplyAsync {
+                Thread.sleep(100)
+                val r = randomInt(100) // 进入了2次
+                println("结果1: $r")
+                r
+            }.toFiberCompletableFuture()
+            .get()*/
+
+            // wrong: 异步处理居然执行了2次
+            val future = FiberCompletableFuture<Int>()
+            CommonThreadPool.execute {
+                val r = randomInt(100) // 进入了2次
+                println("结果1: $r")
+                future.complete(r)
+            }
+            future.get()
+
+            // right
+            /*val f = CompletableFuture.supplyAsync {
+                Thread.sleep(100)
+                val r = randomInt(100)
+                println("结果1: $r")
+                r
+            }
+            AsyncCompletionStage.get(f)*/
+        }
+
+        println(f.get())
     }
 }

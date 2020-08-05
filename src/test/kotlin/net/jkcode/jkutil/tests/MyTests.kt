@@ -8,6 +8,8 @@ import net.jkcode.jkutil.collection.DoneFlagList
 import net.jkcode.jkutil.collection.FixedKeyMapFactory
 import net.jkcode.jkutil.common.*
 import net.jkcode.jkutil.elements.ElementCollection
+import net.jkcode.jkutil.common.fileSize2Bytes
+import net.jkcode.jkutil.common.travel
 import net.jkcode.jkutil.idworker.SnowflakeId
 import net.jkcode.jkutil.idworker.SnowflakeIdWorker
 import net.jkcode.jkutil.iterator.ArrayFilteredIterator
@@ -40,8 +42,6 @@ import kotlin.collections.HashMap
 import kotlin.reflect.KClass
 import kotlin.reflect.KMutableProperty0
 import kotlin.reflect.KMutableProperty1
-import kotlin.reflect.full.companionObject
-import kotlin.reflect.full.companionObjectInstance
 import kotlin.reflect.full.memberFunctions
 import kotlin.reflect.jvm.javaField
 import kotlin.reflect.jvm.javaMethod

@@ -1,5 +1,6 @@
 package net.jkcode.jkutil.common
 
+import net.jkcode.jkutil.fiber.AsyncCompletionStage
 import org.nustaq.serialization.util.FSTUtil
 import sun.reflect.generics.reflectiveObjects.ParameterizedTypeImpl
 import java.io.File
@@ -547,7 +548,8 @@ public fun Method.resultFromFuture(resFuture: CompletableFuture<*>): Any? {
         return resFuture
 
     // 2 同步结果
-    return resFuture.get()
+    //return resFuture.get()
+    return AsyncCompletionStage.get(resFuture) // 支持协程
 }
 
 /**
