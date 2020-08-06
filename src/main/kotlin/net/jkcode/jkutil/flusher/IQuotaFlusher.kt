@@ -1,6 +1,6 @@
 package net.jkcode.jkutil.flusher
 
-import net.jkcode.jkutil.common.CommonThreadPool
+import net.jkcode.jkutil.common.CommonExecutor
 import net.jkcode.jkutil.common.commonLogger
 import net.jkcode.jkutil.common.errorAndPrint
 import net.jkcode.jkutil.lock.AtomicLock
@@ -20,7 +20,7 @@ abstract class IQuotaFlusher<RequestType /* 请求类型 */, ResponseType /* 响
     /**
      * 执行线程(池)
      */
-    protected open val executor: ExecutorService = CommonThreadPool
+    protected open val executor: ExecutorService = CommonExecutor
 
     /**
      * 限制定时+定量并发调用flush()的锁

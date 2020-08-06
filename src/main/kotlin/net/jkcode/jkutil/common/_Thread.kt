@@ -4,6 +4,7 @@ import io.netty.util.concurrent.DefaultThreadFactory
 import io.netty.util.concurrent.EventExecutor
 import io.netty.util.concurrent.MultithreadEventExecutorGroup
 import io.netty.util.concurrent.SingleThreadEventExecutor
+import net.jkcode.jkutil.fiber.CommonFiberPool
 import net.jkcode.jkutil.scope.ClosingOnShutdown
 import net.jkcode.jkutil.ttl.SttlThreadPool
 import java.io.Closeable
@@ -16,6 +17,16 @@ import kotlin.reflect.jvm.javaField
  * 公共的线程池配置
  */
 private val config = Config.instance("common-pool", "yaml")
+
+/**
+ * 公共的线程/协程池
+ */
+public val CommonExecutor: ExecutorService by lazy{
+    if(JkApp.useFiber)
+        CommonFiberPool
+    else
+        CommonThreadPool
+}
 
 /**
  * 公共的线程池

@@ -27,13 +27,19 @@ object JkApp {
      */
     public val env: String = config["env"]!!
 
+
+    /**
+     * 是否应用协程, 与useSttl不兼容, 如果useFiber=true, 则会强制使得 useSttl=false
+     */
+    public val useFiber: Boolean = config["useFiber"]!!
+
     /**
      * 是否应用可传递ScopedTransferableThreadLocal, 影响
      * 1. CompletableFuture 的线程池
      * 2. 公共线程池
      * 3. IRequestScope#sttlWrap()
      */
-    public val useSttl: Boolean = config["useSttl"]!!
+    public val useSttl: Boolean = !useFiber && config["useSttl"]!!
 
     init{
         // 将 SttlThreadPool 应用到 CompletableFuture.asyncPool
