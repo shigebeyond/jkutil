@@ -4,7 +4,7 @@ import io.netty.util.concurrent.DefaultThreadFactory
 import io.netty.util.concurrent.EventExecutor
 import io.netty.util.concurrent.MultithreadEventExecutorGroup
 import io.netty.util.concurrent.SingleThreadEventExecutor
-import net.jkcode.jkutil.fiber.CommonFiberPool
+import net.jkcode.jkutil.fiber.FiberExecutorService
 import net.jkcode.jkutil.scope.ClosingOnShutdown
 import net.jkcode.jkutil.ttl.SttlThreadPool
 import java.io.Closeable
@@ -26,6 +26,14 @@ public val CommonExecutor: ExecutorService by lazy{
         CommonFiberPool
     else
         CommonThreadPool
+}
+
+/**
+ * 公共的协程池
+ *   执行任务时要处理好异常
+ */
+public val CommonFiberPool: ExecutorService by lazy {
+    FiberExecutorService()
 }
 
 /**

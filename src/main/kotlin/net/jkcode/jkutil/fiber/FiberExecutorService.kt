@@ -1,5 +1,6 @@
 package net.jkcode.jkutil.fiber
 
+import co.paralleluniverse.fibers.DefaultFiberScheduler
 import co.paralleluniverse.fibers.Fiber
 import co.paralleluniverse.fibers.FiberScheduler
 import co.paralleluniverse.fibers.Suspendable
@@ -14,7 +15,7 @@ import java.util.concurrent.TimeUnit
  * 基于 ExecutorService 实现的 ExecutorService
  *    执行在协程, 不在线程
  */
-class FiberExecutorService : ExecutorService by defaultFiberThreadPool {
+class FiberExecutorService(public val scheduler: FiberScheduler = DefaultFiberScheduler.getInstance()) : ExecutorService by (scheduler.executor as ExecutorService) {
 
     companion object{
         /**
@@ -27,7 +28,7 @@ class FiberExecutorService : ExecutorService by defaultFiberThreadPool {
      * 执行单个任务
      */
     override fun execute(command: Runnable) {
-        fiber @Suspendable {
+        fiber(scheduler = scheduler) @Suspendable {
             command.run()
         }
     }
@@ -36,7 +37,7 @@ class FiberExecutorService : ExecutorService by defaultFiberThreadPool {
      * 执行单个任务
      */
     override fun <T> submit(task: Callable<T>): Future<T> {
-        return fiber @Suspendable {
+        return fiber(scheduler = scheduler) @Suspendable {
             task.call()
         }
     }
@@ -45,7 +46,7 @@ class FiberExecutorService : ExecutorService by defaultFiberThreadPool {
      * 执行单个任务
      */
     override fun <T> submit(task: Runnable, result: T): Future<T> {
-        return fiber @Suspendable {
+        return fiber(scheduler = scheduler) @Suspendable {
             task.run()
             result
         }
@@ -66,7 +67,7 @@ class FiberExecutorService : ExecutorService by defaultFiberThreadPool {
     override fun <T> invokeAll(tasks: Collection<Callable<T>>, timeout: Long, unit: TimeUnit): List<Future<T>> {
         return tasks.map {
             //submit(it)
-            val f = fiber @Suspendable {
+            val f = fiber(scheduler = scheduler) @Suspendable {
                 it.call()
             }
 
@@ -92,7 +93,7 @@ class FiberExecutorService : ExecutorService by defaultFiberThreadPool {
     override fun <T> invokeAny(tasks: Collection<Callable<T>>, timeout: Long, unit: TimeUnit): T{
         //return submit(tasks.first()).get()
         val task = tasks.first()
-        val f = fiber @Suspendable {
+        val f = fiber(scheduler = scheduler) @Suspendable {
             task.call()
         }
 

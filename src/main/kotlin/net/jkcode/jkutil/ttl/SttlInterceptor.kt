@@ -96,10 +96,8 @@ object SttlInterceptor {
      * @return
      */
     public fun intercept(callerLocals: Local2Value = ScopedTransferableThreadLocal.weakCopyLocal2Value(), command: Runnable): Runnable {
-        return object: Runnable{
-            override fun run() {
+        return Runnable{
                 wrap(callerLocals) { command.run() }
-            }
         }
     }
 
@@ -217,10 +215,8 @@ object SttlInterceptor {
      * @return
      */
     public fun interceptToRunnable(callerLocals: Local2Value = ScopedTransferableThreadLocal.weakCopyLocal2Value(), command: () -> Unit): Runnable {
-        return object: Runnable{
-            override fun run() {
+        return Runnable{
                 wrap(callerLocals) { command.invoke() }
-            }
         }
     }
 
