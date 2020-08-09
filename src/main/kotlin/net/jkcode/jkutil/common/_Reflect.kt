@@ -1,5 +1,6 @@
 package net.jkcode.jkutil.common
 
+import co.paralleluniverse.fibers.Suspendable
 import net.jkcode.jkutil.fiber.AsyncCompletionStage
 import org.nustaq.serialization.util.FSTUtil
 import sun.reflect.generics.reflectiveObjects.ParameterizedTypeImpl
@@ -540,6 +541,7 @@ public val Method.isStatic: Boolean
  * @param resFuture
  * @return
  */
+@Suspendable
 public fun Method.resultFromFuture(resFuture: CompletableFuture<*>): Any? {
     // 1 异步结果
     //if (Future::class.java.isAssignableFrom(method.returnType))

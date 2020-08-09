@@ -156,11 +156,11 @@ class FiberTests {
     }
 
     /**
-     * 测试线程的轮换
+     * 测试同一个线程下的协程切换
      *    fiber睡1s时, 线程是否轮换执行其他任务
      */
     @Test
-    fun testThreadRoate(){
+    fun testFiberSwitch(){
         val singleThread = DefaultEventLoop()
         val scheduler = FiberExecutorScheduler("test", singleThread)
 
