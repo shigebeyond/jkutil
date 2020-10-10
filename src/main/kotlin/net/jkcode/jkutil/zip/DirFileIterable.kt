@@ -1,27 +1,28 @@
 package net.jkcode.jkutil.zip
 
+import net.jkcode.jkutil.common.decorateIterator
 import java.io.File
 import java.io.FileInputStream
 import java.io.InputStream
 
 /**
- * 目录下文件遍历器
+ * 目录下文件迭代器
  * @author shijianhang<772910474@qq.com>
  * @date 2020-10-9 11:03 AM
  */
-class DirFileTraver(path: String) : IFileTraver {
+class DirFileIterable(path: String) : IFileIterable {
 
     /**
-     * 目录
+     * 目录下文件
      */
-    protected val dir: File = File(path)
+    protected val files = File(path).listFiles()
 
     /**
-     * 遍历文件项
+     * 包装目录下文件迭代
      */
-    override fun forEachEntry(action: (IFileEntry) -> Unit) {
-        dir.listFiles().forEach { file ->
-            action(DirFileEntry(file))
+    override fun iterator(): Iterator<IFileEntry> {
+        return decorateIterator(files.iterator()){ file ->
+            DirFileEntry(file)
         }
     }
 }

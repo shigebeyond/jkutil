@@ -2,6 +2,7 @@ package net.jkcode.jkutil.common
 
 import net.jkcode.jkutil.collection.CollectionDecorator
 import net.jkcode.jkutil.collection.SetDecorator
+import net.jkcode.jkutil.iterator.NextMethodIterator
 import org.apache.commons.collections.iterators.AbstractIteratorDecorator
 import java.math.BigDecimal
 import java.net.URLEncoder
@@ -643,6 +644,19 @@ public fun <T, R> decorateIterator(iterator: Iterator<T>, transform: (T) -> R): 
             return transform.invoke(ele)
         }
     } as Iterator<R>
+}
+
+/**
+ * 包装只有一个next方法的对象成为迭代器
+ * @param nextMethod next方法的回调
+ * @return 新的迭代器
+ */
+public fun <R> decorateNextMethodIterator(nextMethod: () -> R?): Iterator<R> {
+    return object: NextMethodIterator<R>(){
+        override fun callNext(): R? {
+            return nextMethod()
+        }
+    }
 }
 
 /**

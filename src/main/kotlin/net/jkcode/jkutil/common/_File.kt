@@ -10,6 +10,7 @@ import java.util.*
 import org.mozilla.universalchardet.Constants
 import org.mozilla.universalchardet.UniversalDetector
 import java.io.FileInputStream
+import java.lang.IllegalStateException
 
 
 /****************************** 文件大小 *******************************/
@@ -202,6 +203,9 @@ public fun travelFiles(files: Stack<File>, action:(file: File) -> Unit) {
 }
 
 /****************************** URL遍历 *******************************/
+// 文件分隔符
+private val SEP = File.separatorChar;
+
 // jar url协议的正则
 private val jarUrlProtocol = "jar|zip|wsjar|code-source".toRegex()
 
@@ -242,7 +246,7 @@ public fun ClassLoader.getRootPath(): String {
      */
     if(JkApp.isWin && root.startsWith('/')){
         root = root.substring(1)
-        root = root.replace('/', File.separatorChar)
+        root = root.replace('/', SEP)
     }
     return root
 }
@@ -256,7 +260,7 @@ public fun URL.travel(action:(relativePath:String, isDir:Boolean) -> Unit){
         val conn = openConnection() as JarURLConnection
         val jarFile = conn.jarFile
         for (entry in jarFile.entries()){
-            val isDir = entry.name.endsWith(File.separatorChar)
+            val isDir = entry.name.endsWith(SEP)
             action(entry.name, isDir);
         }
     }else{ // 遍历目录
@@ -284,7 +288,7 @@ private fun getResourceRelativePath(absolutePath: String, rootPath: String): Str
 
     // 2 其他工程下（兄弟工程/子工程）
     /**
-     * 模式1： idea中直接运行类， 编译输出目录为 out
+     * 模式1： idea2018直接运行类， 编译输出目录为 out
      * fix bug: 运行main()或单元测试时路径对不上
      * classLoader根目录: /home/shi/code/java/java/jksoa/jksoa-rpc/jksoa-rpc-client/out/test/classes/
      * 文件绝对路径:       /home/shi/code/java/java/jksoa/jksoa-rpc/jksoa-rpc-client/out/production/classes/com/jksoa/example/EchoService.class
@@ -310,5 +314,31 @@ private fun getResourceRelativePath(absolutePath: String, rootPath: String): Str
      *
      * => 模式是： build/classes/kotlin/main/ 或 build/classes/java/main/, 直接取后续部分
      */
-    return absolutePath.split("classes" + File.separatorChar)[1]
+
+    /**
+    * 模式3： idea2020直接运行类， 编译输出目录为 classes
+    * classLoader根目录: /home/shi/code/java/jkerp/consoleweb/build/classes/java/main/
+    * 文件绝对路径:       /home/shi/code/java/jkerp/consoleweb/build/classes/kotlin/main/net/jkcode/jkerp/apps/app/controller/SettingWebController.class
+    * 参考: jkerp运行JettyServerLauncher
+    *
+    * => 模式是： 根目录是 build/classes/java/main/, 代码目录却是 build/classes/kotlin/main/
+    */
+    for (delimiter in relativePathDelimiters){
+        val i = absolutePath.indexOf(delimiter)
+        if(i != -1)
+            return absolutePath.substring(i + delimiter.length)
+    }
+    throw IllegalStateException("Cannot determite relative path for resource: " + absolutePath)
 }
+
+// 资源的相对路径的分隔符
+private val relativePathDelimiters = arrayOf(
+        "classes${SEP}java${SEP}main${SEP}",
+        "classes${SEP}kotlin${SEP}main${SEP}",
+        "classes${SEP}scala${SEP}main${SEP}",
+        "classes${SEP}clojure${SEP}main${SEP}",
+        "classes${SEP}groovy${SEP}main${SEP}",
+        "classes${SEP}jython${SEP}main${SEP}",
+        "classes${SEP}jruby${SEP}main${SEP}",
+        "classes${SEP}"
+);

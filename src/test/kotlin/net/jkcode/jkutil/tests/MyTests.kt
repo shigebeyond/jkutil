@@ -46,6 +46,9 @@ import kotlin.reflect.full.memberFunctions
 import kotlin.reflect.jvm.javaField
 import kotlin.reflect.jvm.javaMethod
 import kotlin.reflect.jvm.reflect
+import kotlin.test.assertEquals
+import kotlin.test.assertNotNull
+import kotlin.test.assertSame
 
 /**
  * 基本测试
@@ -59,12 +62,8 @@ class MyTests{
 
     @Test
     fun testSys(){
-        // val prop = System.getenv()
-        val prop = System.getProperties()
-        printProps(prop)
-    }
-
-    fun printProps(props: Map<*, *>) {
+        // val props = System.getenv()
+        val props = System.getProperties()
         println(props.entries.joinToString("\n\n") {
             "${it.key}\n\t${it.value}"
         })
@@ -85,12 +84,13 @@ class MyTests{
         // right
         val field = BeanSingletons::class.java.getDeclaredField("INSTANCE")
         val inst = field?.get(null)
-        println(inst)
+        //println(inst)
+        assertEquals(inst, BeanSingletons)
     }
 
     @Test
     fun testEmail(){
-        val email = "wxzhaopin<wxzhaopin@tencent.com>;"
+        val email = "shige<772910474@qq.com>;"
         println(email.substringBefore("<"))
         println(email.substring(0, email.indexOf("<")))
 
@@ -120,20 +120,16 @@ class MyTests{
 
     @Test
     fun testCompare(){
-        // 检查装箱后对象是否一样
-        fun allEquals(a: Integer, b: Integer): Boolean {
-            return a === b
-        }
         val a = 1
         val b = 1
-        println(allEquals(a as Integer, b as Integer)) // 是同一个 Integer对象
+        assertSame(a as Integer, b as Integer) // 装箱后是同一个 Integer对象
     }
 
     @Test
     fun testNullSafe() {
         val field = String::class.java.getAccessibleField("test")
         val b = field?.type == String::class.java
-        println(b) // false
+        assertEquals(b, false) // false
     }
 
     @Test
@@ -1498,5 +1494,6 @@ class MyTests{
 
         Thread.sleep(100000)
     }
+
 }
 

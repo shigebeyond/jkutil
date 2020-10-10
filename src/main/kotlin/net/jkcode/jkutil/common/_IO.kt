@@ -49,7 +49,7 @@ public fun OutputStream.writeFromInput(`in`: InputStream): Int {
  * 遍历压缩文件中的内容
  * @param action
  */
-public fun ZipInputStream.forEacheEntry(action: (ZipEntry)->Unit){
+public fun ZipInputStream.forEachEntry(action: (ZipEntry)->Unit){
     use {
         while (true) {
             val entry = nextEntry

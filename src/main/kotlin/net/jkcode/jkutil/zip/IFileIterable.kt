@@ -3,27 +3,23 @@ package net.jkcode.jkutil.zip
 import java.io.InputStream
 
 /**
- * 文件遍历器
+ * 文件迭代器
  * @author shijianhang<772910474@qq.com>
  * @date 2020-10-9 11:03 AM
  */
-interface IFileTraver {
+interface IFileIterable: Iterable<IFileEntry>{
 
     companion object{
-
-        public fun create(path: String): IFileTraver {
+        /**
+         * 文件迭代器
+         */
+        public fun create(path: String): IFileIterable {
             if(path.endsWith(".zip"))
-                return ZipFileTraver(path)
+                return ZipFileIterable(path)
 
-            return DirFileTraver(path)
+            return DirFileIterable(path)
         }
-
     }
-
-    /**
-     * 遍历每个文件项
-     */
-    fun forEachEntry(action: (IFileEntry)->Unit)
 }
 
 /**
