@@ -59,9 +59,9 @@ open class IRequestScope : HierarchicalScope(), Closeable {
      * @return
      */
     public inline fun <T> sttlWrap(reqAction: () -> CompletableFuture<T>): CompletableFuture<T> {
-        // 不应用sttl时, 不包装
-        if(!JkApp.useSttl)
-            return reqAction.invoke()
+        // 就算不应用sttl, 但 ScopedTransferableThreadLocal 作为普通 ThreadLocal 的替代者, 也是需要在请求开始与结束时清理资源
+        /*if(!JkApp.useSttl)
+            return reqAction.invoke()*/
 
         // 1 请求处理前，开始作用域
         // 必须在拦截器之前调用, 因为拦截器可能引用请求域的资源
