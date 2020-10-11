@@ -19,14 +19,14 @@ abstract class NextMethodIterator<T>: Iterator<T> {
     protected var _next: T? = null
 
     /**
-     * 初始化next
+     * 迭代开始前置事件
      */
-    protected fun initNext() {
-        if(!_inited){
-            _next = callNext()
-            _inited = true
-        }
-    }
+    open fun beforeBegin(){}
+
+    /**
+     * 迭代结束后置事件
+     */
+    open fun afterEnd(){}
 
     /**
      * 调用next方法
@@ -34,16 +34,30 @@ abstract class NextMethodIterator<T>: Iterator<T> {
     abstract fun callNext(): T?
 
     override fun hasNext(): Boolean {
-        initNext()
-        return _next != null
+        // 迭代开始
+        if(!_inited)
+            beforeBegin()
+
+        // 第一次或之前有值, 则可获得下一个值
+        if(!_inited || _next != null)
+            _next = callNext()
+
+        if(!_inited)
+            _inited = true
+
+        val ret = _next != null
+
+        // 无下一个, 则迭代结束
+        if(!ret)
+            afterEnd()
+
+        return ret
     }
 
     override fun next(): T {
         if(_next === null)
             throw NoSuchElementException()
 
-        val curr = _next!!
-        _next = callNext()
-        return curr
+        return _next!!
     }
 }

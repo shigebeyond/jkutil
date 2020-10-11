@@ -39,14 +39,18 @@ class ZipFileIterable(protected var zip: ByteArray) : IFileIterable {
      */
     override fun iterator(): Iterator<IFileEntry> {
         val `in` = ZipInputStream(ByteArrayInputStream(zip))
-        return decorateNextMethodIterator {
-            val entry = `in`.nextEntry
-            if(entry == null) {
-                // 迭代到最后元素了,则关闭流
+        /*return decorateNextMethodIterator { // 简写, 但无法关闭 `in`
+            ...
+        }*/
+        return object: NextMethodIterator<IFileEntry>(){
+            override fun callNext(): IFileEntry? {
+                val entry = `in`.nextEntry
+                return if(entry == null) null else ZipFileEntry(entry, `in`)
+            }
+
+            override fun afterEnd() {
+                // 迭代结束后关闭流
                 `in`.close()
-                null
-            }else {
-                ZipFileEntry(entry, `in`)
             }
         }
     }
