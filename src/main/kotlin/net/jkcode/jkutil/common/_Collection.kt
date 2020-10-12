@@ -11,6 +11,7 @@ import java.util.concurrent.ConcurrentLinkedQueue
 import java.util.concurrent.ConcurrentMap
 import kotlin.collections.HashSet
 
+
 /****************************** 扩展 Array + Collection *****************************/
 
 private val iarr = IntArray(0)
@@ -215,14 +216,23 @@ public operator fun <E> Collection<E>.get(index: Int): E {
  * Returns a list containing only the non-null/blank string results of applying the given [transform] function
  * to each element in the original collection.
  */
-public inline fun <T, String> Iterable<T>.mapNotNullOrBlankString(transform: (T) -> String?): List<String> {
+public inline fun <T> Iterable<T>.mapNotNullOrBlankString(transform: (T)->String?): List<String> {
     val result = ArrayList<String>()
     forEach { element ->
-        transform(element)?.let {
-            result.add(it)
-        }
+        val str = transform(element)
+        if(!str.isNullOrBlank())
+            result.add(str)
     }
     return result
+}
+
+/**
+ * Returns a list containing only the non-null/blank string in the original collection.
+ */
+public inline fun Iterable<String?>.filterNotNullOrBlankString(): List<String> {
+    return this.filter {
+        !it.isNullOrBlank()
+    } as List<String>
 }
 
 /**
