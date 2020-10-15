@@ -40,7 +40,7 @@ open class ResourceBundleMessageSource : MessageSource {
             }
         }
 
-        return ""
+        return code
     }
 
     /**
