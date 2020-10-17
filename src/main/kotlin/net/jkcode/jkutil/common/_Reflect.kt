@@ -82,8 +82,10 @@ private val singleListClass = Class.forName("java.util.Collections\$SingletonLis
  */
 private fun Collection<Any?>.cloneCollection(cloningElement: Boolean = false): Collection<Any?>{
     // 1 特殊处理单元素list
-    if(this.javaClass == singleListClass)
-        return Collections.singletonList(this.first()?.wrapClone(cloningElement))
+    if(this.javaClass == singleListClass) {
+        val e = this.first()?.wrapClone(cloningElement)
+        return Collections.singletonList(e)
+    }
 
     // 2 其他
     val dest = this.javaClass.newInstance() as MutableCollection<Any?>

@@ -126,6 +126,13 @@ class MyTests{
     }
 
     @Test
+    fun testSort(){
+        val list = listOf("abc", "ab", "a")
+        val list2 = list.sortedBy { it.length } // 从小到大
+        println(list2)
+    }
+
+    @Test
     fun testNullSafe() {
         val field = String::class.java.getAccessibleField("test")
         val b = field?.type == String::class.java
