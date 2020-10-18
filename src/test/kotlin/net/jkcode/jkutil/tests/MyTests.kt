@@ -1181,9 +1181,15 @@ class MyTests{
         println(str.replaceRange(range, "my hero"))
         */
 
-        // 数字范围
+        /*// 数字范围
         val reg = "[0-3]+".toRegex()
         println(reg.find("43")!!.groupValues[0]);
+        */
+
+        val reg = "<([^\\>]+)>".toRegex()
+        val sql = "SELECT <distinct> <columns> FROM <table>"
+        println(reg.split(sql))
+        println(reg.findAllGroupValue(sql, 1).joinToString());
     }
 
     /**

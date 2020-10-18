@@ -24,7 +24,7 @@ class MatchResultCollection<String>(public val rs: Sequence<MatchResult>, public
     }
 
     override fun iterator(): Iterator<String> {
-        return MatchResultIterator(rs)
+        return MatchResultIterator(rs, groupIndex)
     }
 
 }
