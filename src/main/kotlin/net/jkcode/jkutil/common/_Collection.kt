@@ -946,6 +946,19 @@ public fun Map<*, *>.buildQueryString(encoding: Boolean = false): String {
     return buildQueryString(StringBuilder(), encoding).toString()
 }
 
+/********************** 扩展List *********************/
+/**
+ * Returns a view of the portion of this list between the specified [fromIndex] (inclusive) and [toIndex] (exclusive).
+ * The returned list is backed by this list, so non-structural changes in the returned list are reflected in this list, and vice-versa.
+ *
+ * Structural changes in the base list make the behavior of the view undefined.
+ */
+public fun <E> List<E>.subListSafe(fromIndex0: Int, toIndex0: Int): List<E>{
+    val fromIndex = if(fromIndex0 < 0) 0 else fromIndex0
+    val toIndex = if(toIndex0 >= this.size) this.size - 1 else toIndex0
+    return this.subList(fromIndex, toIndex)
+}
+
 /********************** 转为各种类型的Map<String, *>.getter *********************/
 /**
  * Get attribute of db type: varchar, char, enum, set, text, tinytext, mediumtext, longtext
