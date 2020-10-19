@@ -40,7 +40,9 @@ open class ResourceBundleMessageSource : MessageSource {
             }
         }
 
-        return code
+        // 如果没有消息也不能原样返回, 最多你在外面处理就好了, 不要干扰此处的消息获取
+        //return code
+        return ""
     }
 
     /**
