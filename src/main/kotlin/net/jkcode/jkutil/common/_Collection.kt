@@ -955,7 +955,10 @@ public fun Map<*, *>.buildQueryString(encoding: Boolean = false): String {
  */
 public fun <E> List<E>.subListSafe(fromIndex0: Int, toIndex0: Int): List<E>{
     val fromIndex = if(fromIndex0 < 0) 0 else fromIndex0
-    val toIndex = if(toIndex0 >= this.size) this.size - 1 else toIndex0
+    val toIndex = if(toIndex0 > this.size) this.size else toIndex0
+    if(fromIndex >= toIndex)
+        return emptyList()
+
     return this.subList(fromIndex, toIndex)
 }
 
