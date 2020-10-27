@@ -24,8 +24,16 @@ public interface MessageSource {
         public fun instance(): MessageSource {
             return inst
         }
+
+        val currentLocale: Locale
+            get() = instance().currentLocale
     }
 
+    /**
+     * 当前语言
+     */
+    open val currentLocale: Locale
+        get() = Locale .getDefault()
 
     /**
      * Try to resolve the message. Return default message if no message was found.
@@ -41,9 +49,9 @@ public interface MessageSource {
      * otherwise the default message passed as a parameter
      * @see java.text.MessageFormat
      */
-    fun getMessage(code: String, args: Array<*>? = null, defaultMessage: String? = "", locale: Locale =  Locale.getDefault()): String
+    fun getMessage(code: String, args: Array<*>? = null, defaultMessage: String? = "", locale: Locale = currentLocale): String
 
-    fun getMessage(code: String, defaultMessage: String? = "", locale: Locale =  Locale.getDefault()): String{
+    fun getMessage(code: String, defaultMessage: String? = "", locale: Locale = currentLocale): String{
         return getMessage(code, null, defaultMessage, locale)
     }
 
