@@ -67,7 +67,7 @@ public class FixedKeyMapFactory {
      * @param values
      * @return
      */
-    public Map<String, Object> createMap(Object... values) {
+    public FixedKeyMap createMap(Object... values) {
         if (values.length == 0)
             values = new Object[_keys.length];
 
@@ -82,7 +82,7 @@ public class FixedKeyMapFactory {
      * @param key
      * @return -1表示未找到
      */
-    public int indexOf(final Object key){
+    public int keyIndex(final Object key){
         int keyHashCode = key.hashCode();
         for (int i = 0; i < _keys.length; i++)
             if (_keyHashs[i] == keyHashCode && _keys[i].equals(key))
@@ -127,7 +127,24 @@ public class FixedKeyMapFactory {
          */
         @Override
         public Object get(final Object key) {
-            int i = indexOf(key);
+            return get(keyIndex(key));
+        }
+
+        /**
+         * 找到key的位置
+         * @param key
+         * @return -1表示未找到
+         */
+        public int keyIndex(final Object key){
+            return FixedKeyMapFactory.this.keyIndex(key);
+        }
+
+        /**
+         * 根据key位置获得value
+         * @param i key位置
+         * @return
+         */
+        public Object get(int i) {
             if(i == -1)
                 return null;
 
@@ -150,7 +167,7 @@ public class FixedKeyMapFactory {
          */
         @Override
         public boolean containsKey(final Object key) {
-            int i = indexOf(key);
+            int i = keyIndex(key);
             return i > -1 && _dirtyBits.get(i);
         }
 
@@ -181,7 +198,7 @@ public class FixedKeyMapFactory {
          */
         @Override
         public Object put(final String key, final Object value) {
-            int i = indexOf(key);
+            int i = keyIndex(key);
             // 未知key
             if(i == -1) {
                 // 忽略
@@ -206,7 +223,7 @@ public class FixedKeyMapFactory {
          */
         @Override
         public Object remove(final Object key) {
-            int i = indexOf(key);
+            int i = keyIndex(key);
             return remove(i);
         }
 
