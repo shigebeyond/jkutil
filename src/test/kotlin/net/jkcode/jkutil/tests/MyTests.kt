@@ -662,8 +662,12 @@ class MyTests{
 //        val content = xml.substringBetween("<app>", "</app>")
 //        println(content)
 
-        val list = listOf("a", "b", "c")
-        println(list.joinToString(".*.", "*."))
+//        val list = listOf("a", "b", "c")
+//        println(list.joinToString(".*.", "*."))
+
+        val list = "sum(a,b),sum(c,d),e,f".splitOutsideFunc(',')
+        for (part in list)
+            println(part)
     }
 
     @Test
@@ -1186,10 +1190,18 @@ class MyTests{
         println(reg.find("43")!!.groupValues[0]);
         */
 
-        val reg = "<([^\\>]+)>".toRegex()
+        /*val reg = "<([^\\>]+)>".toRegex()
         val sql = "SELECT <distinct> <columns> FROM <table>"
         println(reg.split(sql))
         println(reg.findAllGroupValue(sql, 1).joinToString());
+        */
+
+        val reg = "[<>!=]+| IS( NOT)?|( NOT)? (EXISTS|BETWEEN|LIKE|IN)".toRegex(RegexOption.IGNORE_CASE)
+        val cols = arrayOf("name like", "id between", "id>= ", "id in", "name is", "name")
+        for (col in cols){
+            val m = reg.find(col)
+            println("$col : ${m?.value}")
+        }
     }
 
     /**

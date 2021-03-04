@@ -362,6 +362,51 @@ public fun String.camel2Underline(): String {
     }
 }
 
+/**
+ * 在函数调用外部分割字符串, 即对函数调用的子串不分割
+ * @param delimiter 分隔符
+ * @return
+ */
+public fun String.splitOutsideFunc(delimiter: Char): List<String> {
+    if(!this.contains('('))
+        return this.split(delimiter)
+
+    // 找出每个分隔符的位置
+    var dep = 0
+    val idxs = ArrayList<Int>()
+    for (i in 0 until this.length){
+        when(this[i]){
+            '(' -> dep++
+            ')' -> dep--
+            delimiter -> if(dep == 0) idxs.add(i)
+        }
+    }
+
+    // 根据分隔符的位置来拆分子串
+    val result = ArrayList<String>()
+    var last = 0
+    for (idx in idxs){
+        result.add(this.substring(last, idx))
+        last = idx + 1
+    }
+    result.add(this.substring(last))
+    return result
+}
+
+/**
+ * 校验字段不包含引号, 用于在query builder中识别复杂的字段
+ *    如识别字段有别名时, 要检查字符:空格
+ *    如识别字段是表达式时, 要检查字符:()
+ *    =>先保证字段中没有用引号包住的要检查的字符
+ *    =>简化:保证字段中没有引号
+ * @return
+ */
+public fun String.notContainsQuotationMarks(): Boolean {
+    return !this.contains('\'')
+            && !this.contains('"')
+}
+
+
 /****************************** 字符串转化其他类型 *******************************/
 /**
  * 日期格式

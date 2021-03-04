@@ -112,6 +112,15 @@ object ValidateFuncDefinition{
     }
 
     /**
+     * 检查是否手机格式
+     * @param value
+     * @return
+     */
+    public fun phone(value: String): Boolean {
+        return "^0[1-9]{2,3}-?\\d{8}$".toRegex().matches(value);
+    }
+
+    /**
      * 检查是否数字，不包含.-
      */
     public fun digit(value:String): Boolean{
