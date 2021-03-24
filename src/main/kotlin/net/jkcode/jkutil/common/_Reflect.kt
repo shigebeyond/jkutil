@@ -708,6 +708,22 @@ public fun Class<*>.getMethodByName(name: String): Method?{
 }
 
 /**
+ * 检查方法是否在当前类中定义, 否则在父类中定义
+ *
+ * @param name
+ * @param parameterTypes
+ * @return
+ */
+public fun Class<*>.hasDeclareMethod(name: String, vararg parameterTypes: Class<*>): Boolean {
+    try {
+        getDeclaredMethod(name, *parameterTypes)
+        return true
+    }catch (e: NoSuchMethodException){
+        return false
+    }
+}
+
+/**
  * 查找构造函数
  * @param paramTypes 参数类型
  * @return
