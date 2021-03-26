@@ -37,6 +37,7 @@ import java.text.MessageFormat
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.ConcurrentLinkedQueue
+import java.util.regex.Pattern
 import kotlin.collections.ArrayList
 import kotlin.collections.HashMap
 import kotlin.reflect.KClass
@@ -154,7 +155,13 @@ class MyTests{
 
     @Test
     fun testFormat(){
-        println(MessageFormat.format("Avg ResponseTime: {0,number,#.##}ms", 1.toFloat() / 3))
+        //println(MessageFormat.format("Avg ResponseTime: {0,number,#.##}ms", 1.toFloat() / 3))
+        val temp = 2.1234;
+        println(DecimalFormat("0000.00").format(temp))
+        println(DecimalFormat("##0.00").format(temp))
+        println(DecimalFormat("0.00").format(temp));
+        println(DecimalFormat("#00.00").format(temp));
+        println(DecimalFormat("0.00%").format(temp));
     }
 
     @Test
@@ -665,9 +672,13 @@ class MyTests{
 //        val list = listOf("a", "b", "c")
 //        println(list.joinToString(".*.", "*."))
 
-        val list = "sum(a,b),sum(c,d),e,f".splitOutsideFunc(',')
-        for (part in list)
-            println(part)
+//        val list = "sum(a,b),sum(c,d),e,f".splitOutsideFunc(',')
+//        for (part in list)
+//            println(part)
+
+//        println("a".split(",", limit = 2)) // 1个元素
+
+//        println("".substring(0, 10)) // 报错: String index out of range: 10
     }
 
     @Test
@@ -1196,11 +1207,23 @@ class MyTests{
         println(reg.findAllGroupValue(sql, 1).joinToString());
         */
 
-        val reg = "[<>!=]+| IS( NOT)?|( NOT)? (EXISTS|BETWEEN|LIKE|IN)".toRegex(RegexOption.IGNORE_CASE)
+        /*val reg = "[<>!=]+| IS( NOT)?|( NOT)? (EXISTS|BETWEEN|LIKE|IN)".toRegex(RegexOption.IGNORE_CASE)
         val cols = arrayOf("name like", "id between", "id>= ", "id in", "name is", "name")
         for (col in cols){
             val m = reg.find(col)
             println("$col : ${m?.value}")
+        }*/
+
+        val pattern = Pattern.compile("#i18n\\.([^#^\"]*)#")
+        val s = "欢迎, #i18n.xxx#"
+        val matcher = pattern.matcher(s)
+        while (matcher.find()) {
+            println(matcher.group(1))
+        }
+
+        val ms = "#i18n\\.([^#^\"]*)#".toRegex().findAll(s)
+        for(m in ms){
+            println(m.groupValues[1])
         }
     }
 

@@ -148,25 +148,27 @@ public fun String.substringAfterLastInclude(delimiter: String, missingDelimiterV
 
 /**
  * 截取开始字符与结束字符之间的子字符串
- * @param start
- * @param end
+ * @param start 开始字符
+ * @param end 结束字符
+ * @param last end从后面找起, 就是匹配最大范围的子字符串
  * @return
  */
-public inline fun String.substringBetween(start: String, end: String): String {
+public inline fun String.substringBetween(start: String, end: String, last: Boolean = false): String {
     val startIndex = indexOf(start) + start.length
-    val endIndex = indexOf(end)
+    val endIndex = if(last) lastIndexOf(end) else indexOf(end)
     return substring(startIndex, endIndex)
 }
 
 /**
  * 截取开始字符与结束字符之间的子字符串
- * @param start
- * @param end
+ * @param start 开始字符
+ * @param end 结束字符
+ * @param last end从后面找起, 就是匹配最大范围的子字符串
  * @return
  */
-public inline fun String.substringBetween(start: Char, end: Char): String {
+public inline fun String.substringBetween(start: Char, end: Char, last: Boolean = false): String {
     val startIndex = indexOf(start) + 1
-    val endIndex = indexOf(end)
+    val endIndex = if(last) lastIndexOf(end) else indexOf(end)
     return substring(startIndex, endIndex)
 }
 
