@@ -437,6 +437,15 @@ public fun <T: Any> KClass<T>.getStaticProperty(name:String): KProperty0<*>? {
 }
 
 /**
+ * 查找静态属性值
+ * @param name 属性名
+ * @return
+ */
+public fun <T: Any> KClass<T>.getStaticPropertyValue(name:String): Any? {
+    return getStaticProperty(name)?.get()
+}
+
+/**
  * 转换参数类型
  * @param value
  * @return
