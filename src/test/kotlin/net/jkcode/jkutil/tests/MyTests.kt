@@ -531,6 +531,54 @@ class MyTests{
 
     }
 
+    /**
+     * 对比 keyIndex() 是基于map or 数组来实现的性能对比
+     */
+    @Test
+    fun testFixedKeyMap2() {
+        val keys = (0..8).mapToArray {
+            randomString(6)
+        }
+        val mf = FixedKeyMapFactory(*keys)
+        var start = System.currentTimeMillis()
+        val map = mf.createMap()
+        for(i in 0..100000) {
+            for (key in keys) {
+                map[key] = 1
+            }
+            for (i in 0..3)
+                map.remove(keys.random())
+        }
+        val costtime = System.currentTimeMillis() - start
+        println("耗时: $costtime ms")
+        /*
+        10000循环
+        10key: 数组 44 map 48
+        20key: 数组 53 map 52
+        30key: 数组 55 map 49
+
+        100000循环
+        10key: 数组 89 map 79
+        20key: 数组 100 map 118
+        30key: 数组 132 map 95
+
+        1000000循环
+        10key: 数组 309 map 296
+        20key: 数组 529 map 348
+        30key: 数组 544 map 444
+
+        10000000循环
+        10key: 数组 2563 map 2082
+        20key: 数组 3296 map 2913
+        30key: 数组 4792 map 3587
+
+        20000000循环
+        10key: 数组 4695 map 4044
+        20key: 数组 6421 map 5687
+        30key: 数组 8714 map 6293
+        */
+    }
+
     @Test
     fun testList(){
         val list = listOf<Int>(1, 2, 3)
