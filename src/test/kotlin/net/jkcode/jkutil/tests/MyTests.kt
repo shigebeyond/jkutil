@@ -33,7 +33,6 @@ import java.net.HttpURLConnection
 import java.net.URL
 import java.nio.file.FileSystems
 import java.text.DecimalFormat
-import java.text.MessageFormat
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.ConcurrentLinkedQueue
@@ -48,7 +47,6 @@ import kotlin.reflect.jvm.javaField
 import kotlin.reflect.jvm.javaMethod
 import kotlin.reflect.jvm.reflect
 import kotlin.test.assertEquals
-import kotlin.test.assertNotNull
 import kotlin.test.assertSame
 
 /**
@@ -468,6 +466,7 @@ class MyTests{
 
     @Test
     fun testMap(){
+        /*
         val map = HashMap<Int, String>() // {1=a, 2=b}
         val tableField = HashMap::class.java.getAccessibleField("table")!!
         println(tableField.get(map))
@@ -490,6 +489,32 @@ class MyTests{
 
         println(map)
         //println( emptyMap<String, Any?>() as MutableMap<String, Any?>)
+        */
+        val map = HashMap<String, Int>()
+        /*val keys = (0..8).mapToArray {
+            randomString(6)
+        }
+        for (key in keys) {
+            map[key] = 1
+        }*/
+
+        // containsKey耗时: 17 ms
+        // isNotEmpty + containsKey耗时: 4 ms
+        val key = randomString(6)
+        val n = 10000000
+        collectCostTime {
+            for (i in 0..n){
+                val b = map.containsKey(key)
+            }
+            print("containsKey")
+        }
+        collectCostTime {
+            for (i in 0..n){
+                val b = map.isNotEmpty() && map.containsKey(key)
+            }
+            print("isNotEmpty + containsKey")
+        }
+
     }
 
     @Test
@@ -531,6 +556,13 @@ class MyTests{
 
     }
 
+    fun collectCostTime(action: ()->Unit){
+        var start = System.currentTimeMillis()
+        action();
+        val costtime = System.currentTimeMillis() - start
+        println("耗时: $costtime ms")
+    }
+
     /**
      * 对比 keyIndex() 是基于map or 数组来实现的性能对比
      */
@@ -540,17 +572,16 @@ class MyTests{
             randomString(6)
         }
         val mf = FixedKeyMapFactory(*keys)
-        var start = System.currentTimeMillis()
-        val map = mf.createMap()
-        for(i in 0..100000) {
-            for (key in keys) {
-                map[key] = 1
+        collectCostTime {
+            val map = mf.createMap()
+            for (i in 0..100000) {
+                for (key in keys) {
+                    map[key] = 1
+                }
+                for (i in 0..3)
+                    map.remove(keys.random())
             }
-            for (i in 0..3)
-                map.remove(keys.random())
         }
-        val costtime = System.currentTimeMillis() - start
-        println("耗时: $costtime ms")
         /*
         10000循环
         10key: 数组 44 map 48
@@ -1281,21 +1312,21 @@ class MyTests{
     @Test
     fun testPatternPerformance(){
         // 1 正则匹配耗时: 1061
-        var start = System.currentTimeMillis()
         val n = 10000000
-        val reg = "^abc-\\d+$".toRegex()
-        for(i in 0..n)
-            reg.matches("abc-123")
-        var cost = System.currentTimeMillis() - start
-        println("正则匹配耗时: $cost")
+        collectCostTime {
+            val reg = "^abc-\\d+$".toRegex()
+            for (i in 0..n)
+                reg.matches("abc-123")
+            print("正则匹配")
+        }
 
         // 2 字符串匹配耗时: 60
-        start = System.currentTimeMillis()
-        for(i in 0..n)
-            "abc-123".contains("abc") // 60
+        collectCostTime {
+            for (i in 0..n)
+                "abc-123".contains("abc") // 60
             //"abc-123".startsWith("abc") // 17
-        cost = System.currentTimeMillis() - start
-        println("字符串匹配耗时: $cost")
+            println("字符串匹配")
+        }
     }
 
     /**

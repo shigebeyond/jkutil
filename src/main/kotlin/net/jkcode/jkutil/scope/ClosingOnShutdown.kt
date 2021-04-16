@@ -31,7 +31,7 @@ abstract class ClosingOnShutdown : Closeable {
             // 添加关机事件钩子
             Runtime.getRuntime().addShutdownHook(object : Thread() {
                 public override fun run() {
-                    println("--- Shutdown --- ")
+                    //println("--- Shutdown --- ")
                     // 关闭资源
                     for (c in closings)
                         c.close()
