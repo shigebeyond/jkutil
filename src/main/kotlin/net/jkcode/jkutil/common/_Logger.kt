@@ -8,6 +8,8 @@ internal val switcher = ModuleLogSwitcher("common")
 val commonLogger = switcher.getLogger("net.jkcode")
 // db的日志
 val dbLogger = switcher.getLogger("net.jkcode.jkmvc.db")
+// es的日志
+val esLogger = switcher.getLogger("net.jkcode.jkmvc.db")
 // http的日志
 val httpLogger = switcher.getLogger("net.jkcode.jkmvc.http")
 
