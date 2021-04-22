@@ -699,6 +699,16 @@ class MyTests{
     }
 
     @Test
+    fun testMultiLineText(){
+        // 长文本
+        val str = """
+        hello
+        world
+        """
+        println(str)
+    }
+
+    @Test
     fun testString(){
         // val m = "jdbc:mysql://[^/]+/([^\\?]+)".toRegex().find("jdbc:mysql://127.0.0.1/test?useUnicode=true&characterEncoding=utf-8")
         // if(m != null)
@@ -719,13 +729,6 @@ class MyTests{
         })*/
 
         //println("01".toInt())
-        // 长文本
-        /*val str = """
-        hello
-        world
-        """
-        println(str)*/
-
         // 去空格
         // println("hello world".trim())
         // println("hello world".replace(" ", ""))
