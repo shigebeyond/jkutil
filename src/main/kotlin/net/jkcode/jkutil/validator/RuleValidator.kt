@@ -3,7 +3,7 @@ package net.jkcode.jkutil.validator
 import java.util.concurrent.ConcurrentHashMap
 
 // 规则表达式的运算单位： 1 函数名 2 函数参数
-private typealias SubRule = Pair<String, List<String>>
+public typealias SubRule = Pair<String, List<String>>
 
 /**
  * 规则校验器, 由一个规则表达式, 来表达校验逻辑
@@ -35,7 +35,7 @@ class RuleValidator(public val label: String /* 值的标识, 如orm中的字段
 		 * 编译规则表达式
 		 *     规则表达式是由多个(函数调用的)规则子表达式组成, 规则子表达式之间以空格分隔, 格式为 a(1) b(1,2) c(3,4)
 		 * <code>
-		 *     val subRules = ValidationExpr::compileSubRules("trim notEmpty email");
+		 *     val subRules = RuleValidator::compileSubRules("trim notEmpty email");
 		 * </code>
 		 *
 		 * @param rule
