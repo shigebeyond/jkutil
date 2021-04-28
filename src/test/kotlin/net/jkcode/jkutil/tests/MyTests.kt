@@ -69,6 +69,12 @@ class MyTests{
     }
 
     @Test
+    fun testRange(){
+        for(i in 2 downTo 0)
+            println(i)
+    }
+
+    @Test
     fun testBeanSingletons(){
         // wrong: kotlin语法是object, 不是静态变量
 //        val field = BeanSingletons::class.getStaticProperty("INSTANCE")
