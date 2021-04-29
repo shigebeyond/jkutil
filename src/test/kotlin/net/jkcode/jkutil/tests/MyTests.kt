@@ -973,27 +973,25 @@ class MyTests{
 
     @Test
     fun testClass(){
-         println(MyTests::class)
-         println(this.javaClass)
-         println(this.javaClass.kotlin)
-         println(this::class)
-         println(this::class.java)
-         println(this::class.java == this.javaClass) // true
+         println("MyTests::class = " + MyTests::class)
+         println("this.javaClass = " + this.javaClass)
+         println("this.javaClass.kotlin = " + this.javaClass.kotlin)
+         println("this::class = " + this::class)
+         println("this::class.java = " + this::class.java)
 
-        println("-------")
 
-       println(this::class.simpleName) // MyTests
-        println(this::class.qualifiedName) // net.jkcode.jkutil.tests.MyTests
-        //println(this::class.jvmName)
+       println("this::class.simpleName = " + this::class.simpleName) // MyTests
+        println("this::class.qualifiedName = " + this::class.qualifiedName) // net.jkcode.jkutil.tests.MyTests
+        //println("this::class.jvmName = " + this::class.jvmName)
 
-        println(this.javaClass.name) // net.jkcode.jkutil.tests.MyTests
-        println(this.javaClass.canonicalName) // net.jkcode.jkutil.tests.MyTests
-        println(this.javaClass.simpleName) // MyTests
-        println(this.javaClass.typeName) // net.jkcode.jkutil.tests.MyTests
+        println("this.javaClass.name = " + this.javaClass.name) // net.jkcode.jkutil.tests.MyTests
+        println("this.javaClass.canonicalName = " + this.javaClass.canonicalName) // net.jkcode.jkutil.tests.MyTests
+        println("this.javaClass.simpleName = " + this.javaClass.simpleName) // MyTests
+        println("this.javaClass.typeName = " + this.javaClass.typeName) // net.jkcode.jkutil.tests.MyTests
 
-        println(MyTests::class.qualifiedName)
-        println(Int::class.qualifiedName)
-        println(String::class.qualifiedName)
+        println("MyTests::class.qualifiedName = " + MyTests::class.qualifiedName)
+        println("Int::class.qualifiedName = " + Int::class.qualifiedName)
+        println("String::class.qualifiedName = " + String::class.qualifiedName)
 
         //val m = this.javaClass.getModifiers()
        /* val m = IConfig::class.java.modifiers
