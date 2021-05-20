@@ -37,7 +37,7 @@ buildscript {
 }
 
 project(':') {
-    group 'net.jkcode.jkmvc'
+    group 'net.jkcode'
     version '1.9.0'
 
     apply plugin: 'java'
