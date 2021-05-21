@@ -4,6 +4,24 @@ A bunch of idiomatic, small, general purpose tools.
 
 一些常用的轻量的工具类
 
+# 添加依赖
+
+1. gradle
+```
+compile "net.jkcode:jkutil:1.9.0"
+```
+
+2. maven
+```
+<dependency>
+    <groupId>net.jkcode</groupId>
+    <artifactId>jkutil</artifactId>
+    <version>1.9.0</version>
+</dependency>
+```
+
+详细的工具类参考一下文档
+
 # Document
 
 1. [config](doc/config.md)
