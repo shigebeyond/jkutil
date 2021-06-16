@@ -107,9 +107,10 @@ public fun InputStream.detectedCharset(): String {
  * @param path
  * @return
  */
-public fun String.isAbsolutePath(): Boolean {
-    return startsWith("/") || indexOf(":") > 0;
-}
+public val String.isAbsolutePath: Boolean
+    get(){
+        return startsWith("/") || indexOf(":\\") > 0;
+    }
 
 /**
  * 准备目录

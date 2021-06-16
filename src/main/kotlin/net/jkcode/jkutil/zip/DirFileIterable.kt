@@ -1,6 +1,8 @@
 package net.jkcode.jkutil.zip
 
 import net.jkcode.jkutil.common.decorateIterator
+import net.jkcode.jkutil.common.getRootPath
+import net.jkcode.jkutil.common.isAbsolutePath
 import java.io.File
 import java.io.FileInputStream
 import java.io.InputStream
@@ -12,10 +14,22 @@ import java.io.InputStream
  */
 class DirFileIterable(path: String) : IFileIterable {
 
+    companion object{
+
+        fun fixPath(path: String): String {
+            if(path.isAbsolutePath)
+                return path
+
+            val res = Thread.currentThread().contextClassLoader.getResource(path)
+            return res.path
+        }
+
+    }
+
     /**
      * 目录下文件
      */
-    protected val files = File(path).listFiles()
+    protected val files = File(fixPath(path)).listFiles()
 
     /**
      * 包装目录下文件迭代
