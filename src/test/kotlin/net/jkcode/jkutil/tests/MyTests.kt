@@ -8,8 +8,6 @@ import net.jkcode.jkutil.collection.DoneFlagList
 import net.jkcode.jkutil.collection.FixedKeyMapFactory
 import net.jkcode.jkutil.common.*
 import net.jkcode.jkutil.elements.ElementCollection
-import net.jkcode.jkutil.common.fileSize2Bytes
-import net.jkcode.jkutil.common.travel
 import net.jkcode.jkutil.idworker.SnowflakeId
 import net.jkcode.jkutil.idworker.SnowflakeIdWorker
 import net.jkcode.jkutil.iterator.ArrayFilteredIterator
@@ -1629,5 +1627,15 @@ class MyTests{
         Thread.sleep(100000)
     }
 
+    @Test
+    fun testTerminate(){
+        val pro = Runtime.getRuntime().exec("/ohome/shi/Applications/node-v8.5.0-linux-x64/bin/npm -v")
+        val buf = BufferedReader(InputStreamReader(pro.inputStream))
+        println("----------")
+        buf.forEachLine { line ->
+            println(line)
+        }
+        println("----------")
+    }
 }
 

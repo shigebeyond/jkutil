@@ -38,7 +38,7 @@ class JedisKeyLock : IDistributedKeyLock() {
     public override fun doQuickLock(key: Any, expireSeconds: Int): Boolean{
         val path = "$KeyPrefix$key"
         if(isNotExpired(key)) {
-            // 更新过期时间
+            // 延长过期时间
             jedis.expire(path, expireSeconds)
             return true
         }
@@ -53,9 +53,8 @@ class JedisKeyLock : IDistributedKeyLock() {
             return false;
         }
 
-        // 锁n秒，注：此时可能进程中断，导致设置过期时间失败，则ttl = -1
-        jedis.expire(path, expireSeconds)
-        return true
+        // 锁n秒，注：此时可能线程中断，导致设置过期时间失败，则ttl = -1
+        return jedis.expire(path, expireSeconds) != 0L // 为0则表示key被其他线程删掉了
     }
 
     /**
