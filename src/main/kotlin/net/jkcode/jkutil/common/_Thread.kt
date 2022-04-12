@@ -8,7 +8,9 @@ import net.jkcode.jkutil.fiber.FiberExecutorService
 import net.jkcode.jkutil.scope.ClosingOnShutdown
 import net.jkcode.jkutil.ttl.SttlThreadPool
 import java.io.Closeable
-import java.util.concurrent.*
+import java.util.concurrent.CompletableFuture
+import java.util.concurrent.ExecutorService
+import java.util.concurrent.TimeUnit
 import java.util.function.Supplier
 import kotlin.reflect.KProperty1
 import kotlin.reflect.jvm.javaField
@@ -190,4 +192,19 @@ public fun MultithreadEventExecutorGroup.selectExecutor(arg: Any): SingleThreadE
  */
 public fun MultithreadEventExecutorGroup.selectExecutor(arg: Int): SingleThreadEventExecutor {
     return getExecutor(Math.abs(arg) % executorCount())
+}
+
+/**
+ * 输出命令行进程的执行结果
+ * @return
+ */
+public fun Process.output(): String {
+    val reader = inputStream.bufferedReader()
+    val res = StringBuffer()
+    do{
+        val line = reader.readLine()
+        if(line != null)
+            res.append(line).append("\n")
+    }while (line != null)
+    return res.toString()
 }

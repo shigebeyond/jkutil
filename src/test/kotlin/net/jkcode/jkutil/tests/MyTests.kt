@@ -72,6 +72,47 @@ class MyTests{
             println(i)
     }
 
+    // 测试命令行执行
+    @Test
+    fun testCmd(){
+        val cmd = "ls"
+        val pro: Process = Runtime.getRuntime().exec(cmd)
+        val status = pro.waitFor()
+        if (status != 0)
+            println("Failed to call command: $cmd")
+        val text = pro.output()
+        println("---- start ----")
+        println(text)
+        println("---- end ----")
+    }
+
+    @Test
+    fun testDockerServiceCmd(){
+        // https://docs.docker.com/engine/reference/commandline/service_ls/
+        val cmd = "docker service ls --format {{.Name}}:{{.Replicas}}"
+        val pro: Process = Runtime.getRuntime().exec(cmd)
+        val status = pro.waitFor()
+        if (status != 0)
+            println("Failed to call command: $cmd")
+        // output eg. tcp_tcpserver:2/2
+        val text = pro.output()
+        println("---- start ----")
+        println(text)
+        println("---- end ----")
+
+        // parse service and replicas
+        val services = HashMap<String, Int>()
+        for (line in text.split("\n")) {
+            if(line.isEmpty())
+                break
+            // tcp_tcpserver:2/2
+            var (service, replicas) = line.split(':')
+            replicas = replicas.substringAfter('/')
+            services[service] = replicas.toInt()
+        }
+        println(services)
+    }
+
     @Test
     fun testBeanSingletons(){
         // wrong: kotlin语法是object, 不是静态变量
