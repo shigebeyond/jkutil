@@ -943,6 +943,8 @@ public fun Map<*, *>.buildQueryString(str: StringBuilder, encoding: Boolean = fa
  * @return
  */
 public fun Map<*, *>.buildQueryString(encoding: Boolean = false): String {
+    if(this.isEmpty())
+        return ""
     return buildQueryString(StringBuilder(), encoding).toString()
 }
 
