@@ -197,12 +197,33 @@ public inline fun StringBuilder.deleteSuffix(str: String): StringBuilder {
 }
 
 /**
+ * 是否有大写字母
+ * @return
+ */
+public inline fun String.hasUpperCase(): Boolean {
+    return this.chars().anyMatch {
+        it.toChar() in upperCaseLetters
+    }
+}
+
+/**
+ * 是否有小写字母
+ * @return
+ */
+public inline fun String.hasLowerCase(): Boolean {
+    return this.chars().anyMatch {
+        it.toChar() in lowerCaseLetters
+    }
+}
+
+/**
  * 首字母大写
  * @return
  */
+val lowerCaseLetters = 'a'..'z'
 public inline fun String.ucFirst(): String {
     val cs = this.toCharArray()
-    if (cs[0] in 'a'..'z')
+    if (cs[0] in lowerCaseLetters)
         cs[0] = cs[0] - 32
     return String(cs)
 }
@@ -211,9 +232,10 @@ public inline fun String.ucFirst(): String {
  * 首字母小写
  * @return
  */
+val upperCaseLetters = 'A'..'Z'
 public inline fun String.lcFirst(): String {
     val cs = this.toCharArray()
-    if (cs[0] in 'A'..'Z')
+    if (cs[0] in upperCaseLetters)
         cs[0] = cs[0] + 32
     return String(cs)
 }

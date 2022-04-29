@@ -1012,6 +1012,10 @@ class MyTests{
 
     @Test
     fun testClass(){
+         println(PrimitiveClassUtil.getPrimitiveClass("void"))
+         println(getClassByName("void"))
+         println(java.lang.Boolean.TYPE)
+
          println("MyTests::class = " + MyTests::class)
          println("this.javaClass = " + this.javaClass)
          println("this.javaClass.kotlin = " + this.javaClass.kotlin)
@@ -1158,6 +1162,18 @@ class MyTests{
         val method = IConfig::class.java.getMethod("containsKey", String::class.java)
         println(method.defaultValue) // null
         println(method.defaultResult) // false
+
+        val config = Config.instance("jkapp", "yaml")
+        collectCostTime{ // 1ms
+            for(i in 0 until 10000){
+                config.containsKey("name")
+            }
+        }
+        collectCostTime{ // 3ms
+            for(i in 0 until 10000){
+                method.invoke(config, "name");
+            }
+        }
     }
 
     @Test

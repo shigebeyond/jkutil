@@ -627,7 +627,10 @@ private val name2classes: ConcurrentHashMap<String, Class<*>> = ConcurrentHashMa
  */
 public fun getClassByName(name: String): Class<*> {
     return name2classes.getOrPut(name) {
-        Class.forName(name)
+        var cls: Class<*>? = null
+        if(!name.contains('.'))
+            cls = PrimitiveClassUtil.getPrimitiveClass(name)
+        cls ?: Class.forName(name)
     }
 }
 
