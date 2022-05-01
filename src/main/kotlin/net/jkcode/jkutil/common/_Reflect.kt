@@ -553,7 +553,7 @@ public val Method.isStatic: Boolean
  * @return
  */
 @Suspendable
-public fun Method.resultFromFuture(resFuture: CompletableFuture<*>): Any? {
+public fun Method.getResultFromFuture(resFuture: CompletableFuture<*>): Any? {
     // 1 异步结果
     //if (Future::class.java.isAssignableFrom(method.returnType))
     if(this.returnType == Future::class.java
@@ -642,7 +642,7 @@ public fun getClassByName(name: String): Class<*> {
  */
 public fun Method.getFullSignature(): String {
     // 类名 + 方法签名
-    return this.declaringClass.name + "." + getSignature()
+    return this.declaringClass.name + "#" + getSignature()
 }
 
 /**
