@@ -626,9 +626,10 @@ private val name2classes: ConcurrentHashMap<String, Class<*>> = ConcurrentHashMa
  * @return
  */
 public fun getClassByName(name: String): Class<*> {
+    val name = name.substringBefore('<') // 去掉泛型, 如 CompletableFuture<List<User>>
     return name2classes.getOrPut(name) {
         var cls: Class<*>? = null
-        if(!name.contains('.'))
+        if(!name.contains('.') && name.toLowerCase() == name) // 全小写
             cls = PrimitiveClassUtil.getPrimitiveClass(name)
         cls ?: Class.forName(name)
     }
