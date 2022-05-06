@@ -64,6 +64,12 @@ class FstSerializer: ISerializer {
         conf
     }
 
+    /**
+     * 获得fst当前配置
+     */
+    public val conf: FSTConfiguration
+        get() = confs.get()
+
 
     /**
      * 注册类名, 相当于缩写, 加快序列化

@@ -661,7 +661,7 @@ public fun Method.getSignature(): String {
         // 参数类型
         this.parameterTypes.joinTo(buffer, ",", "(", ")") {
             it.name
-        }.toString().replace("java.lang.", "")
+        }.toString()
     }
 }
 
