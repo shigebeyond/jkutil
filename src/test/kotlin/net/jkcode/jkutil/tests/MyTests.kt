@@ -143,6 +143,23 @@ class MyTests{
     }
 
     @Test
+    fun testFind(){
+        val clazz = "com.sk.order.OrderSerivce"
+        collectCostTime("定位") { // faster
+            for (i in 0..10000) {
+                val t = clazz.substring(0, clazz.indexAtTimes('.', 3))
+                //println(t)
+            }
+        }
+        collectCostTime("正则") {
+            for (i in 0..10000) {
+                val r = "[\\w\\d]+\\.[\\w\\d]+\\.[\\w\\d]+".toRegex().find(clazz)
+                //println(r?.value)
+            }
+        }
+    }
+
+    @Test
     fun testLocale(){
         val locales = Locale.getAvailableLocales()
         locales.forEach(::println)
@@ -599,13 +616,6 @@ class MyTests{
             println("$k = $v")
         }
 
-    }
-
-    fun collectCostTime(action: ()->Unit){
-        var start = System.currentTimeMillis()
-        action();
-        val costtime = System.currentTimeMillis() - start
-        println("耗时: $costtime ms")
     }
 
     /**

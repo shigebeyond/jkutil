@@ -12,7 +12,13 @@ class AtomicStarter {
     /**
      * 是否已启动
      */
-    protected val start: AtomicBoolean = AtomicBoolean(false)
+    protected val started: AtomicBoolean = AtomicBoolean(false)
+
+    /**
+     * 是否已启动过
+     */
+    public val isStarted: Boolean
+        get() = started.get()
 
     /**
      * 启动一次
@@ -20,12 +26,11 @@ class AtomicStarter {
      * @return
      */
     public inline fun startOnce(block: () -> Unit): Boolean {
-        val started = start.compareAndSet(false, true)
-        if(started){
+        val started = (!started.get()) // 未开始过
+                && started.compareAndSet(false, true) // 第一个开始
+        if(started)
             block()
-        }
         return started
-
     }
 
 }

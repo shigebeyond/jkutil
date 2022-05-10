@@ -104,3 +104,13 @@ public fun Timer.newPeriodicUntil(predicateTask: () -> Boolean, period: Long, un
         }
     }, period, unit)
 }
+
+/**
+ * 收集耗时
+ */
+public fun collectCostTime(tag: String = "", action: ()->Unit){
+    var start = System.currentTimeMillis()
+    action()
+    val costtime = System.currentTimeMillis() - start
+    println("${tag}耗时: $costtime ms")
+}

@@ -107,6 +107,20 @@ public fun String.unicodeEncode(): String {
 }
 
 /**
+ * 找到第 time 次出现的 char 的位置
+ * @param char 查找字符
+ * @param time 出现次数
+ * @return
+ */
+public fun String.indexAtTimes(char: Char, time: Int): Int {
+    var pos = -1
+    for(i in 0 until time) {
+        pos = this.indexOf(char, pos + 1)
+    }
+    return pos
+}
+
+/**
  * Unicode解码
  */
 public fun String.unicodeDecode(): String {
