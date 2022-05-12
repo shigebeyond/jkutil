@@ -847,7 +847,8 @@ class MyTests{
         println(File.pathSeparatorChar) // ":"
         */
 
-        /*val f = File("/home/shi/test/wiki.txt")
+        val f = File("/home/shi/test/wiki.txt")
+        /*
         val ms = "<span.*>([^<]*)</span>".toRegex().findAll(f.readText())
         for(m in ms){
             println(m.groups[0]!!.value)
@@ -857,7 +858,9 @@ class MyTests{
                 result.groups[1]!!.value
             }
         }*/
-
+        // GroovyClassLoader 缓存编译结果的key的算法
+        val name = f.toURI().toURL().toExternalForm();
+        println(name) // 输出： file:/home/shi/test/wiki.txt
     }
 
     @Test
