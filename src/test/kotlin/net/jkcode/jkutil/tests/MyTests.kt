@@ -1168,6 +1168,13 @@ class MyTests{
     }
 
     @Test
+    fun testMethodInvoke(){
+        val m = this::testMethod.javaMethod!!
+        val args = emptyArray<Any>()
+        m.invoke(this, *args)
+    }
+
+    @Test
     fun testMethod(){
         for(m in IConfig::class.java.methods)
             println(m.getSignature())
