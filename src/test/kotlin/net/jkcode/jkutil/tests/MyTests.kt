@@ -188,9 +188,17 @@ class MyTests{
 
     @Test
     fun testSort(){
-        val list = listOf("abc", "ab", "a")
-        val list2 = list.sortedBy { it.length } // 从小到大
-        println(list2)
+        val list = mutableListOf("abc", "ab", "a")
+        println("原始值")
+        println(list)
+        val list2 = list.sortedBy { it.length } // 返回新的list
+        println("sortedBy之后")
+        println(list) // 不变
+        println(list2) // 新的list
+        val noth = list.sortBy { it.length } // 直接修改list, 无返回值
+        println("sortBy之后")
+        println(list)
+        println(noth)
     }
 
     @Test
