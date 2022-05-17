@@ -292,7 +292,7 @@ private fun getResourceRelativePath(absolutePath: String, rootPath: String): Str
      * 模式1： idea2018直接运行类， 编译输出目录为 out
      * fix bug: 运行main()或单元测试时路径对不上
      * classLoader根目录: /home/shi/code/java/java/jksoa/jksoa-rpc/jksoa-rpc-client/out/test/classes/
-     * 文件绝对路径:       /home/shi/code/java/java/jksoa/jksoa-rpc/jksoa-rpc-client/out/production/classes/com/jksoa/example/EchoService.class
+     * 文件绝对路径:       /home/shi/code/java/java/jksoa/jksoa-rpc/jksoa-rpc-client/out/production/classes/com/jksoa/example/SimpleService.class
      * 参考: ClientTests.testScanClass()
      *
      * classLoader根目录: /home/shi/code/java/jkjob/out/test/classes/

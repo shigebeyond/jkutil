@@ -20,7 +20,7 @@ class LambdaClassScanner(
      *
      * @param relativePath 类文件相对路径
      */
-    override fun collectClass(relativePath: String) {
+    override fun collectClassFile(relativePath: String) {
         lambda.invoke(relativePath)
     }
 

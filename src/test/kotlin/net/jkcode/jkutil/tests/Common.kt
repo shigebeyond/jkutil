@@ -7,10 +7,10 @@ import net.jkcode.jkutil.common.generateId
 import java.util.*
 
 open class A() {
-    open fun echo(){}
+    open fun sayHi(){}
 }
 class B(): A() {
-    /*override fun echo(){
+    /*override fun sayHi(){
         println("Ah")
     }*/
 }

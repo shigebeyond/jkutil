@@ -33,5 +33,5 @@ interface IClassScanner {
      *
      * @param relativePath 类文件相对路径
      */
-    fun collectClass(relativePath: String)
+    fun collectClassFile(relativePath: String)
 }

@@ -28,6 +28,7 @@ import java.io.IOException
 import java.io.InputStreamReader
 import java.lang.reflect.ParameterizedType
 import java.net.HttpURLConnection
+import java.net.InetAddress
 import java.net.URL
 import java.nio.file.FileSystems
 import java.text.DecimalFormat
@@ -174,8 +175,11 @@ class MyTests{
 //        println(path.toAbsolutePath())
 
         val file = File(f)
-        println(file.toURL())
-        println(file.toURL().toExternalForm())
+        val url = file.toURL()
+        println(url)
+        println(url.path)
+        println(url.toURI())
+        println(url.toExternalForm())
         println(file.toURI().toURL().toExternalForm())
     }
 
@@ -298,6 +302,16 @@ class MyTests{
         println(map.keys) // [1, 2, 3, 4]
         println(map.values) // [a, b, c, d]
 
+        println("----- equals")
+        val map2 = mapOf(
+                4 to "d",
+                3 to "c",
+                1 to "a",
+                2 to "b"
+        )
+        println(map == map2)
+
+        println("----- head tail ")
         val hm = map.headMap(3)
         println(hm) // {1=a, 2=b} -- key < 3
 
@@ -729,7 +743,9 @@ class MyTests{
             }
         }*/
         // 内网ip
-        println(getIntranetHost())
+        //println(getIntranetHost())
+
+        println(InetAddress.getLocalHost().getHostName())
     }
 
     @Test

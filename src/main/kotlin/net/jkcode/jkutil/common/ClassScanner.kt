@@ -69,7 +69,7 @@ abstract class ClassScanner : IClassScanner {
                     // 记录类文件
                     scanedFiles.add(relativePath)
                     // 收集类文件
-                    collectClass(relativePath)
+                    collectClassFile(relativePath)
                 }
             }
         }

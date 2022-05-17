@@ -14,7 +14,8 @@ class RequestInterceptorChain<R>(
 ): IRequestInterceptor<R> {
 
     init {
-        commonLogger.debug(chain.joinToString(", ", "加载拦截器: ") { it.javaClass.toString() })
+        if(chain.isNotEmpty())
+            commonLogger.debug(chain.joinToString(", ", "加载拦截器: ") { it.javaClass.toString() })
     }
 
     /**
