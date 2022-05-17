@@ -384,12 +384,11 @@ public inline fun <T> Array<T>.getOrPut(index: Int, defaultValue: (Int) -> T): T
 /**
  * 统计个数
  */
-public inline fun <T, K> Iterable<T>.groupCount(keySelector: (T) -> K): Map<K, Int> {
-    val counter = HashMap<K, Int>()
+public inline fun <T, K> Iterable<T>.groupCount(counter: MutableMap<K, Int> = HashMap(), keySelector: (T) -> K): Map<K, Int> {
     for (element in this) {
         val key = keySelector(element)
-        val count = counter[key]
-        counter[key] = if(count == null) 1 else count + 1
+        val count = counter[key] ?: 0
+        counter[key] = count + 1
     }
     return counter
 }
