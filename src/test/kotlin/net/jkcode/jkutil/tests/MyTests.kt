@@ -574,6 +574,20 @@ class MyTests{
         println(map)
         //println( emptyMap<String, Any?>() as MutableMap<String, Any?>)
         */
+        val serverNums = mutableMapOf("a" to 1, "b" to 7, "c" to 5)
+        // serverNums 变为要删除的每个server的连接数
+        val delThreshold = 3
+        val it = serverNums.entries.iterator() // map迭代更新或删除元素
+        while (it.hasNext()){
+            val entry = it.next()
+            val num = entry.value
+            if(num > delThreshold) // 超过阀值: 记录要裁掉的连接数
+                entry.setValue(num - delThreshold)
+            else // 未超过阀值: 不要了
+                it.remove()
+        }
+        println(serverNums)
+
         val map = HashMap<String, Int>()
         /*val keys = (0..8).mapToArray {
             randomString(6)
@@ -582,7 +596,7 @@ class MyTests{
             map[key] = 1
         }*/
 
-        // containsKey耗时: 17 ms
+        /*// containsKey耗时: 17 ms
         // isNotEmpty + containsKey耗时: 4 ms
         val key = randomString(6)
         val n = 10000000
@@ -597,7 +611,7 @@ class MyTests{
                 val b = map.isNotEmpty() && map.containsKey(key)
             }
             print("isNotEmpty + containsKey")
-        }
+        }*/
 
     }
 
