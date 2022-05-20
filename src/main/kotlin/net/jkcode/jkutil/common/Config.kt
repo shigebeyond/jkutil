@@ -301,6 +301,15 @@ open class Config(
     }
 
     /**
+     * 尝试设置配置项，仅内部使用
+     * @param key
+     * @param value
+     */
+    public operator fun set(key: String, value: Any?){
+        (props as MutableMap<String, Any?>).set(key, value)
+    }
+
+    /**
      * 配置项是类的列表, 对应返回实例列表
      * @param prop
      * @return

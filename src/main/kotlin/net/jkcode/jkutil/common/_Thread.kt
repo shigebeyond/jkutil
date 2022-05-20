@@ -8,6 +8,7 @@ import net.jkcode.jkutil.fiber.FiberExecutorService
 import net.jkcode.jkutil.scope.ClosingOnShutdown
 import net.jkcode.jkutil.ttl.SttlThreadPool
 import java.io.Closeable
+import java.io.IOException
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.TimeUnit
@@ -195,16 +196,40 @@ public fun MultithreadEventExecutorGroup.selectExecutor(arg: Int): SingleThreadE
 }
 
 /**
+ * 执行命令
+ * @param cmd 命令
+ * @return 执行结果
+ */
+public fun execCommand(cmd: String): String {
+    val pro: Process = doExecCommand(cmd)
+    return pro.output()
+}
+
+/**
+ * 执行命令
+ * @param cmd 命令
+ * @param outputLineHandler 输出行处理
+ */
+public fun execCommand(cmd: String, outputLineHandler:(String)->Unit) {
+    val pro = doExecCommand(cmd)
+    pro.inputStream.bufferedReader().forEachLine(outputLineHandler)
+}
+
+/**
+ * 执行命令
+ */
+private inline fun doExecCommand(cmd: String): Process {
+    val pro: Process = Runtime.getRuntime().exec(cmd)
+    val status = pro.waitFor()
+    if (status != 0)
+        throw IOException("Failed to call command: $cmd")
+    return pro
+}
+
+/**
  * 输出命令行进程的执行结果
  * @return
  */
 public fun Process.output(): String {
-    val reader = inputStream.bufferedReader()
-    val res = StringBuffer()
-    do{
-        val line = reader.readLine()
-        if(line != null)
-            res.append(line).append("\n")
-    }while (line != null)
-    return res.toString()
+    return inputStream.bufferedReader().readText()
 }

@@ -61,10 +61,14 @@ class MyTests{
     @Test
     fun testSys(){
         // val props = System.getenv()
-        val props = System.getProperties()
+        /*val props = System.getProperties()
         println(props.entries.joinToString("\n\n") {
             "${it.key}\n\t${it.value}"
-        })
+        })*/
+        
+        println("cpu: " + SysInfo.cpuCores)
+        println("jvm: " + SysInfo.jvmProperties)
+        println("sys: " + SysInfo.systemProperties)
     }
 
     @Test
