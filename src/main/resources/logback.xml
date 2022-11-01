@@ -1,0 +1,45 @@
+<configuration>
+    <!-- 控制台输出 -->
+    <appender name="console" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>(%F:%L)|%m%n</pattern>
+        </encoder>
+    </appender>
+
+    <!-- 文件输出 -->
+    <appender name="file" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <!--See http://logback.qos.ch/manual/appenders.html#RollingFileAppender-->
+        <!--and http://logback.qos.ch/manual/appenders.html#TimeBasedRollingPolicy-->
+        <Append>true</Append>
+        <!-- 日志文件 -->
+        <File>logs/error.log</File>
+        <encoder>
+            <!-- 日志格式 -->
+            <pattern>common</pattern>
+            <!--<pattern>%-d{yyyy-MM-dd HH:mm:ss} [ %t:%r ] - [ %p ] %m%n</pattern>-->
+        </encoder>
+        <!-- 日志等级 -->
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>ERROR</level>
+        </filter>
+    </appender>
+
+    <!-- org包使用console输出，日志级别为error -->
+    <logger name="org" level="error">
+        <appender-ref ref="console"/>
+    </logger>
+    <logger name="com" level="error">
+        <appender-ref ref="console"/>
+    </logger>
+    <logger name="net" level="error">
+        <appender-ref ref="console"/>
+    </logger>
+    <root level="fatal">
+        <appender-ref ref="console"/>
+    </root>
+    <!-- net.jkcode包使用console跟file输出，日志级别为debug -->
+    <logger name="net.jkcode" additivity="false" level="debug">
+        <appender-ref ref="console"/>
+        <appender-ref ref="file"/>
+    </logger>
+</configuration>

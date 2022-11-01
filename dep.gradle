@@ -26,10 +26,11 @@
 		// json
 		compile 'com.alibaba:fastjson:1.2.67'
 
-		// log
+		// log: 弃用log4j, 改用logback
 		compile 'org.slf4j:slf4j-api:1.7.10'
-		compile 'org.slf4j:slf4j-log4j12:1.7.10' // SLF4J重复绑定，与gradle-core包引用slf4j-log4j12实现冲突，但是依然可以使用
-		compile 'org.slf4j:jcl-over-slf4j:1.7.10'
+//		compile 'org.slf4j:slf4j-log4j12:1.7.10' // SLF4J重复绑定，与gradle-core包引用slf4j-log4j12实现冲突，但是依然可以使用
+//		compile 'org.slf4j:jcl-over-slf4j:1.7.10'
+		compile 'ch.qos.logback:logback-classic:1.2.3'
 
 		// redis
 		compile 'redis.clients:jedis:2.9.0'
@@ -49,6 +50,9 @@
 		// zookeeper
 		compile "org.apache.zookeeper:zookeeper:$zk_version"
 		compile "com.101tec:zkclient:$zkclient_version"
+
+		// disruptor
+		compile 'com.lmax:disruptor:3.4.4'
 
 		// netty -- 用到 HashedWheelTimer
 		compile "io.netty:netty-all:$netty_version"
