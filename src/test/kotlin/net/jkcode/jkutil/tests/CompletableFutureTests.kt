@@ -25,6 +25,17 @@ class CompletableFutureTests{
      */
     @Test
     fun testBasic() {
+        /*
+        1. 成功
+        成功了有结果: 10
+        异常依旧返回结果: 10
+        最后汇总: 结果=10，异常=null
+
+        2. 异常
+        失败了有异常: java.util.concurrent.CompletionException: java.lang.Exception: 随机的异常
+        异常依旧返回结果: -1
+        最后汇总: 结果=null，异常=java.util.concurrent.CompletionException: java.lang.Exception: 随机的异常
+         */
         val f = CompletableFuture.supplyAsync {
             if(randomBoolean())
                 throw Exception("随机的异常")
@@ -34,7 +45,7 @@ class CompletableFutureTests{
         f.thenAccept {
             println("成功了有结果: $it")
         }
-        val newFuture = f.exceptionally {
+        val f2: CompletableFuture<Void>? = f.exceptionally {
             println("失败了有异常: $it")
             -1 // 发生异常后, 可以返回新的成功值, 但是只限于新future
         }.thenAccept {
@@ -42,7 +53,7 @@ class CompletableFutureTests{
         }
 
         // 对上一行的异常捕获, 并返回新的值, 不会影响旧的future
-        f.whenComplete{ r, ex ->
+        val f3: CompletableFuture<Int> = f.whenComplete{ r, ex ->
             println("最后汇总: 结果=" + r + "，异常=" + ex)
         }
         Thread.sleep(10000)

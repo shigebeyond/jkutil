@@ -18,7 +18,7 @@ val httpLogger = switcher.getLogger("net.jkcode.jkmvc.http")
  * @param msg
  * @param e
  */
-public fun Logger.errorAndPrint(msg: String, e: Exception) {
+public fun Logger.errorAndPrint(msg: String, e: Throwable) {
     this.error(msg, e)
     e.printStackTrace()
 }

@@ -9,6 +9,17 @@ public val VoidFuture: CompletableFuture<Void> = CompletableFuture.completedFutu
 public val UnitFuture: CompletableFuture<Unit> = CompletableFuture.completedFuture(null)
 
 /**
+ * 构建异常的CompletableFuture对象
+ * @param ex
+ * @return
+ */
+public fun completeExceptionFuture(ex: Exception): CompletableFuture<Any?> {
+    return CompletableFuture<Any?>().apply {
+        completeExceptionally(ex)
+    }
+}
+
+/**
  * 等待并输出异步结果
  */
 public fun CompletableFuture<*>.print() {
