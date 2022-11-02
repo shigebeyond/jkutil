@@ -1756,5 +1756,15 @@ class MyTests{
         }
         println("----------")
     }
+
+    @Test
+    fun testLogger(){
+        for(i in 1..10) {
+            if(randomBoolean())
+                commonLogger.error("错误 " + i)
+            else
+                commonLogger.info("你好 " + i)
+        }
+    }
 }
 

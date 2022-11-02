@@ -65,11 +65,12 @@ project(':') {
             url 'http://maven.aliyun.com/nexus/content/repositories/snapshots'
         }
         maven {
-            url "http://dl.bintray.com/kotlin/kotlin"
-        }
-        maven {
             url "https://repository.apache.org/content/repositories/releases"
         }
+        maven {
+            url "http://dl.bintray.com/kotlin/kotlin"
+        }
+
         maven {
             url 'https://dl.bintray.com/kotlin/kotlin-eap'
         }
