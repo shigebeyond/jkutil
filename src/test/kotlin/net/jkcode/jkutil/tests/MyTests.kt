@@ -1766,5 +1766,20 @@ class MyTests{
                 commonLogger.info("你好 " + i)
         }
     }
+    
+    @Test
+    fun testArgs(){
+        mockOrmConstructor(1, true)
+        mockOrmConstructor(2, false)
+        mockOrmConstructor(2, false, true)
+        mockOrmConstructor(2, false, true, useCache = true)
+        mockOrmConstructor(2, false, true, useCache = false)
+    }
+
+    fun mockOrmConstructor(vararg pks: Any, useCache: Boolean? = null){
+        println("主键: " + pks.joinToString(", "))
+        println("本次查询是否使用缓存: " + useCache)
+        println("-----")
+    }
 }
 
