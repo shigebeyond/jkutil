@@ -21,7 +21,7 @@
 
         <!-- 日志文件rolling策略:按天生成日志文件 -->
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <FileNamePattern>logs/error-%d{yyyyMMdd}.log.gz</FileNamePattern>
+            <FileNamePattern>logs/error.log.%d{yyyyMMdd}</FileNamePattern>
             <!-- 文件在磁盘上保留天数 -->
             <maxHistory>30</maxHistory>
         </rollingPolicy>
@@ -59,7 +59,7 @@
         <appender-ref ref="console"/>
     </root>
     <!-- net.jkcode包使用console跟file输出，日志级别为debug -->
-    <logger name="net.jkcode" additivity="false" level="debug">
+    <logger name="net.jkcode" level="debug" additivity="false">
         <appender-ref ref="console"/>
         <appender-ref ref="file"/>
     </logger>
