@@ -16,8 +16,13 @@ interface IPlugin: Closeable {
      * 初始化
      */
     fun start(){
-        commonLogger.debug(" ------ plugin: {} ------ ", this.javaClass)
-        doStart()
+        commonLogger.debug(ColorFormatter.applyTextColor("Load plugin: {}", 34), this.javaClass)
+        try {
+            doStart()
+        }catch (ex: Exception){
+            commonLogger.errorAndPrint("Fail to load plugin [${this.javaClass}]", ex)
+            throw ex
+        }
     }
 
     /**

@@ -22,7 +22,7 @@ abstract class NamedConfiguredSingletons<T> : INamedConfiguredSingletons<T> {
      * @return
      */
     public override fun instance(name: String): T{
-        val clazz: String = instsConfig[name]!!
+        val clazz: String = instsConfig[name] ?: throw Exception("\"配置文件[${instsConfig.file}]中无配置项: $name")
         try {
             return BeanSingletons.instance(clazz) as T
         }catch (e: ClassNotFoundException){
