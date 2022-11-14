@@ -236,6 +236,18 @@ public inline fun Iterable<String?>.filterNotNullOrBlankString(): List<String> {
 }
 
 /**
+ * 迭代器转数组
+ *   注: Array<R> 不能使用R作为泛型参数, 只能使用具体类
+ */
+public inline fun <E, reified R> Iterator<E>.mapToArray(size:Int, transform: (E) -> R): Array<R> {
+    val arr = arrayOfNulls<R?>(size);
+    var i = 0;
+    for (item in this)
+        arr[i++] = transform(item)
+    return arr as Array<R>
+}
+
+/**
  * 集合转数组
  *   注: Array<R> 不能使用R作为泛型参数, 只能使用具体类
  */
