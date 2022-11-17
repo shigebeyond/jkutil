@@ -23,7 +23,7 @@ import io.netty.handler.ssl.util.InsecureTrustManagerFactory.INSTANCE as Insecur
  * @author shijianhang<772910474@qq.com>
  * @date 2019-10-19 12:48 PM
  */
-class HttpClient {
+class HttpClient(protected val remResCookie: Boolean = false /* 是否记录响应的cookie */) {
     companion object{
 
         /**
@@ -162,11 +162,13 @@ class HttpClient {
                 .toCompletableFuture()
                 .thenApply { response: Response ->
                     // 8 写cookie
-                    response.cookies.forEach {
-                        if (it.value() == "")
-                            cookies.remove(it.name())
-                        else
-                            cookies[it.name()] = it
+                    if(remResCookie) {
+                        response.cookies.forEach {
+                            if (it.value() == "")
+                                cookies.remove(it.name())
+                            else
+                                cookies[it.name()] = it
+                        }
                     }
 
                     response
