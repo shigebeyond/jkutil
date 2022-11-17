@@ -936,7 +936,8 @@ public fun Collection<out Map<*, *>>.toMap(keyField:String, valueField:String? =
  * @return
  */
 public fun Map<*, *>.buildQueryString(str: StringBuilder, encoding: Boolean = false): StringBuilder {
-    return entries.joinTo(str, "&") {
+    // fix: 不能处理value是数组的情况
+    /*return entries.joinTo(str, "&") {
         var key = it.key.toString()
         var value = it.value.toString()
         if(encoding){
@@ -944,7 +945,29 @@ public fun Map<*, *>.buildQueryString(str: StringBuilder, encoding: Boolean = fa
             value = URLEncoder.encode(value, "UTF-8")
         }
         "$key=$value"
+    }*/
+    for((key, value) in this){
+        if(value is Array<*>){ // value是多值
+            for(v in value)
+                addQueryItem(str, key, v, encoding)
+        }else { // value是单值
+            addQueryItem(str, key, value, encoding)
+        }
     }
+    return str
+}
+
+/**
+ * 为查询字符串添加单个键值
+ */
+private fun addQueryItem(str: StringBuilder, key: Any?, value: Any?, encoding: Boolean){
+    var key2 = key.toString()
+    var value2 = value?.toString() ?: ""
+    if (encoding) {
+        key2 = URLEncoder.encode(key2, "UTF-8")
+        value2 = URLEncoder.encode(value2, "UTF-8")
+    }
+    str.append(key2).append("=").append(value2).append("&")
 }
 
 /**

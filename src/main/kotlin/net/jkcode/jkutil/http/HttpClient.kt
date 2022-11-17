@@ -17,16 +17,13 @@ import io.netty.handler.ssl.util.InsecureTrustManagerFactory.INSTANCE as Insecur
 /**
  * 使用 asynchttpclient 实现用http通讯的rpc客户端
  *    内部使用netty, 会对每个server建立连接池以便复用连接, 加上异步请求, 性能很好
+ *    如果你要对某个域名指定header或cookie, 则要对该域名要创建单独的 HttpClient 实例
  *
  * @Description:
  * @author shijianhang<772910474@qq.com>
  * @date 2019-10-19 12:48 PM
  */
-class HttpClient(
-        public val headers: Map<String, String> = emptyMap(), // 请求头
-        password: String? = null, // 认证的密码
-        user: String? = null // 认证的用户名
-) {
+class HttpClient {
     companion object{
 
         /**
@@ -65,13 +62,9 @@ class HttpClient(
     }
 
     /**
-     * 认证信息
+     * 请求头
      */
-    protected val authorization: String? =
-        if (user != null)
-            Base64.getEncoder().encodeToString("$user:$password".toByteArray(UTF_8)) // base编码用户名密码
-        else
-            null
+    protected val headers: MutableMap<String, String?> = HashMap()
 
     /**
      * 记录cookie
@@ -79,18 +72,48 @@ class HttpClient(
     protected val cookies: MutableMap<String, Cookie> = HashMap()
 
     /**
-     * 添加cookie
+     * 添加请求头
      */
-    public fun addCookie(cookie: Cookie){
-        cookies[cookie.name()] = cookie
+    public fun addHeader(name: String, value: String): HttpClient {
+        headers[name] = value
+        return this
+    }
+
+    /**
+     * 添加请求头
+     */
+    public fun addHeaders(heads: Map<String, String?>): HttpClient {
+        this.headers.putAll(heads)
+        return this
+    }
+
+    /**
+     * 添加 Authorization Basic 认证的请求头
+     * @param user 认证的用户名
+     * @param password 认证的密码
+     * @return
+     */
+    public fun authBasic(user: String, password: String): HttpClient {
+        val auth = Base64.getEncoder().encodeToString("$user:$password".toByteArray(UTF_8)) // base编码用户名密码
+        addHeader("Authorization", "Basic $auth")
+        return this
     }
 
     /**
      * 添加cookie
      */
-    public fun addCookies(cookies: Array<Cookie>){
+    public fun addCookie(cookie: Cookie): HttpClient {
+        cookies[cookie.name()] = cookie
+        return this
+    }
+
+    /**
+     * 添加cookie
+     */
+    public fun addCookies(cookies: Array<Cookie>): HttpClient {
         for (cookie in cookies)
             addCookie(cookie)
+        return this
     }
 
     /**
@@ -116,8 +139,7 @@ class HttpClient(
         // 3 设置header
         if(contentType != null)
             req.addHeader("Content-Type", contentType)
-        if (authorization != null)
-            req.addHeader("Authorization", "Basic $authorization")
+
         this.headers.forEach { // 全局的header
             req.addHeader(it.key, it.value)
         }
