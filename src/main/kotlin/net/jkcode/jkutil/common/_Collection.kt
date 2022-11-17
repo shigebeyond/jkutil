@@ -975,6 +975,18 @@ public fun <E> List<E>.subListSafe(fromIndex0: Int, toIndex0: Int): List<E>{
     return this.subList(fromIndex, toIndex)
 }
 
+/**
+ * 将自己的元素给转变了，还是存在自己list中
+ *   主要是为了复用list, 优化map性能, 特别是调用频繁或list很大的场景
+ */
+public inline fun <T, R> List<T>.mapSelf(transform: (T) -> R): List<R> {
+    var list = (this as List<*>) as MutableList<R>
+    for(i in 0 until this.size){
+        list[i] = transform(this[i])
+    }
+    return list
+}
+
 /********************** 转为各种类型的Map<String, *>.getter *********************/
 /**
  * Get attribute of db type: varchar, char, enum, set, text, tinytext, mediumtext, longtext
