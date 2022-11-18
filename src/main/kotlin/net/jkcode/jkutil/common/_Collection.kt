@@ -577,26 +577,30 @@ public inline fun <T> Enumeration<T>.any(predicate: (T) -> Boolean): Boolean {
 }
 
 /**
- * Returns a set containing all elements that are contained by this collection and not contained by the specified collection.
- *
+ * Enumeration相减
+ * Returns a set containing all elements that are contained by this Enumeration and not contained by the specified Enumeration.
  * The returned set preserves the element iteration order of the original collection.
  */
 public infix fun <T> Enumeration<T>.subtract(other: Enumeration<T>): Set<T> {
+    // bug: 由于Enumeration类似于迭代器, 只能用一次迭代, 因此不能直接在循环中多次迭代来处理
+    /*val set = HashSet<T>()
+    for(e in this){
+        if(!other.any{e == it}) // wrong: 只能用一次迭代
+            set.add(e)
+    }
+    return set*/
+    // fix: 将要多次迭代的Enumeration放到list中, list可以多次迭代
+    val c = other.toList()
+    return this.subtract(c)
+}
+
+public infix fun <T> Enumeration<T>.subtract(other: Collection<T>): Set<T> {
     val set = HashSet<T>()
     for(e in this){
         if(!other.contains(e))
             set.add(e)
     }
     return set
-}
-
-/**
- * 包含
- */
-public infix fun <T> Enumeration<T>.contains(e: T): Boolean {
-    return this.any {
-        it == e
-    }
 }
 
 /**

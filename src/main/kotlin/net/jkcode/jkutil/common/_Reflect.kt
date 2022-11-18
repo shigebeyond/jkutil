@@ -2,9 +2,11 @@ package net.jkcode.jkutil.common
 
 import co.paralleluniverse.fibers.Suspendable
 import net.jkcode.jkutil.fiber.AsyncCompletionStage
+import org.apache.commons.lang.SerializationUtils
 import org.nustaq.serialization.util.FSTUtil
 import sun.reflect.generics.reflectiveObjects.ParameterizedTypeImpl
 import java.io.File
+import java.io.Serializable
 import java.lang.invoke.MethodHandle
 import java.lang.invoke.MethodHandles
 import java.lang.reflect.*
@@ -12,6 +14,7 @@ import java.util.*
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.Future
+import kotlin.collections.ArrayList
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.*
 import kotlin.reflect.full.*
@@ -35,6 +38,66 @@ public inline fun <reified T> Any?.asArray(): Array<T>?{
 }
 
 /**
+ * 复制对象
+ * @param constructorParams 构造函数参数
+ * @return
+ */
+public fun Any.copyBean(vararg constructorParams: Any?): Any {
+//    val target = this.javaClass.newInstance() // 无参构造函数
+
+    // 有参数的构造函数
+    var params = constructorParams
+    var constructor:Constructor<*>? = this.javaClass.getConstructorByParams(constructorParams) // 指定参数的构造函数
+    if(constructorParams.isEmpty() && constructor == null){ // 无参数, 但有没有[无参数构造函数] => 搞个最少参数的构造函数, 实参全部为null
+        constructor = this.javaClass.constructors.minBy { it.parameterCount}!!
+        params = arrayOfNulls(constructor.parameterCount)
+    }
+    // 实例化
+    val target = constructor!!.newInstance(*params)
+    //遍历属性来复制
+    for (field in this.javaClass.getInheritFields()) {
+        field.isAccessible = true
+        var value = field.get(this)
+        field.set(target, value)
+    }
+    return target
+}
+
+/**
+ * 复制对象属性
+ * @param props 属性名
+ * @return
+ */
+public fun Any.copyProps(vararg props: String) {
+    for (prop in props){
+        val field = this.javaClass.getInheritField(prop)
+        field.isAccessible = true
+        var value = field.get(this).copyBean()
+        field.set(this, value)
+    }
+}
+
+/**
+ * 根据实际参数来获得构造函数
+ */
+fun Class<*>.getConstructorByParams(params: Array<out Any?>): Constructor<*>? {
+    if (params.isEmpty())
+        return this.getConstructorOrNull()
+
+    val byType = params.all { it != null } // 参数不为null, 才能获得参数类型
+    if(byType) { // 根据参数类型来找
+        val paramTypes = params.mapToArray {
+            it!!.javaClass
+        }
+        return this.getConstructorOrNull(*paramTypes)
+    }
+
+    // 根据参数个数来找, 部分参数为null
+    return this.constructors.first { it.parameterCount == params.size }
+}
+
+
+/**
  * 尝试调用克隆方法
  *    1 如果是集合+数组, 则复制为新的集合+数组
  *    2 如果实现了 Cloneable 接口, 则调用并返回 clone(), 否则直接返回 this
@@ -51,17 +114,22 @@ public fun Any.tryClone(cloningArrayCollectionElement: Boolean = false):Any {
     if(this.isArray())
         return this.cloneArray(cloningArrayCollectionElement)
 
-    // 3 其他
-    if(this !is Cloneable)
-        return this
+    // 3 Cloneable接口
+    if(this is Cloneable) {
+        /*
+        val f:KFunction<*> = this::class.getFunction("clone")!!
+        return f.call(this) as Any
+        */
+        val method = this.javaClass.getMethod("clone")
+        method.isAccessible = true
+        return method.invoke(this)
+    }
 
-    /*
-    val f:KFunction<*> = this::class.getFunction("clone")!!
-    return f.call(this) as Any
-    */
-    val method = this.javaClass.getMethod("clone")
-    method.isAccessible = true
-    return method.invoke(this)
+    // 4 Serializable 接口
+    if(this is Serializable)
+        return SerializationUtils.clone(this)
+
+    return this
 }
 
 /**
@@ -874,6 +942,21 @@ public fun Class<*>.getWritableFinalField(name: String, inherited: Boolean = fal
         field.isAccessible = true
 
     return field
+}
+
+/**
+ * 获得所有属性, 包含继承的
+ * @param name
+ * @return
+ */
+public fun Class<*>.getInheritFields(): List<Field>{
+    val fields = ArrayList<Field>()
+    var c: Class<*>? = this
+    while (c != null) {
+        fields.addAll(c.declaredFields)
+        c = c.superclass
+    }
+    return fields
 }
 
 /**
