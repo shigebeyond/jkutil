@@ -4,7 +4,6 @@ import co.paralleluniverse.fibers.Suspendable
 import net.jkcode.jkutil.fiber.AsyncCompletionStage
 import org.apache.commons.lang.SerializationUtils
 import org.nustaq.serialization.util.FSTUtil
-import sun.reflect.generics.reflectiveObjects.ParameterizedTypeImpl
 import java.io.File
 import java.io.Serializable
 import java.lang.invoke.MethodHandle
@@ -319,7 +318,7 @@ public fun KFunction<*>.matches(name:String, paramTypes:Array<out Class<*>>):Boo
     // 2.2 匹配参数类型
     for (i in paramTypes.indices){
         var targetType = this.parameters[i].type.javaType;
-        if(targetType is ParameterizedTypeImpl) // 若是泛型类型，则去掉泛型，只保留原始类型
+        if(targetType is ParameterizedType) // 若是泛型类型，则去掉泛型，只保留原始类型
             targetType = targetType.rawType;
 
         if(paramTypes[i] != targetType)
@@ -897,6 +896,17 @@ private fun getGenricType(genType: Type?, genTypeIndex: Int): Class<out Any>? {
     return params.getOrElse(genTypeIndex){
         Any::class.java
     } as Class<*>
+}
+
+/**
+ * 判断属性是否存在
+ * @param name 属性名
+ * @return
+ */
+public fun Class<*>.isFieldExist(name: String): Boolean {
+    return this.declaredFields.any {
+        it.name == name
+    }
 }
 
 /**
