@@ -39,3 +39,4 @@ compile "net.jkcode:jkutil:1.9.0"
 5. [校验器](doc/validation/validation.cn.md)
 6. [校验表达式](doc/validation/validation_expression.cn.md)
 7. [id生成器](doc/idworker.cn.md)
+7. [http client](doc/http_client.cn.md)
