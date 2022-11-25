@@ -1417,7 +1417,7 @@ class MyTests{
             println("$col : ${m?.value}")
         }*/
 
-        val pattern = Pattern.compile("#i18n\\.([^#^\"]*)#")
+        /*val pattern = Pattern.compile("#i18n\\.([^#^\"]*)#")
         val s = "欢迎, #i18n.xxx#"
         val matcher = pattern.matcher(s)
         while (matcher.find()) {
@@ -1427,6 +1427,15 @@ class MyTests{
         val ms = "#i18n\\.([^#^\"]*)#".toRegex().findAll(s)
         for(m in ms){
             println(m.groupValues[1])
+        }*/
+
+        val ms = "\\d(\\w)".toRegex().findAll("1a 2a 3b")
+        for(m in ms){
+            println("-------")
+            println(m.value)
+            println(m.range)
+            println(m.groups.size)
+            println(m.groupValues)
         }
     }
 
