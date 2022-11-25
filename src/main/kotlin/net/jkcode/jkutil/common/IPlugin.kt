@@ -20,7 +20,7 @@ interface IPlugin: Closeable {
         try {
             doStart()
         }catch (ex: Exception){
-            commonLogger.errorAndPrint("Fail to load plugin [${this.javaClass}]", ex)
+            commonLogger.errorColor("Fail to load plugin [${this.javaClass}]", ex)
             throw ex
         }
     }

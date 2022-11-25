@@ -1,7 +1,7 @@
 package net.jkcode.jkutil.serialize
 
 import net.jkcode.jkutil.common.commonLogger
-import net.jkcode.jkutil.common.errorAndPrint
+import net.jkcode.jkutil.common.errorColor
 import java.io.*
 
 /**
@@ -26,7 +26,7 @@ class JdkSerializer : ISerializer {
             }
             return bo.toByteArray()
         } catch (e: IOException) {
-            commonLogger.errorAndPrint(this.javaClass.name + "序列化错误", e)
+            commonLogger.errorColor(this.javaClass.name + "序列化错误", e)
             return null
         }
     }
@@ -42,7 +42,7 @@ class JdkSerializer : ISerializer {
             val oi = ObjectInputStream(input)
             return oi.readObject()
         } catch (e: Exception) {
-            commonLogger.errorAndPrint(this.javaClass.name + "反序列化错误", e)
+            commonLogger.errorColor(this.javaClass.name + "反序列化错误", e)
             return null
         }
     }

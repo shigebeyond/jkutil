@@ -4,7 +4,7 @@ import com.esotericsoftware.kryo.Kryo
 import com.esotericsoftware.kryo.io.Input
 import com.esotericsoftware.kryo.io.Output
 import net.jkcode.jkutil.common.commonLogger
-import net.jkcode.jkutil.common.errorAndPrint
+import net.jkcode.jkutil.common.errorColor
 import java.io.IOException
 import java.io.InputStream
 
@@ -30,7 +30,7 @@ class KryoSerializer: ISerializer {
             kryo.writeClassAndObject(output, obj)
             return output.toBytes()
         } catch (e: IOException) {
-            commonLogger.errorAndPrint(this.javaClass.name + "序列化错误", e)
+            commonLogger.errorColor(this.javaClass.name + "序列化错误", e)
             return null
         }
     }
@@ -47,7 +47,7 @@ class KryoSerializer: ISerializer {
             val input = Input(input)
             return kryo.readClassAndObject(input)
         } catch (e: IOException) {
-            commonLogger.errorAndPrint(this.javaClass.name + "反序列化错误", e)
+            commonLogger.errorColor(this.javaClass.name + "反序列化错误", e)
             return null
         }
     }
