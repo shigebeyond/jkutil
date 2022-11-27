@@ -77,6 +77,13 @@ class MyTests{
             println(i)
     }
 
+    @Test
+    fun testNull(){
+        var useWriter: Boolean? = null
+        println(useWriter == false)
+        println(useWriter == true)
+    }
+
     // 测试命令行执行
     @Test
     fun testCmd(){
