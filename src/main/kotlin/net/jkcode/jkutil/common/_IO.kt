@@ -27,9 +27,9 @@ public fun OutputStream.writeFile(file: File) {
  * @param in
  * @return
  */
-public fun OutputStream.writeFromInput(`in`: InputStream): Int {
+public fun OutputStream.writeFromInput(`in`: InputStream, closeIn: Boolean = true): Int {
     var total = 0
-    `in`.use {
+    try {
         var length = -1
         val buffer = ByteArray(1024)
         do {
@@ -41,6 +41,9 @@ public fun OutputStream.writeFromInput(`in`: InputStream): Int {
                 total += length
             }
         } while (length != -1)
+    }finally {
+        if(closeIn)
+            `in`.tryClose()
     }
     return total
 }
@@ -63,7 +66,7 @@ public fun ZipInputStream.forEachEntry(action: (ZipEntry)->Unit){
 /**
  * 尝试关闭
  */
-public fun Closeable?.tryClose(){
+public inline fun Closeable?.tryClose(){
     try {
         this?.close()
     } catch (e: Exception) {

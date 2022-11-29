@@ -183,6 +183,10 @@ public fun File.replaceText(transform:(txt: String) -> String){
  * @param action 访问者函数
  */
 public fun File.travel(action:(file: File) -> Unit) {
+    if(this.isFile){
+        action(this)
+        return
+    }
     val files: Stack<File> = Stack()
     files.push(this)
     travelFiles(files, action)

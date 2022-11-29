@@ -1,9 +1,12 @@
 package net.jkcode.jkutil.zip
 
 import net.jkcode.jkutil.common.decorateNextMethodIterator
+import net.jkcode.jkutil.common.prepareDirectory
+import net.jkcode.jkutil.common.writeFromInput
 import net.jkcode.jkutil.iterator.NextMethodIterator
 import java.io.ByteArrayInputStream
 import java.io.File
+import java.io.FileOutputStream
 import java.io.InputStream
 import java.nio.file.FileSystems
 import java.util.zip.ZipEntry
@@ -71,5 +74,18 @@ class ZipFileEntry(protected val entry: ZipEntry, protected val `in`: ZipInputSt
 
     override fun inputStream(): InputStream {
         return `in`
+    }
+
+    /**
+     * 提取到目标目录中
+     */
+    public fun extractTo(destDir: String){
+        val file = File(destDir, name)
+        // 准备父目录
+        destDir.prepareDirectory()
+        if (isDirectory) // 目录
+            file.mkdirs()
+        else // 文件
+            FileOutputStream(file).writeFromInput(inputStream(), false) // 不关闭 zip 输入流
     }
 }
