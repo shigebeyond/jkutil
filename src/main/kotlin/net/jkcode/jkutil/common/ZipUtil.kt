@@ -59,8 +59,8 @@ object ZipUtil {
     }
 
     /**
-     * 压缩单个文件
-     * @param file 要压缩的文件
+     * 压缩单个文件或目录
+     * @param file 要压缩的文件或目录
      * @param zos 压缩输出流
      * @param root 根路径, 如果不为空, 则输出要去掉根路径, 否则直接输出文件名
      */
