@@ -665,3 +665,21 @@ public fun Regex.findAllGroupValue(input: CharSequence, groupIndex: Int = 0, sta
     val m = this.findAll(input, startIndex)
     return MatchResultCollection(m, groupIndex)
 }
+
+/**
+报错： Caused by: java.lang.ClassNotFoundException: jdk.internal.jrtfs.JrtUtils
+解决：https://www.codenong.com/24720665/
+    这是javac的限制。 默认情况下，javac不会从rt.jar中读取类。 它从符号文件读取，该文件仅包含标准API和一些内部API(例如com.sun。，com.oracle。和sun。*)。
+    要禁用此机制，我可以使用javac -XDignore.symbol.file=true选项
+    =>直接不用该方法
+*/
+// 引用JrtUtils.toRegexPattern()方法
+//val globRegMethod = Class.forName("jdk.internal.jrtfs.JrtUtils").getMethod("toRegexPattern")
+
+/**
+ * 字符串转glob模式正则
+ */
+/*
+public fun String.toGlobReg(): String {
+    return globRegMethod.invoke(null, this) as String
+}*/
