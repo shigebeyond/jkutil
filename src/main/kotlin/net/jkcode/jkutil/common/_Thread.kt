@@ -9,6 +9,7 @@ import net.jkcode.jkutil.scope.ClosingOnShutdown
 import net.jkcode.jkutil.ttl.SttlThreadPool
 import java.io.Closeable
 import java.io.IOException
+import java.lang.management.ManagementFactory
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.TimeUnit
@@ -83,6 +84,15 @@ public val CommonThreadPool: ExecutorService by lazy{
         SttlThreadPool(pool)
     else
         pool
+}
+
+/**
+ * 获得当前进程id
+ */
+public fun currentProcessID(): String {
+    val b = ManagementFactory.getRuntimeMXBean()
+    println(b.name)
+    return b.name.substringBefore('@')
 }
 
 /**

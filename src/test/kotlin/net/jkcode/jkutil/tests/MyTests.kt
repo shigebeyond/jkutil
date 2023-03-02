@@ -35,7 +35,6 @@ import java.text.DecimalFormat
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.ConcurrentLinkedQueue
-import java.util.regex.Pattern
 import kotlin.collections.ArrayList
 import kotlin.collections.HashMap
 import kotlin.reflect.KClass
@@ -82,6 +81,12 @@ class MyTests{
         var useWriter: Boolean? = null
         println(useWriter == false)
         println(useWriter == true)
+    }
+
+    // 获得进程id
+    @Test
+    fun testProcessId(){
+        println("当期进程id： " + currentProcessID())
     }
 
     // 测试命令行执行
