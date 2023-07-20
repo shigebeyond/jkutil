@@ -4,6 +4,7 @@ import com.alibaba.fastjson.annotation.JSONField
 import io.netty.util.concurrent.DefaultEventExecutor
 import io.netty.util.concurrent.DefaultPromise
 import net.jkcode.jkutil.bit.SetBitIterator
+import net.jkcode.jkutil.collection.DataFrame
 import net.jkcode.jkutil.collection.DoneFlagList
 import net.jkcode.jkutil.collection.FixedKeyMapFactory
 import net.jkcode.jkutil.common.*
@@ -103,29 +104,56 @@ class MyTests{
         println("---- end ----")
     }
 
+    /**
+     * 通过 docker service ls 命令来查询k8s服务的节点数
+     * @return Map<k8s服务名, 节点数>
+     */
     @Test
     fun testDockerServiceCmd(){
         // https://docs.docker.com/engine/reference/commandline/service_ls/
         val cmd = "docker service ls --format {{.Name}}:{{.Replicas}}"
-        val pro: Process = Runtime.getRuntime().exec(cmd)
-        val status = pro.waitFor()
-        if (status != 0)
-            println("Failed to call command: $cmd")
-        // output eg. tcp_tcpserver:2/2
-        val text = pro.output()
+        val output = execCommand(cmd)
         println("---- start ----")
-        println(text)
+        println(output)
         println("---- end ----")
 
         // parse service and replicas
         val services = HashMap<String, Int>()
-        for (line in text.split("\n")) {
+        for (line in output.split("\n")) {
             if(line.isEmpty())
                 break
             // tcp_tcpserver:2/2
             var (service, replicas) = line.split(':')
             replicas = replicas.substringAfter('/')
             services[service] = replicas.toInt()
+        }
+        println(services)
+    }
+
+
+    @Test
+    fun testK8sServiceCmd() {
+        /* 1 执行命令，结果如下
+        NAMESPACE       NAME                       READY   UP-TO-DATE   AVAILABLE   AGE
+        default         demo                       2/2     2            2           27h
+         */
+        val cmd = "kubectl get deploy -A"
+        val output = execCommand(cmd)
+        println("---- start ----")
+        println(output)
+        println("---- end ----")
+
+        // 2 转df
+        val df = DataFrame.fromString(output)!!
+
+        // 3 解析副本数
+        val services = HashMap<String, Int>()
+        df.forEach { row ->
+            val name = row["NAME"]!!
+            // 可用副本数/期望副本数，在滚动更新的过程中有可能：可用副本数 > 期望副本数，因此要取最小值
+            val (readyReplicas, desiredReplicas) = row["READY"]!!.split('/')
+            val replicas = minOf(readyReplicas.toInt(), desiredReplicas.toInt())
+            services[name] = replicas
         }
         println(services)
     }
