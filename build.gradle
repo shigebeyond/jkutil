@@ -11,7 +11,7 @@ buildscript {
         jcenter()
         mavenCentral()
         maven {
-            url 'http://maven.aliyun.com/nexus/content/repositories/snapshots'
+            url 'https://maven.aliyun.com/repository/public/'
         }
         maven {
             url "http://dl.bintray.com/kotlin/kotlin"
@@ -62,7 +62,7 @@ project(':') {
         mavenLocal()
         mavenCentral()
         maven {
-            url 'http://maven.aliyun.com/nexus/content/repositories/snapshots'
+            url 'https://maven.aliyun.com/repository/public/'
         }
         maven {
             url "https://repository.apache.org/content/repositories/releases"
