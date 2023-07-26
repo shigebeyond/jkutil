@@ -1242,11 +1242,11 @@ class MyTests{
     @Test
     fun testExtend(){
         val a: A = A()
-        a.sayHi() // A
+        a.hostname() // A
         val b: B = B()
-        b.sayHi() // B
+        b.hostname() // B
         val c: A = B()
-        c.sayHi() // A
+        c.hostname() // A
     }
 
     @Test

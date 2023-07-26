@@ -857,6 +857,19 @@ public fun  <K, V> MutableMap<K, V>.putAllIfAbsent(map: Map<K, V>){
 }
 
 /**
+ * 根据条件删除map中的项目
+ * @param predicate 删除单项的条件
+ */
+public inline fun <K, V> MutableMap<out K, V>.removeBy(predicate: (Map.Entry<K, V>) -> Boolean) {
+    val nit = this.entries.iterator()
+    while (nit.hasNext()) {
+        val entry = nit.next()
+        if (predicate(entry))
+            nit.remove()
+    }
+}
+
+/**
  * map删除多个key
  * @param keys
  * @return

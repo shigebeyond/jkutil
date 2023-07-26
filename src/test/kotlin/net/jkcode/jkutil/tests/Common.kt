@@ -7,19 +7,19 @@ import net.jkcode.jkutil.common.generateId
 import java.util.*
 
 open class A() {
-    open fun sayHi(){}
+    open fun hostname(){}
 }
 class B(): A() {
-    /*override fun sayHi(){
+    /*override fun hostname(){
         println("Ah")
     }*/
 }
 
-fun A.sayHi(){
+fun A.hostname(){
     println("hi, I'm A")
 }
 
-fun B.sayHi(){
+fun B.hostname(){
     println("hi, I'm B")
 }
 
