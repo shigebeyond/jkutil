@@ -2,7 +2,6 @@ package net.jkcode.jkutil.common
 
 import net.jkcode.jkutil.ttl.SttlThreadPool
 import java.util.concurrent.atomic.AtomicInteger
-import java.util.concurrent.atomic.AtomicLong
 
 /**
  * 应用信息
@@ -18,15 +17,20 @@ object JkApp {
     public val config = Config.instance("jkapp", "yaml")
 
     /**
-     * 应用名
+     * k8s命名空间, 可能包含环境(pro/dev/test)+版本: 优先读环境变量POD_NAMESPACE, 如果环境变量不存在再读配置项
      */
-    public val name: String = config["name"]!!
+    public val namespace: String
+        get() {
+            return System.getenv("APP_NAME") ?: config["namespace"]!!
+        }
 
     /**
-     * 环境
+     * k8s应用名: 优先读环境变量APP_NAME, 如果环境变量不存在再读配置项
      */
-    public val env: String = config["env"]!!
-
+    public val name: String
+        get(){
+            return System.getenv("POD_NAMESPACE") ?: config["name"]!!
+        }
 
     /**
      * 是否应用协程, 与useSttl不兼容, 如果useFiber=true, 则会强制使得 useSttl=false
@@ -50,18 +54,18 @@ object JkApp {
     /**
      * 是否测试环境
      */
-    public val isTest: Boolean = env == "test"
+    public val isTest: Boolean = "test" in namespace
 
     /**
      * 是否开始环境
      */
-    public val isDev: Boolean = env == "dev"
+    public val isDev: Boolean = "dev" in namespace
 
 
     /**
      * 是否线上环境
      */
-    public val isPro: Boolean = env == "pro"
+    public val isPro: Boolean = "pro" in namespace
 
     /**
      * 是否debug环境

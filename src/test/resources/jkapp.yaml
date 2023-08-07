@@ -1,6 +1,7 @@
-# 环境： pro/dev/test
-env: test
-name: jkapp
+# k8s命名空间, 可能包含环境(pro/dev/test)+版本, 仅本地部署时有效, 当k8s部署并设置了环境变量POD_NAMESPACE, 则此配置项无效
+namespace: default
+# k8s应用名, 仅本地部署时有效, 当k8s部署并设置了环境变量APP_NAME, 则此配置项无效
+name: rpcserver
 # 是否应用协程, 与useSttl不兼容, 如果useFiber=true, 则会强制使得 useSttl=false
 useFiber: false
 # 是否应用可传递ScopedTransferableThreadLocal, 影响 1. CompletableFuture 的线程池 2. 公共线程池 3. IRequestScope#sttlWrap()

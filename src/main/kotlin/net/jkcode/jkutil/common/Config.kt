@@ -19,10 +19,10 @@ import kotlin.collections.HashMap
  * @date 2016-10-8 下午8:02:47
  */
 open class Config(
-        public override val props: Map<String, *>, // 配置项
+        override val props: Map<String, *>, // 配置项
         public override val file: String = "", // 配置文件
-        public override val merging: Boolean = false // 是否合并
-): IConfig(){
+        public val merging: Boolean = false // 是否合并
+): IConfig() {
 
     companion object{
         /**
@@ -30,7 +30,7 @@ open class Config(
          *   key 文件名
          *   value 配置数据
          */
-        val configs:ConcurrentHashMap<String, Config?> = ConcurrentHashMap<String, Config?>()
+        private val configs:ConcurrentHashMap<String, Config> = ConcurrentHashMap()
 
         /**
          * 获得配置数据，如果没有数据，则加载配置文件来读取数据
@@ -38,14 +38,14 @@ open class Config(
          *
          * 例子：
          * <code>
-         *      val config = Config.instance("config.txt", "UTF-8");
+         *      val config = Config.instance("config.yml", "UTF-8");
          *      String username = config.get("username");
          *      String password = config.get("password");
          *
-         *      username = Config.instance("other_config.txt").get("username");
-         *      password = Config.instance("other_config.txt").get("password");
+         *      username = Config.instance("other_config.yml").get("username");
+         *      password = Config.instance("other_config.yml").get("password");
          *
-         *      Config.instance("com/jfinal/config_in_sub_directory_of_classpath.txt");
+         *      Config.instance("com/jfinal/config_in_sub_directory_of_classpath.yml");
          * <code>
          *
          * @param file the properties file's name in classpath or the sub directory of classpath
@@ -126,9 +126,9 @@ open class Config(
             val result = `is`.use {
                 when(type){
                     "properties" -> Properties().apply { load(`is`.reader()) } // 加载 properties 文件
-                    "yaml" -> Yaml().loadAs(`is`, HashMap::class.java) // 加载 yaml 文件
+                    "yaml", "yml" -> Yaml().loadAs(`is`, HashMap::class.java) // 加载 yaml 文件
                     "json" -> JSONObject.parseObject(`is`.reader().readText()) // 加载 json 文件
-                    else -> throw IllegalArgumentException("未知配置文件类型")
+                    else -> throw IllegalArgumentException("未知配置文件类型: " + type)
                 }
             }
             if(result == null)
@@ -141,9 +141,9 @@ open class Config(
     /**
      * 例子：
      * <code>
-     *      val config = Config("my_config.properties");
-     *      val config = Config("my_config.properties", "properties");
-     *      val config = Config("my_config.properties", "yaml");
+     *      val config = Config("my_config");
+     *      val config = Config("my_config", "properties");
+     *      val config = Config("my_config", "yaml");
      *      val username = config.get("username");
      * <code>
      *
@@ -154,178 +154,8 @@ open class Config(
     public constructor(file: String, type: String = "properties", merging: Boolean = false):this(buildProperties(file, type, merging), file, merging){
     }
 
-    /**
-     * 判断是否含有配置项
-     * @param key
-     * @return
-     */
-    public override fun containsKey(key: String): Boolean {
-        return props.containsKey(key)
-    }
-
-    /**
-     * 获得string类型的配置项
-     * @param key
-     * @param defaultValue
-     * @return
-     */
-    public override fun getString(key: String, defaultValue: String?): String? {
-        val value = props.get(key)
-        return if(value == null)
-            defaultValue
-        else
-            value.toString()
-    }
-
-    /**
-     * 获得int类型的配置项
-     * @param key
-     * @param defaultValue
-     * @return
-     */
-    public override fun getInt(key: String, defaultValue: Int?): Int? {
-        return props.getAndConvert(key, defaultValue)
-    }
-
-    /**
-     * 获得long类型的配置项
-     * @param key
-     * @param defaultValue
-     * @return
-     */
-    public override fun getLong(key: String, defaultValue: Long?): Long? {
-        return props.getAndConvert(key, defaultValue)
-    }
-
-
-    /**
-     * 获得float类型的配置项
-     * @param key
-     * @param defaultValue
-     * @return
-     */
-    public override fun getFloat(key: String, defaultValue: Float?): Float? {
-        return props.getAndConvert(key, defaultValue)
-    }
-
-    /**
-     * 获得double类型的配置项
-     * @param key
-     * @param defaultValue
-     * @return
-     */
-    public override fun getDouble(key: String, defaultValue: Double?): Double? {
-        return props.getAndConvert(key, defaultValue)
-    }
-
-    /**
-     * 获得bool类型的配置项
-     * @param key
-     * @param defaultValue
-     * @return
-     */
-    public override fun getBoolean(key: String, defaultValue: Boolean?): Boolean? {
-        return props.getAndConvert(key, defaultValue)
-    }
-
-    /**
-     * 获得short类型的配置项
-     * @param key
-     * @param defaultValue
-     * @return
-     */
-    public override fun getShort(key: String, defaultValue: Short?): Short?{
-        return props.getAndConvert(key, defaultValue)
-    }
-
-    /**
-     * 获得Date类型的配置项
-     * @param key
-     * @param defaultValue
-     * @return
-     */
-    public override fun getDate(key: String, defaultValue: Date?): Date?{
-        return props.getAndConvert(key, defaultValue)
-    }
-
-    /**
-     * 获得Map类型的配置项
-     * @param key
-     * @param defaultValue
-     * @return
-     */
-    public override fun getMap(key: String, defaultValue: Map<String, *>?): Map<String, *>?{
-        return props.getAndConvert(key, defaultValue)
-    }
-
-    /**
-     * 获得List类型的配置项
-     * @param key
-     * @param defaultValue
-     * @return
-     */
-    public override fun getList(key: String, defaultValue: List<*>?): List<*>?{
-        return props.getAndConvert(key, defaultValue)
-    }
-
-    /**
-     * 获得Config类型的子配置项
-     * @param key
-     * @param defaultValue
-     * @return
-     */
-    public override fun getPathConfig(path: String): Config{
-        try{
-            val subprops = PropertyUtil.getPath(props, path) as Map<String, *>
-            return Config(subprops)
-        }catch (e:ClassCastException){
-            throw NoSuchElementException("构建配置子项失败：配置数据为$props, 但路径[$path]的子项不是Map")
-        }
-    }
-
-    /**
-     * 获得Properties类型的子配置项
-     * @param key
-     * @param defaultValue
-     * @return
-     */
-    public override fun getPathProperties(path: String): Properties{
-        try{
-            val subprops = PropertyUtil.getPath(props, path) as Map<String, *>
-            val result = Properties()
-            result.putAll(subprops)
-            return result
-        }catch (e:ClassCastException){
-            throw NoSuchElementException("构建配置子项失败：配置数据为$props, 但路径[$path]的子项不是Map")
-        }
-    }
-
-    /**
-     * 尝试设置配置项，仅内部使用
-     * @param key
-     * @param value
-     */
-    public operator fun set(key: String, value: Any?){
-        (props as MutableMap<String, Any?>).set(key, value)
-    }
-
-    /**
-     * 配置项是类的列表, 对应返回实例列表
-     * @param prop
-     * @return
-     */
-    public override fun <T> classes2Instances(prop: String): List<T>{
-        val classes: List<String>? = this[prop]
-        if(classes.isNullOrEmpty())
-            return LinkedList() // 空也返回可写的list, 外面可能要用到, 特别是对配置的插件/拦截器列表而言
-
-        return classes!!.map { clazz ->
-            BeanSingletons.instance(clazz) as T
-        }
-    }
-
     public override fun toString(): String {
-        return "Config[$props]"
+        return "${this::class.simpleName}[$props]"
     }
 
     override fun equals(other: Any?): Boolean {

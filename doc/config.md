@@ -2,10 +2,11 @@
 
 By default, configuration files are in the directory `src/main/resources/ `
 
-Jkmvc supports two types of configuration files
+Jkmvc supports 3 types of configuration files
 
 1. properties
-2. yaml
+2. yaml/yml
+3. json
 
 ## 1 Define configuration file
 

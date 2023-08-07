@@ -105,8 +105,8 @@ class MyTests{
     }
 
     /**
-     * 通过 docker service ls 命令来查询k8s服务的节点数
-     * @return Map<k8s服务名, 节点数>
+     * 通过 docker service ls 命令来查询k8s应用的节点数
+     * @return Map<k8s应用域名, 节点数>
      */
     @Test
     fun testDockerServiceCmd(){

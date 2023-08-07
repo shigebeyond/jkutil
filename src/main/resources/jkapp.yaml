@@ -1,5 +1,6 @@
-# 环境： pro/dev/test
-env: dev
+# k8s命名空间, 可能包含环境(pro/dev/test)+版本, 仅本地部署时有效, 当k8s部署并设置了环境变量POD_NAMESPACE, 则此配置项无效
+namespace: dev
+# k8s应用名, 仅本地部署时有效, 当k8s部署并设置了环境变量APP_NAME, 则此配置项无效
 name: jkapp
 # 是否应用协程, 与useSttl不兼容, 如果useFiber=true, 则会强制使得 useSttl=false
 useFiber: false

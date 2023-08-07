@@ -2,10 +2,11 @@
 
 jkmvc的配置文件一般放在 `src/main/resources/` 目录下
 
-jkmvc支持以下2种类型的配置文件
+jkmvc支持以下3类配置文件
 
 1. properties
-2. yaml
+2. yaml/yml
+3. json
 
 ## 1 配置文件定义
 
