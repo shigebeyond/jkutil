@@ -1,5 +1,24 @@
 # 基于zookeeper实现的远程配置
 
+## 设计理念
+1. 为了更好的融入k8s架构，远端配置文件的目录结构必须遵循k8s的层次结构，即两层：1 命名空间 2 应用
+
+2. 应用加载远端配置，即是从zookeeper(远端)中获得(当前k8s命名空间+应用)目录下的配置文件
+
+3. 结合 [jkcfg](https://github.com/shigebeyond/jkcfg) 在zookeeper上做配置管理，生成对应的目录结构
+
+3. zookeeper上目录结构如下:
+```
+jkcfig
+  default # k8s命名空间
+    app1 # 应用
+      redis.yaml # 配置文件
+             log4j.properties
+    app2 # 应用
+      redis.yaml # 配置文件
+             log4j.properties
+```
+
 ## 使用
 1. 配置 zk.yaml
 ```yaml

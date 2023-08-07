@@ -12,13 +12,13 @@ import kotlin.math.E
  * zookeeper上的配置文件数据, 支持从远端(zookeeper)加载配置
  *
  * 设计目标：
- *   从zk中获得(当前命名空间+当前应用)目录下的配置文件
+ *   从zk中获得(当前k8s命名空间+应用)目录下的配置文件
  *   配合 jkcfig 在zk上生成的目录结构
  *
  * zk目录结构如下:
  * ```
  * jkcfig
- *  	default # 命名空间
+ *  	default # k8s命名空间
  *  		app1 # 应用
  *  			redis.yaml # 配置文件
  *              log4j.properties
