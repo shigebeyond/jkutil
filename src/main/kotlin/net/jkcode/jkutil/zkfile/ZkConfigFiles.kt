@@ -89,7 +89,7 @@ object ZkConfigFiles: IFileListener {
      */
     private fun getFilename(path: String): String {
         //return path.replace(appPath, "") // wrong: /redis.yml
-        return path.substring(appPath.length + 1) // rigth: /redis.yml
+        return path.substring(appPath.length + 1) // right: redis.yml
     }
 
     /**

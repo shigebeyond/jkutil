@@ -8,8 +8,10 @@ import java.io.Closeable
 import java.util.concurrent.ConcurrentHashMap
 
 /**
- * zk中子节点变化监听器
- *    实现了IZkChildListener, 处理zk子节点变化
+ * zk中子节点变化监听器： 适配器模式, 将zk监听器接口转为代理调用fileListener接口, 就是将zk节点/数据变化事件转为文件增删改事件, 好实现zk配置(文件)动态刷新
+ *    1 实现了IZkChildListener, 处理zk子节点变化
+ *    2 维护子节点的zk数据监听器
+ *    3 实现与代理调用 fileListener, 多加了增删zk数据监听器
  *
  * @author shijianhang
  * @create 2023-7-13 下午10:56
@@ -31,43 +33,10 @@ class ZkChildListener(
     @Volatile
     protected var files: List<String> = ArrayList()
 
+    /************************* 监听子节点变化 *************************/
     init {
         // 添加zk子节点监听
         zkClient.subscribeChildChanges(parentPath, this)
-    }
-
-    /**
-     * 关闭: 清理监听器
-     */
-    public override fun close() {
-        // 取消zk子节点监听
-        zkClient.unsubscribeChildChanges(parentPath, this)
-
-        // 清理数据监听器
-        // ConcurrentHashMap支持边遍历边删除, HashMap不支持
-        for (key in dataListeners.keys)
-            removeDataListener(key)
-    }
-
-    /**
-     * 对文件子节点添加数据监听器
-     * @param path
-     */
-    protected fun addDataListener(path: String) {
-        commonLogger.info("ZkDataListener监听[{}]数据变化", path)
-        val dataListener = ZkDataListener(path, fileListener)
-        zkClient.subscribeDataChanges(path, dataListener);
-        dataListeners[path] = dataListener
-    }
-
-    /**
-     * 对文件子节点删除数据监听器
-     * @param path
-     */
-    protected fun removeDataListener(path: String) {
-        commonLogger.info("ZkDataListener取消监听[{}]数据变化", path)
-        val dataListener = dataListeners.remove(path)!!
-        zkClient.unsubscribeDataChanges(path, dataListener)
     }
 
     /**
@@ -100,6 +69,42 @@ class ZkChildListener(
         files = newFiles
     }
 
+    /************************* 监听子节点数据变化 *************************/
+    /**
+     * 对文件子节点添加数据监听器
+     * @param path
+     */
+    protected fun addDataListener(path: String) {
+        commonLogger.info("ZkDataListener监听[{}]数据变化", path)
+        val dataListener = ZkDataListener(fileListener)
+        zkClient.subscribeDataChanges(path, dataListener);
+        dataListeners[path] = dataListener
+    }
+
+    /**
+     * 对文件子节点删除数据监听器
+     * @param path
+     */
+    protected fun removeDataListener(path: String) {
+        commonLogger.info("ZkDataListener取消监听[{}]数据变化", path)
+        val dataListener = dataListeners.remove(path)!!
+        zkClient.unsubscribeDataChanges(path, dataListener)
+    }
+
+    /**
+     * 关闭: 清理监听器
+     */
+    public override fun close() {
+        // 取消zk子节点监听
+        zkClient.unsubscribeChildChanges(parentPath, this)
+
+        // 清理数据监听器
+        // ConcurrentHashMap支持边遍历边删除, HashMap不支持
+        for (key in dataListeners.keys)
+            removeDataListener(key)
+    }
+
+    /************************* 实现与代理调用 fileListener, 多加了增删zk数据监听器 *************************/
     /**
      * 处理配置文件新增
      * @param path
@@ -132,6 +137,5 @@ class ZkChildListener(
     override fun handleContentChange(path: String, content: String) {
         fileListener.handleContentChange(path, content)
     }
-
 
 }
