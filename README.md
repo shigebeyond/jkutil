@@ -31,13 +31,13 @@ compile "net.jkcode:jkutil:1.9.0"
 3. [validation](doc/validation/validation.md)
 
 # 中文文档
-
-1. [配置](doc/config.cn.md)
-2. [基于zookeeper实现的远程配置](doc/zkconfig.cn.md)
-3. [缓存](doc/cache.cn.md)
-4. [锁](doc/lock.cn.md)
-5. [序列化](doc/serializer.cn.md)
-6. [校验器](doc/validation/validation.cn.md)
-7. [校验表达式](doc/validation/validation_expression.cn.md)
-8. [id生成器](doc/idworker.cn.md)
-9. [http client](doc/http_client.cn.md)
+1. [命名空间与应用名](doc/ns_app.cn.md)
+2. [配置](doc/config.cn.md)
+3. [基于zookeeper实现的远程配置](doc/zkconfig.cn.md)
+4. [缓存](doc/cache.cn.md)
+5. [锁](doc/lock.cn.md)
+6. [序列化](doc/serializer.cn.md)
+7. [校验器](doc/validation/validation.cn.md)
+8. [校验表达式](doc/validation/validation_expression.cn.md)
+9. [id生成器](doc/idworker.cn.md)
+10. [http client](doc/http_client.cn.md)
