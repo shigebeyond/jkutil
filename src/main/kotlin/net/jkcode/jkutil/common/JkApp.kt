@@ -21,7 +21,7 @@ object JkApp {
      */
     public val namespace: String
         get() {
-            return System.getenv("APP_NAME") ?: config["namespace"]!!
+            return System.getenv("POD_NAMESPACE") ?: config["namespace"]!!
         }
 
     /**
@@ -29,7 +29,7 @@ object JkApp {
      */
     public val name: String
         get(){
-            return System.getenv("POD_NAMESPACE") ?: config["name"]!!
+            return System.getenv("APP_NAME") ?: config["name"]!!
         }
 
     /**

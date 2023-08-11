@@ -31,7 +31,7 @@ compile "net.jkcode:jkutil:1.9.0"
 3. [validation](doc/validation/validation.md)
 
 # 中文文档
-1. [命名空间与应用名](doc/ns_app.cn.md)
+1. [k8s命名空间与应用名](doc/ns_app.cn.md)
 2. [配置](doc/config.cn.md)
 3. [基于zookeeper实现的远程配置](doc/zkconfig.cn.md)
 4. [缓存](doc/cache.cn.md)
