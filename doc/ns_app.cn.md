@@ -11,7 +11,7 @@ k8s中的Namespace是一种用于在集群内部组织和隔离资源的机制�
 3. 安全隔离：控制资源配额，限制cpu、内存等资源的使用；控制访问权限，确保应用之间的安全隔离。
 
 ## 在k8s集群中引入应用概念
-结合 [K8sBoot](https://github.com/shigebeyond/K8sBoot) 框架来实现，它对k8s资源定义做了简化，并抽取了`应用`的概念
+结合 [K8sBoot](https://github.com/shigebeyond/K8sBoot) 框架来实现，它对k8s资源定义做了简化，并抽取了`应用`的概念，为k8s资源定义增加了面向应用编程的方式，更加切合应用维度的部署与管理需求
 ```yaml
 - ns: dev # 定义命名空间
 - app(xxx): # 定义应用，应用名为xxx
@@ -45,7 +45,6 @@ jkcfig
 
 3.2 python实现: [pyutilb库的zkconfigfiles类](https://github.com/shigebeyond/pyutilb)
 
-
 ## 应用中如何获得命名空间与应用名?
 
 ```
@@ -56,8 +55,7 @@ JkApp.name // 应用名
 ## 应用中命名空间与应用名从哪里来?
 根据部署方式的不同，有不同的取值来源
 
-1. 本地部署: 命名空间与应用名读jkapp.yaml配置文件
-jkapp.yaml
+1. 本地部署: 命名空间与应用名读配置文件jkapp.yaml
 ```yaml
 # k8s命名空间, 可能包含环境(pro/dev/test)+版本, 仅本地部署时有效, 当k8s部署并设置了环境变量POD_NAMESPACE, 则此配置项无效
 namespace: dev
