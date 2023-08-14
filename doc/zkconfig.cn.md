@@ -7,11 +7,12 @@ jkcfig
   default # k8s命名空间
     app1 # 应用
       redis.yaml # 配置文件
-             log4j.properties
+      log4j.properties
     app2 # 应用
       redis.yaml # 配置文件
-             log4j.properties
+      log4j.properties
 ```
+注：仅支持 properties/yaml/yml/json 4种后缀的配置文件
 
 2. 数据管理层面：结合 [jkcfg](https://github.com/shigebeyond/jkcfg) 在zookeeper上做配置管理，生成对应的目录结构
 
@@ -31,9 +32,38 @@ default:
 2. 使用远程配置
 ```kotlin
 // 获得远程配置文件: 假定当前k8s命名空间为default, 应用名为rpcserver, 而配置文件名为redis.yml，则对应zookeeper上的配置文件路径为/jkcfg/default/rpcserver/redis.yml
-val cfg: ZkConfig = ZkConfig.instance("redis.yml") // 配置文件名为redis.yml
+val cfg: ZkConfig = ZkConfig("redis.yml") // 配置文件名为redis.yml
+// 或
+//val cfg: ZkConfig = ZkConfigFiles.instance().getZkConfig("redis.yml")
 // 读配置文件中host配置项的值
 val host: String? = config["host"]
+```
+
+3. 使用监听器监听配置变化，有2种监听方式:
+
+3.1 使用`ZkConfigFiles.addConfigListener()`来添加监听器
+```kotlin
+val file = "redis.yml"
+val configFiles = ZkConfigFiles.instance()
+configFiles.addConfigListener(file){ data ->
+    println("监听到配置[$file]变更: $data")
+}
+```
+
+3.2 改写`ZkConfig.handleConfigChange()`来处理监听
+```kotlin
+val file = "redis.yml"
+val config = object: ZkConfig(file){
+    override fun handleConfigChange(data: Map<String, Any?>?) {
+        println("监听到配置[$file]变更: $data")
+        if(data == null){
+            println("redis.yml配置文件被删除")
+            return
+        }
+        println("redis.yml的host配置为: " + this.getString("host"))
+    }
+}
+println("redis.yml的host配置为: " + config.getString("host"))
 ```
 
 ## 结合 jkcfg 做配置管理

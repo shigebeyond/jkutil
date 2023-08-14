@@ -2,11 +2,12 @@ package net.jkcode.jkutil.zkfile
 
 import com.alibaba.fastjson.JSONObject
 import net.jkcode.jkutil.common.JkApp
+import net.jkcode.jkutil.common.getOrPutOnce
 import org.yaml.snakeyaml.Yaml
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
+import java.util.concurrent.CopyOnWriteArrayList
 import kotlin.collections.HashMap
-import kotlin.math.E
 
 /**
  * zookeeper上的配置文件数据, 支持从远端(zookeeper)加载配置
@@ -31,12 +32,7 @@ import kotlin.math.E
  * @author shijianhang
  * @date 2023-7-8 下午8:02:47
  */
-object ZkConfigFiles: IFileListener {
-
-    /**
-     * 应用路径
-     */
-    private val appPath = "/jkcfg/${JkApp.namespace}/${JkApp.name}"
+class ZkConfigFiles(public val appPath: String): IFileListener {
 
     /**
      * 所有配置文件的数据: <文件路径 to 配置数据>
@@ -49,11 +45,42 @@ object ZkConfigFiles: IFileListener {
     public val files: Collection<String>
         get() = fileProps.keys
 
+    /**
+     * 配置变化监听器: <配置文件名 to 配置变化监听器>
+     */
+    protected val configListeners: ConcurrentHashMap<String, CopyOnWriteArrayList<IConfigListener>> = ConcurrentHashMap()
+
     init {
         // 监听应用下配置文件变化
         ZkFileSubscriber.subscribe(appPath, this)
     }
 
+    companion object{
+
+        /**
+         * 当前应用路径
+         */
+        private val currAppPath = "/jkcfg/${JkApp.namespace}/${JkApp.name}"
+
+        /**
+         * ZkConfigFiles池
+         */
+        private val insts: ConcurrentHashMap<String, ZkConfigFiles> = ConcurrentHashMap();
+
+        /**
+         * 获得ZkConfigFiles实例
+         * @param appPath
+         * @return
+         */
+        public fun instance(appPath: String? = null): ZkConfigFiles {
+            val appPath = appPath ?: currAppPath // 默认取当前app路径
+            return insts.getOrPut(appPath){
+                ZkConfigFiles(appPath)
+            }
+        }
+    }
+
+    /************************ 实现 IFileListener zk文件变化的监听器 ***************************/
     /**
      * 处理配置文件新增
      * @param url
@@ -69,6 +96,7 @@ object ZkConfigFiles: IFileListener {
     override fun handleFileRemove(path: String) {
         val path = getFilename(path)
         fileProps.remove(path)
+        triggerConfigListeners(path, null)
     }
 
     /**
@@ -81,6 +109,7 @@ object ZkConfigFiles: IFileListener {
         val type = path.substringAfterLast('.') // 扩展名即为类型
         val data = buildProperties(content, type)
         fileProps[path] = data
+        triggerConfigListeners(path, data)
     }
 
     /**
@@ -121,4 +150,56 @@ object ZkConfigFiles: IFileListener {
     public fun getFileProps(file: String): Map<String, Any?> {
         return fileProps[file] ?: throw Exception("找到不zk配置文件[$file], 其在zk路径为 $appPath/$file}")
     }
+
+    /**
+     * 获得zk配置文件
+     */
+    public fun getZkConfig(file: String): ZkConfig {
+        return ZkConfig(file, this)
+    }
+
+    /************************ 配置变化监听器 ***************************/
+    /**
+     * 添加配置变化监听器
+     */
+    public fun getConfigListener(file: String): CopyOnWriteArrayList<IConfigListener> {
+        return configListeners.getOrPutOnce(file){
+            CopyOnWriteArrayList()
+        }
+    }
+
+    /**
+     * 触发配置变化监听器
+     */
+    private fun triggerConfigListeners(file: String, data: Map<String, Any?>?){
+        for (l in getConfigListener(file))
+            l.handleConfigChange(data)
+    }
+
+    /**
+     * 添加配置变化监听器
+     */
+    public fun addConfigListener(file: String, listener: IConfigListener){
+        getConfigListener(file).add(listener)
+    }
+
+    /**
+     * 添加配置变化监听器
+     */
+    public fun addConfigListener(file: String, callback: (data: Map<String, Any?>?)->Unit){
+        val listener = object: IConfigListener{
+            override fun handleConfigChange(data: Map<String, Any?>?){
+                callback.invoke(data)
+            }
+        }
+        getConfigListener(file).add(listener)
+    }
+
+    /**
+     * 删除配置变化监听器
+     */
+    public fun removeConfigListener(file: String, listener: IConfigListener){
+        configListeners[file]?.remove(listener)
+    }
+
 }

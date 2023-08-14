@@ -28,45 +28,21 @@ import java.util.concurrent.ConcurrentHashMap
  * @author shijianhang
  * @date 2023-7-8 下午8:02:47
  */
-class ZkConfig(public override val file: String /* 配置文件 */) : IConfig() {
+open class ZkConfig(
+    public override val file: String, // 配置文件
+    private val files: ZkConfigFiles = ZkConfigFiles.instance() // 配置文件
+) : IConfig(), IConfigListener {
 
     /**
      * 配置项
      */
     public override val props: Map<String, *>
         get() {
-            return ZkConfigFiles.getFileProps(file)
+            return files.getFileProps(file)
         }
 
-    companion object{
-        /**
-         * 缓存配置数据
-         *   key 文件名
-         *   value 配置数据
-         */
-        private val configs: ConcurrentHashMap<String, ZkConfig> = ConcurrentHashMap()
-
-        /**
-         * 获得配置数据
-         * 例子：
-         * <code>
-         *      val config = ZkConfig.instance("config.yml", "UTF-8");
-         *      String username = config.get("username");
-         *      String password = config.get("password");
-         *
-         *      username = ZkConfig.instance("other_config.yml").get("username");
-         *      password = ZkConfig.instance("other_config.yml").get("password");
-         * <code>
-         *
-         * @param file zk的配置文件名
-         */
-        @JvmStatic
-        @JvmOverloads
-        public fun instance(file: String): ZkConfig {
-            return configs.getOrPutOnce(file){
-                ZkConfig(file)
-            }
-        }
+    init {
+        files.addConfigListener(file, this)
     }
 
 }
