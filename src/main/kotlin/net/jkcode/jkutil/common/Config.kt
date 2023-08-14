@@ -49,7 +49,7 @@ open class Config(
          * <code>
          *
          * @param file the properties file's name in classpath or the sub directory of classpath
-         * @param type properties | yaml
+         * @param type file type, eg. properties | yaml | yml | json
          * @param merging
          */
         @JvmStatic
@@ -94,7 +94,7 @@ open class Config(
                         }else
                             Thread.currentThread().contextClassLoader.getResources(file)
             if(!urls.hasMoreElements())
-                throw IllegalArgumentException("配置文件[$file]不存在")
+                throw IllegalArgumentException("配置文件[$file.$type]不存在")
             // 1 不合并: 取第一个
             if (!merging)
                 return buildProperties(urls.nextElement(), type)

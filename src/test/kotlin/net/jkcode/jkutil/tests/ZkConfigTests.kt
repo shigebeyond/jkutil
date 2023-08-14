@@ -11,7 +11,7 @@ import net.jkcode.jkutil.zkfile.ZkFileSubscriber
 /**
  * zk测试
  */
-class ZkTests {
+class ZkConfigTests {
 
     val l = object: IFileListener{
         override fun handleFileAdd(path: String, content: String) {
